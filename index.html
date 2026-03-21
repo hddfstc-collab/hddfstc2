@@ -1,0 +1,2034 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>창고 관리 시스템 v26.9 (푸터 및 장바구니 미니멀 최적화)</title>
+    <style>
+        :root {
+            --slate-50: #f8fafc; --slate-100: #f1f5f9; --slate-200: #e2e8f0; --slate-300: #cbd5e1;
+            --slate-400: #94a3b8; --slate-500: #64748b; --slate-600: #475569; --slate-700: #334155;
+            --slate-800: #1e293b; --slate-900: #0f172a;
+            --blue-50: #eff6ff; --blue-100: #dbeafe; --blue-200: #bfdbfe; --blue-300: #93c5fd; --blue-400: #60a5fa; --blue-500: #3b82f6; --blue-600: #2563eb; --blue-800: #1e40af;
+            --red-50: #fef2f2; --red-100: #fee2e2; --red-200: #fecaca; --red-300: #fca5a5; --red-500: #ef4444; --red-600: #dc2626; --red-700: #b91c1c; --red-800: #991b1b;
+            --amber-50: #fffbeb; --amber-100: #fef3c7; --amber-400: #fbbf24; --amber-500: #f59e0b; --amber-600: #d97706; --amber-900: #78350f;
+            --green-500: #22c55e; --green-600: #16a34a;
+        }
+        * { box-sizing: border-box; font-family: 'Malgun Gothic', '맑은 고딕', sans-serif; font-weight: 900; }
+        body { margin: 0; padding: 0; background-color: var(--slate-50); color: var(--slate-800); overflow: hidden; user-select: none; word-break: keep-all; overflow-wrap: break-word; }
+        
+        .h-screen { height: 100vh; height: 100dvh; } .w-full { width: 100%; } .flex-1 { flex: 1; min-height: 0; }
+        .flex { display: flex; } .flex-col { flex-direction: column; } .flex-wrap { flex-wrap: wrap; }
+        .items-center { align-items: center; } .items-start { align-items: flex-start; } .items-end { align-items: flex-end; }
+        .justify-between { justify-content: space-between; } .justify-center { justify-content: center; } .justify-end { justify-content: flex-end; }
+        .grid { display: grid; } .grid-cols-2 { grid-template-columns: 1fr 1fr; } .grid-cols-3 { grid-template-columns: 1fr 1fr 1fr; } .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+        
+        .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; } .gap-8 { gap: 2rem; } .gap-10 { gap: 2.5rem; }
+        .p-2 { padding: 0.5rem; } .p-4 { padding: 1rem; } .p-6 { padding: 1.5rem; } .p-8 { padding: 2rem; } .p-10 { padding: 2.5rem; } .p-12 { padding: 3rem; } .p-16 { padding: 4rem; }
+        .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; } .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; } .py-4 { padding-top: 1rem; padding-bottom: 1rem; } .py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; } .py-8 { padding-top: 2rem; padding-bottom: 2rem; } .py-10 { padding-top: 2.5rem; padding-bottom: 2.5rem; } .py-12 { padding-top: 3rem; padding-bottom: 3rem; }
+        .px-4 { padding-left: 1rem; padding-right: 1rem; } .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; } .px-8 { padding-left: 2rem; padding-right: 2rem; } .px-10 { padding-left: 2.5rem; padding-right: 2.5rem; } .px-12 { padding-left: 3rem; padding-right: 3rem; }
+        .mb-2 { margin-bottom: 0.5rem; } .mb-4 { margin-bottom: 1rem; } .mb-6 { margin-bottom: 1.5rem; } .mb-8 { margin-bottom: 2rem; } .mb-10 { margin-bottom: 2.5rem; } .mb-12 { margin-bottom: 3rem; } .mb-16 { margin-bottom: 4rem; }
+        .pb-32 { padding-bottom: 8rem; }
+        .mt-2 { margin-top: 0.5rem; } .mt-4 { margin-top: 1rem; } .mt-8 { margin-top: 2rem; } .mt-10 { margin-top: 2.5rem; } .mt-16 { margin-top: 4rem; }
+        .ml-2 { margin-left: 0.5rem; } .ml-4 { margin-left: 1rem; } .ml-6 { margin-left: 1.5rem; } .ml-8 { margin-left: 2rem; }
+        
+        .text-center { text-align: center; } .text-right { text-align: right; } .text-left { text-align: left; }
+        .text-sm { font-size: 0.875rem; } .text-base { font-size: 1rem; } .text-lg { font-size: 1.125rem; } .text-xl { font-size: 1.25rem; } .text-2xl { font-size: 1.5rem; } .text-3xl { font-size: 1.875rem; } .text-4xl { font-size: 2.25rem; } .text-5xl { font-size: 3rem; } .text-6xl { font-size: 3.75rem; } .text-7xl { font-size: 4.5rem; } .text-8xl { font-size: 6rem; }
+        .italic { font-style: italic; } .uppercase { text-transform: uppercase; } .underline { text-decoration: underline; } .tracking-widest { letter-spacing: 0.1em; } .tracking-tighter { letter-spacing: -0.05em; } .leading-none { line-height: 1; } .leading-tight { line-height: 1.2; } .font-bold { font-weight: bold; } .font-black { font-weight: 900; }
+        
+        .text-white { color: #fff; } .text-slate-300 { color: var(--slate-300); } .text-slate-400 { color: var(--slate-400); } .text-slate-500 { color: var(--slate-500); } .text-slate-600 { color: var(--slate-600); } .text-slate-700 { color: var(--slate-700); } .text-slate-800 { color: var(--slate-800); }
+        .text-blue-400 { color: var(--blue-400); } .text-blue-500 { color: var(--blue-500); } .text-blue-600 { color: var(--blue-600); } .text-blue-800 { color: var(--blue-800); } 
+        .text-red-500 { color: var(--red-500); } .text-red-600 { color: var(--red-600); } .text-red-800 { color: var(--red-800); }
+        .text-amber-400 { color: var(--amber-400); } .text-amber-900 { color: var(--amber-900); } .text-green-600 { color: var(--green-600); }
+        
+        .bg-white { background-color: #fff; } .bg-slate-50 { background-color: var(--slate-50); } .bg-slate-100 { background-color: var(--slate-100); } .bg-slate-200 { background-color: var(--slate-200); } .bg-slate-700 { background-color: var(--slate-700); } .bg-slate-800 { background-color: var(--slate-800); } .bg-slate-900 { background-color: var(--slate-900); }
+        .bg-blue-50 { background-color: var(--blue-50); } .bg-blue-100 { background-color: var(--blue-100); } .bg-blue-600 { background-color: var(--blue-600); } 
+        .bg-red-50 { background-color: var(--red-50); } .bg-red-100 { background-color: var(--red-100); } .bg-red-600 { background-color: var(--red-600); } 
+        .bg-amber-50 { background-color: var(--amber-50); } .bg-amber-500 { background-color: var(--amber-500); } .bg-amber-600 { background-color: var(--amber-600); }
+        
+        .border { border: 1px solid var(--slate-200); } .border-2 { border: 2px solid var(--slate-200); } .border-4 { border: 4px solid var(--slate-200); } .border-8 { border: 8px solid var(--slate-200); }
+        .border-b { border-bottom: 1px solid var(--slate-200); } .border-b-2 { border-bottom: 2px solid var(--slate-200); } .border-b-4 { border-bottom: 4px solid var(--slate-200); } .border-b-8 { border-bottom: 8px solid var(--slate-200); }
+        .border-l-[10px] { border-left: 10px solid var(--slate-200); } .border-l-[15px] { border-left: 15px solid var(--slate-200); }
+        .border-slate-100 { border-color: var(--slate-100); } .border-slate-200 { border-color: var(--slate-200); } .border-slate-300 { border-color: var(--slate-300); } .border-slate-700 { border-color: var(--slate-700); } .border-slate-800 { border-color: var(--slate-800); }
+        .border-blue-100 { border-color: var(--blue-100); } .border-blue-200 { border-color: var(--blue-200); } .border-blue-300 { border-color: var(--blue-300); } .border-blue-500 { border-color: var(--blue-500); } .border-blue-600 { border-color: var(--blue-600); }
+        .border-red-100 { border-color: var(--red-100); } .border-red-200 { border-color: var(--red-200); } .border-red-300 { border-color: var(--red-300); } .border-red-500 { border-color: var(--red-500); } 
+        .border-amber-100 { border-color: var(--amber-100); } .border-amber-500 { border-color: var(--amber-500); } .border-transparent { border-color: transparent; } .border-green-500 { border-color: var(--green-500); }
+        
+        .rounded-xl { border-radius: 0.75rem; } .rounded-2xl { border-radius: 1rem; } .rounded-3xl { border-radius: 1.5rem; } .rounded-[2rem] { border-radius: 2rem; } .rounded-[3rem] { border-radius: 3rem; } .rounded-[3.5rem] { border-radius: 3.5rem; } .rounded-[4rem] { border-radius: 4rem; } .rounded-[5rem] { border-radius: 5rem; } .rounded-[6rem] { border-radius: 6rem; } .rounded-[7rem] { border-radius: 7rem; } .rounded-full { border-radius: 9999px; }
+        .rounded-t-[4rem] { border-top-left-radius: 4rem; border-top-right-radius: 4rem; }
+        
+        .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); } .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); } .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); } .shadow-xl { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); } .shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); } .shadow-inner { box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06); }
+        
+        button, input, select, textarea { outline: none; border: none; background: transparent; font-family: inherit; font-weight: inherit; color: inherit; }
+        button { cursor: pointer; }
+        .tap-effect { transition: transform 0.1s, opacity 0.1s, background-color 0.2s; } .tap-effect:active { transform: scale(0.95); opacity: 0.8; }
+        .custom-scroll { overflow-y: auto; } .custom-scroll::-webkit-scrollbar { width: 10px; height: 10px; } .custom-scroll::-webkit-scrollbar-thumb { background: var(--slate-300); border-radius: 20px; }
+        .category-tab-active { border-bottom: 8px solid var(--blue-600); color: var(--blue-600) !important; }
+        
+        .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .text-truncate-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; word-break: keep-all; }
+        
+        .input-standard { background-color: var(--slate-50); border: 4px solid var(--slate-200); border-radius: 3rem; padding: 1.5rem 2rem; font-size: 1.875rem; width: 100%; transition: border-color 0.2s; }
+        .input-standard:focus { border-color: var(--blue-500); }
+        
+        input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"] { -moz-appearance: textfield; border-bottom: 4px solid var(--slate-300); transition: border-color 0.2s; padding: 0.5rem; }
+        input[type="number"]:focus { border-bottom-color: var(--blue-500); background-color: white; border-radius: 1rem; }
+        
+        .uppercase-input { text-transform: uppercase; }
+        .whitespace-nowrap { white-space: nowrap !important; }
+        .word-keep { word-break: keep-all; overflow-wrap: break-word; }
+        
+        .modal-overlay { position: fixed; inset: 0; background: rgba(2, 6, 23, 0.96); backdrop-filter: blur(15px); display: flex; align-items: center; justify-content: center; padding: 2rem; z-index: 6000; }
+        .fade-in { animation: fadeIn 0.3s ease-out; } @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th { padding: 1.5rem 1rem; border-bottom: 6px solid var(--slate-200); color: var(--slate-500); font-size: 1.5rem; text-transform: uppercase; font-style: italic; text-align: center; white-space: nowrap; }
+        td { padding: 1.5rem 1rem; border-bottom: 2px solid var(--slate-200); font-size: 1.75rem; color: var(--slate-800); text-align: center; white-space: nowrap; }
+        .excel-table th { background-color: var(--slate-100); border: 2px solid var(--slate-300); color: var(--slate-600); font-weight: 900; }
+        .excel-table td { border: 2px solid var(--slate-200); }
+        .excel-table tr:hover td { background-color: var(--blue-50); }
+        
+        .relative { position: relative; } .absolute { position: absolute; } .inset-0 { top:0; bottom:0; left:0; right:0; }
+        .overflow-hidden { overflow: hidden; } .overflow-x-auto { overflow-x: auto; } .shrink-0 { flex-shrink: 0; }
+        .grayscale { filter: grayscale(1); opacity: 0.4; pointer-events: none; }
+        .decoration-blue-200 { text-decoration-color: var(--blue-200); } .decoration-amber-500 { text-decoration-color: var(--amber-500); } .underline-offset-10 { text-underline-offset: 10px; }
+        .appearance-none { -webkit-appearance: none; appearance: none; }
+        .hover\:bg-red-100:hover { background-color: var(--red-100); } .hover\:bg-red-700:hover { background-color: var(--red-700); }
+        
+        .w-14 { width: 3.5rem; } .h-14 { height: 3.5rem; }
+
+        /* [푸터 공통 CSS 개선] */
+        .footer-icon { font-size: 3.75rem; }
+        .footer-text { font-size: 1.25rem; font-weight: bold; }
+        .footer-divider { width: 4px; height: 60px; }
+
+        .explorer-cat-bar { height: 90px; }
+        .explorer-list-zone { flex: none; height: 540px; padding: 2.5rem; overflow-y: auto; }
+        .explorer-item-card { height: 200px; padding: 2rem; border-radius: 2rem; } 
+        .item-title { font-size: 2rem; font-weight: 900; } 
+        .item-stock-text { font-size: 1.5rem; padding: 0.75rem 1.5rem; }
+        .item-soldout-badge { font-size: 1.25rem; padding: 0.5rem 1.5rem; }
+        
+        .explorer-cart-zone { flex: 1; display: flex; flex-direction: column; min-height: 300px; box-shadow: 0 -20px 50px rgba(0,0,0,0.4); } 
+        
+        .cart-grid {
+            display: grid;
+            grid-template-rows: repeat(2, 1fr);
+            grid-auto-flow: column;
+            grid-auto-columns: max-content;
+            gap: 1.5rem;
+            padding: 1.5rem 2rem;
+            align-items: stretch;
+        }
+
+        .explorer-cart-item { width: 320px; min-height: 180px; padding: 1.5rem; border-radius: 2.5rem; display: flex; flex-direction: column; }
+        .cart-item-title { font-size: 1.75rem; }
+        .cart-item-unit-detail { font-size: 1.2rem; } 
+        .cart-item-del { width: 2.5rem; height: 2.5rem; font-size: 1.2rem; }
+        
+        .cart-main-qty { font-size: 1.5rem; letter-spacing: -0.05em; color: var(--amber-400); font-weight: 900; line-height: 1.2; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .cart-sub-qty { font-size: 1.1rem; color: var(--slate-400); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 0.2rem; }
+        
+        .cart-qty-btn { width: 3.5rem; height: 3.5rem; font-size: 2rem; border-radius: 1rem; }
+        .cart-checkout-zone { padding: 2rem; }
+        .cart-checkout-btn { padding: 1.5rem; font-size: 2.5rem; border-radius: 9999px; width: 100%; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+
+        @media screen and (max-width: 800px) {
+            html { font-size: 12px; } 
+            
+            .footer-icon { font-size: 3rem; }
+            .footer-text { font-size: 1rem; }
+            .footer-divider { width: 3px; height: 50px; }
+
+            .explorer-cat-bar { height: 60px; }
+            .explorer-list-zone { height: 360px; padding: 1.5rem; }
+            .explorer-item-card { height: 140px; padding: 1.2rem; border-width: 2px; border-radius: 1.5rem; } 
+            .item-title { font-size: 1.4rem; } 
+            .item-stock-text { font-size: 1.1rem; padding: 0.4rem 1rem; }
+            .item-soldout-badge { font-size: 1rem; padding: 0.3rem 1rem; margin-top: 0.5rem; }
+            
+            .explorer-cart-zone { min-height: 250px; box-shadow: 0 -10px 30px rgba(0,0,0,0.3); } 
+            .cart-grid { gap: 1rem; padding: 1rem; }
+            .explorer-cart-item { width: 190px; min-height: 140px; padding: 1rem; border-radius: 1.5rem; }
+            .cart-item-title { font-size: 1.2rem; }
+            .cart-item-unit-detail { font-size: 0.9rem; margin-top: 0.2rem; }
+            .cart-item-del { width: 2rem; height: 2rem; font-size: 1rem; }
+            
+            .cart-main-qty { font-size: 1.15rem; letter-spacing: -0.05em; }
+            .cart-sub-qty { font-size: 0.9rem; }
+            
+            .cart-qty-btn { width: 2.5rem; height: 2.5rem; font-size: 1.5rem; border-radius: 0.8rem; }
+            .cart-checkout-zone { padding: 1rem; }
+            .cart-checkout-btn { padding: 1rem; font-size: 1.8rem; }
+
+            .p-10 { padding: 1.5rem; } .p-12 { padding: 1.5rem; } .p-16 { padding: 2rem; }
+            .gap-10 { gap: 1rem; } .gap-8 { gap: 1rem; }
+            .px-10 { padding-left: 1rem; padding-right: 1rem; } .px-12 { padding-left: 1.5rem; padding-right: 1.5rem; }
+            th { font-size: 1.2rem; padding: 1rem 0.5rem; } td { font-size: 1.4rem; padding: 1rem 0.5rem; }
+            .input-standard { padding: 1rem 1.5rem; font-size: 1.5rem; }
+            .grid-cols-3 { grid-template-columns: 1fr 1fr; }
+            .text-8xl { font-size: 5rem; }
+            div[style*="width:350px"] { width: 250px !important; height: 250px !important; }
+            div[style*="width:280px"] { width: 200px !important; height: 200px !important; }
+            .modal-content { max-width: 95% !important; padding: 2rem !important;}
+        }
+
+        /* =========================================================
+           480px (iPhone SE 등 초소형 모바일) 완벽 최적화 레이아웃
+           ========================================================= */
+        @media screen and (max-width: 480px) {
+            html { font-size: 10px; } 
+            
+            .grid-cols-2, .grid-cols-3, .grid-cols-4 { grid-template-columns: 1fr !important; }
+            
+            /* [개선] 상단 세부 품목 리스트가 남는 공간을 모두 차지하도록 flex 설정 */
+            .explorer-list-zone { flex: 1 !important; min-height: 0 !important; height: auto !important; padding: 0.5rem !important; }
+            .explorer-list-zone .grid { gap: 0.5rem; padding-bottom: 1rem; }
+            .explorer-item-card { height: auto; min-height: 60px; padding: 1rem; flex-direction: row; align-items: center; justify-content: space-between; border-width: 2px; }
+            .explorer-item-card > div:first-child { margin-bottom: 0; flex: 1; }
+            .explorer-item-card > div:last-child { flex: none; margin-left: 1rem; }
+            .item-title { font-size: 1.4rem; }
+            .item-stock-text { font-size: 1rem; padding: 0.3rem 0.6rem; }
+            
+            /* [개선] 장바구니 높이를 늘려 품목 아이템 세로 크기 증가 수용 (280px) */
+            .explorer-cart-zone { flex: none !important; height: 280px !important; min-height: auto !important; border-top-left-radius: 2rem; border-top-right-radius: 2rem; }
+            
+            .explorer-cart-zone > div:first-child { padding: 0.8rem 1rem !important; }
+            .explorer-cart-zone > div:first-child h3 { font-size: 1.4rem !important; }
+            .explorer-cart-zone > div:first-child span.text-5xl { font-size: 2rem !important; }
+            
+            /* [개선] 장바구니 아이템 강제 1줄 배치 유지, 높이 50% 확대 (min-height 150px), 너비 조정 */
+            .cart-grid { grid-template-rows: 1fr !important; gap: 0.8rem !important; padding: 0.8rem !important; grid-auto-columns: 150px !important; }
+            .explorer-cart-item { width: 150px !important; min-height: 150px !important; padding: 0.8rem !important; border-radius: 1rem; justify-content: space-between; }
+            .cart-item-title { font-size: 1.2rem; }
+            .cart-item-unit-detail { font-size: 0.9rem; margin-top: 0.2rem; }
+            .cart-main-qty { font-size: 1.3rem; }
+            .cart-sub-qty { font-size: 0.9rem; }
+            .cart-qty-btn { width: 2.5rem; height: 2.5rem; font-size: 1.4rem; }
+            
+            /* [개선] 하단 푸터 버튼 및 글씨 크기를 50% 축소하여 여백 추가 확보 */
+            .footer-icon { font-size: 1.8rem !important; margin-bottom: 0.2rem; }
+            .footer-text { font-size: 0.8rem !important; }
+            .footer-divider { width: 2px !important; height: 30px !important; }
+            .mobile-footer { padding-top: 0.4rem !important; padding-bottom: 0.4rem !important; border-top-width: 4px !important; }
+
+            .p-10 { padding: 1rem; } .p-12 { padding: 1rem; } .p-16 { padding: 1.5rem; }
+            .gap-10 { gap: 1rem; } .gap-8 { gap: 0.8rem; }
+            .px-10 { padding-left: 0.8rem; padding-right: 0.8rem; } .px-12 { padding-left: 1rem; padding-right: 1rem; }
+            
+            div[style*="width:350px"] { width: 180px !important; height: 180px !important; }
+            div[style*="width:280px"] { width: 140px !important; height: 140px !important; }
+            .text-8xl { font-size: 4rem; }
+            
+            .cart-checkout-zone { padding: 0.8rem !important; }
+            .cart-checkout-btn { padding: 0.8rem; font-size: 1.6rem; }
+            
+            .modal-overlay .py-10 { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
+            .modal-overlay .py-8 { padding-top: 1rem !important; padding-bottom: 1rem !important; }
+            .modal-overlay .py-6 { padding-top: 0.8rem !important; padding-bottom: 0.8rem !important; }
+            .modal-overlay .text-xl { font-size: 1.2rem !important; }
+            .modal-overlay .text-2xl { font-size: 1.4rem !important; }
+            .modal-overlay .text-3xl { font-size: 1.6rem !important; }
+            .modal-overlay .text-4xl { font-size: 1.8rem !important; }
+            .modal-overlay .text-5xl { font-size: 2rem !important; }
+            .modal-overlay .text-6xl { font-size: 2.2rem !important; }
+            .modal-overlay .text-7xl { font-size: 2.5rem !important; }
+            .modal-overlay .p-16 { padding: 1.5rem !important; }
+            .modal-overlay .p-12 { padding: 1.2rem !important; }
+            .modal-overlay .p-10 { padding: 1rem !important; }
+            
+            input[type="number"].text-4xl { font-size: 2rem !important; width: 80px !important; }
+            .w-14 { width: 3rem !important; } .h-14 { height: 3rem !important; }
+            .px-6 { padding-left: 1rem !important; padding-right: 1rem !important; }
+            .px-10 { padding-left: 1.5rem !important; padding-right: 1.5rem !important; }
+            .py-4 { padding-top: 0.8rem !important; padding-bottom: 0.8rem !important; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="h-screen flex flex-col bg-slate-50 overflow-hidden relative"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // ==========================================
+        // 0. 파이어베이스(Firebase) 온라인 연동 설정
+        // ==========================================
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "AIzaSyCDW2TzDtMDfAVmSRHM7a-IZDhsBlkRMEQ",
+            authDomain: "ware-house-b36d7.firebaseapp.com",
+            projectId: "ware-house-b36d7",
+            storageBucket: "ware-house-b36d7.firebasestorage.app",
+            messagingSenderId: "549765421476",
+            appId: "1:549765421476:web:ef48192ccce302b1c38931"
+        };
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'warehouse_system';
+        let app, auth, db, docRef, authUser;
+        let isFirebaseActive = false;
+
+        // ==========================================
+        // 1. 핵심 상태 (State) 및 초기화
+        // ==========================================
+        const STORAGE_KEY = 'warehouse_sys_data';
+
+        const initialState = {
+            adminPassword: '6011',
+            warehouses: { counter: '카운터', wh1: '창고1', wh2: '창고2' },
+            staffList: [],
+            categories: ['완충재', '포장재', '쇼핑백', '스티커', '사무', '기타'],
+            inventory: [
+                { id: 1, name: '롤 에어캡', cat: '완충재', unitBase: '개', unitBulk: '', bulkRatio: 1, stocks: { counter: 0, wh1: 0, wh2: 0 }, maxReserveQty: 100, alertQty: 10 },
+                { id: 2, name: '포켓형 에어캡 (소)', cat: '완충재', unitBase: '개', unitBulk: '박스', bulkRatio: 50, stocks: { counter: 0, wh1: 0, wh2: 0 }, maxReserveQty: 100, alertQty: 10 },
+                { id: 21, name: '포켓형 에어캡 (대)', cat: '완충재', unitBase: '개', unitBulk: '박스', bulkRatio: 30, stocks: { counter: 0, wh1: 0, wh2: 0 }, maxReserveQty: 100, alertQty: 10 },
+                { id: 41, name: '쇼핑백(소)', cat: '쇼핑백', unitBase: '개', unitBulk: '박스', bulkRatio: 100, stocks: { counter: 0, wh1: 0, wh2: 0 }, maxReserveQty: 100, alertQty: 10 },
+                { id: 42, name: '쇼핑백(중)', cat: '쇼핑백', unitBase: '개', unitBulk: '박스', bulkRatio: 100, stocks: { counter: 0, wh1: 0, wh2: 0 }, maxReserveQty: 100, alertQty: 10 },
+                { id: 43, name: '쇼핑백(대)', cat: '쇼핑백', unitBase: '개', unitBulk: '박스', bulkRatio: 50, stocks: { counter: 0, wh1: 0, wh2: 0 }, maxReserveQty: 100, alertQty: 10 },
+                { id: 44, name: '비닐쇼핑백(특대)', cat: '쇼핑백', unitBase: '개', unitBulk: '박스', bulkRatio: 50, stocks: { counter: 0, wh1: 0, wh2: 0 }, maxReserveQty: 100, alertQty: 10 },
+                { id: 5, name: '부착빌', cat: '스티커', unitBase: '부', unitBulk: '', bulkRatio: 1, stocks: { counter: 0, wh1: 0, wh2: 0 }, maxReserveQty: 100, alertQty: 10 },
+                { id: 8, name: '박스테이프', cat: '포장재', unitBase: '개', unitBulk: '박스', bulkRatio: 50, stocks: { counter: 0, wh1: 0, wh2: 0 }, maxReserveQty: 100, alertQty: 10 }
+            ],
+            logs: [],
+            reservations: [],
+            settings: { alertEmail: '' }
+        };
+
+        let state = {
+            view: 'scan',
+            adminSubView: 'inventory',
+            isAdminAuthenticated: false,
+            authModal: false,
+            pwdChangeModal: false,
+            user: { id: '', name: '', brand: '', tagId: '' },
+            activeCat: '완충재',
+            cart: [],
+            message: null,
+            selectedItem: null,
+            categoryModal: null, 
+            editingItem: null,   
+            transferModal: null, 
+            selectedAdminItemId: null,
+            confirmModal: null,
+            checkoutConfirmModal: false, 
+            stockAlertModal: null,
+            categoryInputValue: '',
+            isAddingNew: false,
+            transferFrom: 'wh1',
+            transferTo: 'counter',
+            transferQty: 1,
+            cartInputQty: 1,      
+            cartInputUnit: 'base',
+            staffSearchQuery: '',
+            editingStaffItem: null,
+            startDate: '', 
+            endDate: new Date().toISOString().split('T')[0],
+            filterItem: '전체',
+            reserveMode: false, 
+            pendingReservations: null, 
+            reserveFilterStatus: '전체',
+            settings: { alertEmail: '' }
+        };
+        
+        // 전역 객체 바인딩 (인라인 클릭 이벤트 대응)
+        window.state = state;
+
+        // [중요] 키오스크 RFID 리더기용 임시 저장 변수 선언 (오류 해결 핵심)
+        let tagBuffer = "";
+
+        // ==========================================
+        // 2. 글로벌 비즈니스 로직 및 이벤트 함수들 (ReferenceError 방지용 명시적 선언)
+        // ==========================================
+
+        function loadLocalDataFallback() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    state.adminPassword = parsed.adminPassword || initialState.adminPassword;
+                    state.warehouses = parsed.warehouses || initialState.warehouses;
+                    state.staffList = parsed.staffList || [];
+                    state.categories = parsed.categories || initialState.categories;
+                    state.inventory = parsed.inventory || initialState.inventory;
+                    state.logs = parsed.logs || [];
+                    state.reservations = parsed.reservations || [];
+                    state.settings = parsed.settings || initialState.settings;
+                } else {
+                    state.adminPassword = initialState.adminPassword;
+                    state.warehouses = JSON.parse(JSON.stringify(initialState.warehouses));
+                    state.staffList = [...initialState.staffList];
+                    state.categories = [...initialState.categories];
+                    state.inventory = JSON.parse(JSON.stringify(initialState.inventory));
+                    state.logs = [...initialState.logs];
+                    state.reservations = [...initialState.reservations];
+                    state.settings = JSON.parse(JSON.stringify(initialState.settings));
+                }
+            } catch (e) {
+                console.error("데이터 로드 실패:", e);
+                state.adminPassword = initialState.adminPassword;
+                state.warehouses = JSON.parse(JSON.stringify(initialState.warehouses));
+                state.staffList = [];
+                state.categories = [...initialState.categories];
+                state.inventory = JSON.parse(JSON.stringify(initialState.inventory));
+                state.logs = [];
+                state.reservations = [];
+                state.settings = JSON.parse(JSON.stringify(initialState.settings));
+            }
+            const now = new Date();
+            state.startDate = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0];
+            state.endDate = now.toISOString().split('T')[0];
+        }
+        window.loadLocalDataFallback = loadLocalDataFallback;
+
+        function convertAccessControlID(tagId) {
+            if (!tagId) return '';
+            tagId = tagId.trim().toUpperCase();
+            if (tagId.length >= 10 && /^[0-9A-F]+$/.test(tagId)) {
+                const byte0 = tagId.substring(0, 2);
+                const byte1 = tagId.substring(2, 4);
+                const byte2 = tagId.substring(4, 6);
+                const cardDec = parseInt(byte1 + byte0, 16);
+                const facDec = parseInt(byte2, 16);
+                if (!isNaN(cardDec) && !isNaN(facDec)) {
+                    return facDec.toString().padStart(3, '0') + cardDec.toString().padStart(5, '0');
+                }
+            }
+            return tagId;
+        }
+        window.convertAccessControlID = convertAccessControlID;
+
+        function formatStock(total, base, bulk, ratio, hideTotal = false) {
+            total = parseInt(total) || 0;
+            if (!bulk || !ratio || ratio <= 1) return `${total}${base}`;
+            const b = Math.floor(total / ratio);
+            const p = total % ratio;
+            let res = '';
+            if (b > 0) res += `${b}${bulk} `;
+            if (p > 0 || b === 0) res += `${p}${base}`;
+            if (!hideTotal && b > 0) res += ` <span class="text-slate-400 text-sm ml-1 font-normal word-keep">(총 ${total}${base})</span>`;
+            return res.trim();
+        }
+        window.formatStock = formatStock;
+
+        function saveDataToStorage() {
+            const dataToSave = {
+                adminPassword: state.adminPassword,
+                warehouses: state.warehouses,
+                staffList: state.staffList,
+                categories: state.categories,
+                inventory: state.inventory,
+                logs: state.logs,
+                reservations: state.reservations,
+                settings: state.settings,
+                lastUpdated: new Date().toISOString()
+            };
+            
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+            
+            if (isFirebaseActive && docRef && authUser) {
+                setDoc(docRef, dataToSave).catch(e => {
+                    console.error("클라우드 동기화 실패:", e);
+                });
+            }
+        }
+        window.saveDataToStorage = saveDataToStorage;
+
+        function checkLowStockAndAlert(cartItems) {
+            const lowStockItems = [];
+            cartItems.forEach(c => {
+                const item = state.inventory.find(i => i.id === c.itemId);
+                if (item) {
+                    const totalStock = Object.values(item.stocks).reduce((sum, v) => sum + (parseInt(v) || 0), 0);
+                    if (totalStock <= (item.alertQty || 0)) {
+                        lowStockItems.push({
+                            name: item.name,
+                            totalStock: totalStock,
+                            formattedStock: window.formatStock(totalStock, item.unitBase, item.unitBulk, item.bulkRatio, false),
+                            alertQty: item.alertQty
+                        });
+                    }
+                }
+            });
+
+            if (lowStockItems.length > 0) {
+                state.stockAlertModal = lowStockItems;
+                window.renderApp();
+            }
+        }
+        window.checkLowStockAndAlert = checkLowStockAndAlert;
+
+        function sendMorningReport() {
+            if (!state.settings?.alertEmail) return window.showMsg("시스템 설정에서 수신 이메일을 먼저 등록해주세요.");
+            
+            let body = "📅 [창고관리시스템] 현재 전체 재고 및 발주 필요 목록 현황\n\n";
+            let lowStockItems = [];
+            
+            state.inventory.forEach(item => {
+                const totalStock = Object.values(item.stocks).reduce((sum, v) => sum + (parseInt(v) || 0), 0);
+                const formatStr = window.formatStock(totalStock, item.unitBase, item.unitBulk, item.bulkRatio, true).replace(/<[^>]*>?/gm, '');
+                body += `- ${item.name}: ${formatStr}\n`;
+                
+                if (totalStock <= (item.alertQty || 0)) {
+                    lowStockItems.push(`${item.name} (잔여: ${formatStr}, 발주기준: ${item.alertQty}${item.unitBase} 이하)`);
+                }
+            });
+            
+            if (lowStockItems.length > 0) {
+                body = "⚠️ [발주 요망 품목]\n" + lowStockItems.map(i => `- ${i}`).join('\n') + "\n\n====================\n\n" + body;
+            }
+            
+            const subject = encodeURIComponent(`[일일보고/발주알림] 창고 재고 현황 (${new Date().toISOString().split('T')[0]})`);
+            window.location.href = `mailto:${state.settings.alertEmail}?subject=${subject}&body=${encodeURIComponent(body)}`;
+            window.showMsg("이메일 작성 앱이 실행되었습니다.");
+        }
+        window.sendMorningReport = sendMorningReport;
+
+        function renderApp() {
+            const scrollEls = document.querySelectorAll('.custom-scroll, .overflow-y-auto, .overflow-x-auto, #app > div');
+            const scrollMap = new Map();
+            scrollEls.forEach((el, i) => {
+                let id = el.id || el.className;
+                scrollMap.set(id + i, { top: el.scrollTop, left: el.scrollLeft });
+            });
+
+            document.getElementById('app').innerHTML = `
+                ${state.message ? `<div class="absolute top-[100px] left-[50%] z-[9999] bg-blue-600 text-white px-8 py-4 rounded-full text-2xl shadow-2xl fade-in" style="transform: translateX(-50%);">${state.message}</div>` : ''}
+                ${renderHeader()}
+                <div class="flex-1 flex flex-col relative overflow-hidden bg-slate-50">
+                    ${renderView()}
+                </div>
+                ${renderFooter()}
+                ${renderModals()}
+            `;
+
+            const newScrollEls = document.querySelectorAll('.custom-scroll, .overflow-y-auto, .overflow-x-auto, #app > div');
+            newScrollEls.forEach((el, i) => {
+                let id = el.id || el.className;
+                if(scrollMap.has(id + i)) {
+                    const pos = scrollMap.get(id + i);
+                    el.scrollTop = pos.top;
+                    el.scrollLeft = pos.left;
+                }
+            });
+        }
+        window.renderApp = renderApp;
+
+        function showMsg(txt) {
+            state.message = txt; window.renderApp();
+            setTimeout(() => { state.message = null; window.renderApp(); }, 3000);
+        }
+        window.showMsg = showMsg;
+
+        function openConfirmModal(title, desc, actionType, payload, confirmText = '확인', isRed = true) {
+            state.confirmModal = { title, desc, actionType, payload, confirmText, isRed };
+            window.renderApp();
+        }
+        window.openConfirmModal = openConfirmModal;
+
+        function closeConfirmModal() {
+            state.confirmModal = null;
+            window.renderApp();
+        }
+        window.closeConfirmModal = closeConfirmModal;
+
+        function executeConfirmAction() {
+            if (!state.confirmModal) return;
+            const { actionType, payload } = state.confirmModal;
+            state.confirmModal = null; 
+
+            if (actionType === 'deleteLog') {
+                const idx = state.logs.findIndex(l => l.id == payload);
+                if(idx > -1) {
+                    const log = state.logs[idx];
+                    const item = state.inventory.find(i => i.name === log.itemName);
+                    if (item) {
+                        if (item.stocks.counter === undefined) item.stocks.counter = 0;
+                        item.stocks.counter += log.qty;
+                    }
+                    state.logs.splice(idx, 1); window.saveDataToStorage(); window.showMsg("기록이 삭제되고 재고가 복구되었습니다.");
+                }
+            } else if (actionType === 'cancelReservation') {
+                const res = state.reservations.find(r => r.id == payload);
+                if(res) {
+                    res.cart.forEach(c => {
+                        const item = state.inventory.find(i => i.id == c.itemId);
+                        if(item && item.stocks.counter !== undefined) { item.stocks.counter += c.amount; }
+                    });
+                    res.status = 'cancelled';
+                    if(state.pendingReservations) {
+                        state.pendingReservations = state.pendingReservations.filter(p => p.id != payload);
+                        if(state.pendingReservations.length === 0) state.pendingReservations = null;
+                    }
+                    window.saveDataToStorage(); window.showMsg("예약이 취소되고 재고가 정상 복구되었습니다.");
+                }
+            } else if (actionType === 'deleteItem') {
+                state.inventory = state.inventory.filter(i => i.id != payload);
+                if (state.selectedAdminItemId == payload) state.selectedAdminItemId = null;
+                window.saveDataToStorage(); window.showMsg("품목이 삭제되었습니다.");
+            } else if (actionType === 'deleteCategory') {
+                state.categories = state.categories.filter(c => c !== payload); window.saveDataToStorage(); window.showMsg("분류가 삭제되었습니다.");
+            } else if (actionType === 'deleteStaff') {
+                state.staffList.splice(payload, 1); window.saveDataToStorage(); window.showMsg("직원 데이터가 삭제되었습니다.");
+            } else if (actionType === 'clearLogs') {
+                state.logs = []; window.saveDataToStorage(); window.showMsg("수령 내역이 모두 삭제되었습니다.");
+            } else if (actionType === 'clearInventory') {
+                state.inventory = []; state.categories = ['기본분류']; state.activeCat = '기본분류'; state.selectedAdminItemId = null; window.saveDataToStorage(); window.showMsg("품목 및 분류가 모두 삭제되었습니다.");
+            } else if (actionType === 'clearStaff') {
+                state.staffList = []; window.saveDataToStorage(); window.showMsg("직원 명단이 모두 삭제되었습니다.");
+            } else if (actionType === 'factoryReset') {
+                localStorage.removeItem(STORAGE_KEY); window.location.reload();
+            }
+
+            window.renderApp();
+        }
+        window.executeConfirmAction = executeConfirmAction;
+
+        function tryEnterAdmin() {
+            if (state.isAdminAuthenticated) { 
+                state.user = { id: '', name: '', brand: '', tagId: '' }; 
+                state.cart = []; 
+                state.reserveMode = false;
+                window.changeView('admin'); 
+            } 
+            else { 
+                state.authModal = true; window.renderApp(); 
+            }
+        }
+        window.tryEnterAdmin = tryEnterAdmin;
+
+        function cancelAdminAuth() {
+            state.authModal = false;
+            window.renderApp();
+        }
+        window.cancelAdminAuth = cancelAdminAuth;
+
+        function verifyAdminPwd() {
+            const input = document.getElementById('adminPwdInput').value;
+            if (input === state.adminPassword) {
+                state.isAdminAuthenticated = true; 
+                state.authModal = false;
+                state.user = { id: '', name: '', brand: '', tagId: '' }; 
+                state.cart = [];
+                state.reserveMode = false;
+                window.changeView('admin'); 
+                window.showMsg("관리자 인증에 성공했습니다.");
+            } else { window.showMsg("비밀번호가 일치하지 않습니다."); }
+        }
+        window.verifyAdminPwd = verifyAdminPwd;
+
+        function changeAdminPwd() {
+            const oldP = document.getElementById('oldPwdInput').value;
+            const newP = document.getElementById('newPwdInput').value;
+            if (oldP !== state.adminPassword) return window.showMsg("현재 비밀번호가 틀립니다.");
+            if (!newP || newP.length < 4) return window.showMsg("새 비밀번호를 4자리 이상 입력하세요.");
+            state.adminPassword = newP; window.saveDataToStorage(); state.pwdChangeModal = false;
+            window.showMsg("관리자 비밀번호가 변경되었습니다.");
+        }
+        window.changeAdminPwd = changeAdminPwd;
+
+        function changeView(view) { 
+            state.view = view; 
+            if (view !== 'admin') state.isAdminAuthenticated = false;
+            if(view === 'admin' && state.adminSubView === 'inventory') {
+                const firstItem = state.inventory.find(i => i.cat === state.activeCat);
+                state.selectedAdminItemId = firstItem ? firstItem.id : null;
+            }
+            window.renderApp(); 
+        }
+        window.changeView = changeView;
+        
+        function changeAdminSubView(sub) { 
+            state.adminSubView = sub; 
+            if(sub === 'inventory') {
+                const firstItem = state.inventory.find(i => i.cat === state.activeCat);
+                state.selectedAdminItemId = firstItem ? firstItem.id : null;
+            }
+            window.renderApp(); 
+        }
+        window.changeAdminSubView = changeAdminSubView;
+
+        function setCategory(cat) { 
+            state.activeCat = cat; 
+            if (state.view === 'admin' && state.adminSubView === 'inventory') {
+                const firstItem = state.inventory.find(i => i.cat === cat);
+                state.selectedAdminItemId = firstItem ? firstItem.id : null;
+            }
+            window.renderApp(); 
+        }
+        window.setCategory = setCategory;
+        
+        function logout() { 
+            state.user = { id:'', name:'', brand:'', tagId:'' }; state.cart = []; state.reserveMode = false;
+            state.isAdminAuthenticated = false; window.changeView('scan'); window.showMsg("로그아웃 되었습니다."); 
+        }
+        window.logout = logout;
+
+        function simulateTag(tagId) {
+            state.reserveMode = false; 
+            const convertedTagId = window.convertAccessControlID(tagId);
+            const staff = state.staffList.find(s => s.tagId === convertedTagId);
+            
+            state.isAdminAuthenticated = false; 
+            if(state.view === 'register' || state.view === 'reserveLogin'){ state.view = 'scan'; }
+            
+            if (staff) {
+                state.user = staff; 
+                const pending = state.reservations.filter(r => r.staffId === staff.id && r.status === 'pending');
+                if (pending.length > 0) {
+                    state.pendingReservations = pending; 
+                }
+                window.changeView('explorer'); 
+                window.showMsg(`${staff.name}님 환영합니다.`);
+            } else {
+                state.user = { id: '', name: '', brand: '', tagId: convertedTagId }; window.changeView('register'); window.showMsg("미등록 카드입니다. 정보를 입력해주세요.");
+            }
+        }
+        window.simulateTag = simulateTag;
+
+        window.addEventListener('keydown', function(e) {
+            if (document.activeElement && ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+            const key = e.key;
+            if (state.authModal || state.pwdChangeModal || state.categoryModal || state.editingItem || state.transferModal || state.editingStaffItem || state.confirmModal || state.checkoutConfirmModal || state.stockAlertModal) return; 
+            if (key === 'Enter') { if (tagBuffer.trim()) { window.simulateTag(tagBuffer.trim()); tagBuffer = ""; } } 
+            else if (key.length === 1) { tagBuffer += key; }
+        });
+
+        function verifyReserveStaff() {
+            const idInput = document.getElementById('reserveStaffId').value.trim().toUpperCase();
+            if(!idInput) return window.showMsg("사번을 입력해주세요.");
+            
+            const staff = state.staffList.find(s => s.id === idInput);
+            if(staff) {
+                state.user = staff;
+                state.reserveMode = true;
+                state.cart = [];
+                window.changeView('explorer');
+                window.showMsg(`${staff.name}님 예약 시스템에 오신 것을 환영합니다.`);
+            } else {
+                window.showMsg("등록되지 않은 사번입니다. 최초 등록은 사원증을 지참하여 현장 키오스크에서 진행해주세요.");
+            }
+        }
+        window.verifyReserveStaff = verifyReserveStaff;
+
+        function registerUser() {
+            const brand = document.getElementById('regBrand').value.toUpperCase();
+            const id = document.getElementById('regId').value.toUpperCase();
+            const name = document.getElementById('regName').value.toUpperCase();
+            const tagId = window.convertAccessControlID(document.getElementById('regTagId').value.toUpperCase());
+            const consent = document.getElementById('privacyConsent').checked;
+            
+            if(!consent) {
+                return window.showMsg("개인정보 수집 및 이용에 동의해 주세요.");
+            }
+
+            if(brand && name && id && tagId) {
+                state.user = { ...state.user, brand, id, name, tagId };
+                state.staffList.push(state.user);
+                window.saveDataToStorage(); 
+                window.changeView('explorer'); window.showMsg("등록 완료!");
+            } else { window.showMsg("모든 정보를 입력해주세요."); }
+        }
+        window.registerUser = registerUser;
+
+        function openItemModal(id) { 
+            state.selectedItem = state.inventory.find(i => i.id == id); 
+            state.cartInputQty = 1;
+            state.cartInputUnit = 'base';
+            window.renderApp(); 
+        }
+        window.openItemModal = openItemModal;
+
+        function closeItemModal() { state.selectedItem = null; window.renderApp(); }
+        window.closeItemModal = closeItemModal;
+        
+        function setCartInputQty(val) {
+            if (!state.selectedItem) return;
+            const item = state.selectedItem;
+            const inCartItem = state.cart.find(c => c.itemId === item.id);
+            const availableNow = (item.stocks.counter || 0) - (inCartItem ? inCartItem.amount : 0);
+            
+            let qty = parseInt(val) || 1;
+            if (qty < 1) qty = 1;
+            
+            const multiplier = state.cartInputUnit === 'bulk' ? (item.bulkRatio || 1) : 1;
+            const itemMaxReserve = item.maxReserveQty ?? 100;
+            const maxAllowed = state.reserveMode ? Math.min(availableNow, itemMaxReserve) : availableNow;
+            
+            if (qty * multiplier > maxAllowed) {
+                if (qty * multiplier > availableNow) {
+                    window.showMsg("재고수량을 초과 하였습니다.");
+                } else {
+                    window.showMsg(`해당 품목의 예약 한도는 1인당 최대 ${itemMaxReserve}개입니다.`);
+                }
+                state.cartInputQty = Math.max(1, Math.floor(maxAllowed / multiplier));
+            } else {
+                state.cartInputQty = qty;
+            }
+            window.renderApp();
+        }
+        window.setCartInputQty = setCartInputQty;
+
+        function changeCartInputQty(delta) {
+            window.setCartInputQty(state.cartInputQty + delta);
+        }
+        window.changeCartInputQty = changeCartInputQty;
+
+        function changeCartInputUnit(unit) {
+            state.cartInputUnit = unit;
+            window.setCartInputQty(state.cartInputQty); 
+        }
+        window.changeCartInputUnit = changeCartInputUnit;
+
+        function confirmAddToCart() {
+            if(!state.selectedItem) return;
+            const item = state.selectedItem;
+            const qty = parseInt(state.cartInputQty) || 1;
+            const isBulk = state.cartInputUnit === 'bulk';
+            const addAmount = isBulk ? (qty * (item.bulkRatio || 1)) : qty;
+
+            if(addAmount <= 0) return window.showMsg("수량을 1 이상 입력해주세요.");
+
+            window.addToCart(item.id, addAmount);
+        }
+        window.confirmAddToCart = confirmAddToCart;
+
+        function addToCart(itemId, addAmount) {
+            const item = state.inventory.find(i => i.id == itemId);
+            const currentStock = item.stocks.counter || 0;
+            const inCartItem = state.cart.find(c => c.itemId === itemId);
+            const currentInCartQty = inCartItem ? inCartItem.amount : 0;
+            
+            const itemMaxReserve = item.maxReserveQty ?? 100;
+            const maxAllowed = state.reserveMode ? Math.min(currentStock, itemMaxReserve) : currentStock;
+
+            if (currentInCartQty + addAmount > maxAllowed) {
+                if (currentInCartQty + addAmount > currentStock) {
+                    return window.showMsg("재고수량을 초과 하였습니다.");
+                } else {
+                    return window.showMsg(`해당 품목의 예약 한도는 1인당 최대 ${itemMaxReserve}개입니다.`);
+                }
+            }
+            
+            if (inCartItem) { inCartItem.amount += addAmount; } 
+            else { 
+                state.cart.push({ itemId: item.id, itemName: item.name, unitBase: item.unitBase, unitBulk: item.unitBulk, bulkRatio: item.bulkRatio, amount: addAmount }); 
+            }
+            state.selectedItem = null; window.showMsg(`${item.name} 담기 완료`); window.renderApp();
+        }
+        window.addToCart = addToCart;
+
+        function removeFromCart(itemId) { state.cart = state.cart.filter(c => c.itemId !== itemId); window.renderApp(); }
+        window.removeFromCart = removeFromCart;
+
+        function updateCartQty(itemId, delta) {
+            const item = state.inventory.find(i => i.id == itemId);
+            const currentStock = item.stocks.counter || 0;
+            const cartItem = state.cart.find(c => c.itemId === itemId);
+            
+            if(cartItem) {
+                const nextQty = cartItem.amount + delta;
+                if(nextQty <= 0) return window.removeFromCart(itemId);
+                
+                const itemMaxReserve = item.maxReserveQty ?? 100;
+                const maxAllowed = state.reserveMode ? Math.min(currentStock, itemMaxReserve) : currentStock;
+                
+                if(nextQty > maxAllowed) {
+                    if (nextQty > currentStock) {
+                        return window.showMsg("재고수량을 초과 하였습니다.");
+                    } else {
+                        return window.showMsg(`해당 품목의 예약 한도는 1인당 최대 ${itemMaxReserve}개입니다.`);
+                    }
+                }
+                cartItem.amount = nextQty; window.renderApp();
+            }
+        }
+        window.updateCartQty = updateCartQty;
+
+        function openCheckoutConfirm() {
+            if (state.cart.length === 0) return;
+            state.checkoutConfirmModal = true;
+            window.renderApp();
+        }
+        window.openCheckoutConfirm = openCheckoutConfirm;
+
+        function executeCheckout() {
+            state.checkoutConfirmModal = false;
+            
+            const rawDate = new Date().toISOString().split('T')[0];
+            const timeStr = new Date().toLocaleTimeString('ko-KR', { hour12: false });
+            
+            const cartCopy = JSON.parse(JSON.stringify(state.cart));
+            
+            if (state.reserveMode) {
+                const reserveCart = state.cart.map(c => {
+                    const realItem = state.inventory.find(i => i.id === c.itemId);
+                    realItem.stocks.counter -= c.amount; 
+                    const formatStr = window.formatStock(c.amount, c.unitBase, c.unitBulk, c.bulkRatio, false).replace(/<[^>]*>?/gm, ''); 
+                    return { ...c, amountStr: formatStr };
+                });
+                
+                state.reservations.unshift({
+                    id: Date.now() + Math.random(),
+                    rawDate,
+                    time: timeStr,
+                    staffId: state.user.id,
+                    name: state.user.name,
+                    brand: state.user.brand,
+                    cart: reserveCart,
+                    status: 'pending'
+                });
+                
+                state.cart = []; window.saveDataToStorage(); 
+                window.showMsg("사전 예약이 완료되었습니다! (익일 14시 이후 현장 수령)");
+                setTimeout(() => { state.reserveMode = false; window.changeView('scan'); }, 3000);
+
+            } else {
+                state.cart.forEach(c => {
+                    const realItem = state.inventory.find(i => i.id === c.itemId);
+                    realItem.stocks.counter -= c.amount;
+                    const formatStr = window.formatStock(c.amount, c.unitBase, c.unitBulk, c.bulkRatio, true).replace(/<[^>]*>?/gm, ''); 
+                    
+                    state.logs.unshift({
+                        id: Date.now() + '_' + Math.random().toString(36).slice(2), rawDate, time: timeStr,
+                        brand: state.user.brand, name: state.user.name, staffId: state.user.id,
+                        itemName: c.itemName, amountStr: formatStr, qty: c.amount 
+                    });
+                });
+                state.cart = []; window.saveDataToStorage(); window.showMsg("수령이 완료되었습니다!");
+                setTimeout(() => window.changeView('scan'), 2000);
+            }
+            
+            window.checkLowStockAndAlert(cartCopy);
+        }
+        window.executeCheckout = executeCheckout;
+
+        function confirmReserveReceipt(resId) {
+            const res = state.reservations.find(r => r.id == resId);
+            if(!res) return;
+            
+            const rawDate = new Date().toISOString().split('T')[0];
+            const timeStr = new Date().toLocaleTimeString('ko-KR', { hour12: false });
+            
+            res.cart.forEach(c => {
+                state.logs.unshift({
+                    id: Date.now() + Math.random(), rawDate, time: timeStr,
+                    brand: res.brand, name: res.name, staffId: res.staffId,
+                    itemName: c.itemName, amountStr: c.amountStr, qty: c.amount 
+                });
+            });
+            
+            res.status = 'completed'; 
+            if (state.pendingReservations) {
+                state.pendingReservations.shift(); 
+                if(state.pendingReservations.length === 0) state.pendingReservations = null;
+            }
+            window.saveDataToStorage();
+            window.showMsg("예약 물품 수령 처리가 완료되었습니다!");
+            window.renderApp();
+        }
+        window.confirmReserveReceipt = confirmReserveReceipt;
+
+        function delayReserveReceipt() {
+            state.pendingReservations = null;
+            window.renderApp();
+        }
+        window.delayReserveReceipt = delayReserveReceipt;
+
+        function cancelReservation(resId) {
+            window.openConfirmModal('예약 강제 취소', '이 예약을 정말 취소하시겠습니까?<br/>미리 차감되었던 창고 재고가 다시 복구됩니다.', 'cancelReservation', resId, '강제 취소', true);
+        }
+        window.cancelReservation = cancelReservation;
+
+        function deleteLog(id) {
+            window.openConfirmModal('수령 기록 취소', '이 수령 기록을 삭제하고 차감된 재고를 다시 원상 복구하시겠습니까?', 'deleteLog', id, '취소 및 복구', true);
+        }
+        window.deleteLog = deleteLog;
+
+        function openAddCategory() { state.categoryInputValue = ''; state.categoryModal = { mode: 'add' }; window.renderApp(); }
+        window.openAddCategory = openAddCategory;
+
+        function openEditCategory(cat) { state.categoryInputValue = cat; state.categoryModal = { mode: 'edit', oldName: cat }; window.renderApp(); }
+        window.openEditCategory = openEditCategory;
+
+        function deleteCategory(cat) { window.openConfirmModal('분류 삭제', `[${cat}] 분류를 삭제하시겠습니까?`, 'deleteCategory', cat, '삭제하기', true); }
+        window.deleteCategory = deleteCategory;
+
+        function saveCategory() {
+            const name = document.getElementById('catInput').value.trim();
+            if (!name) return window.showMsg("이름을 입력하세요.");
+            if (state.categoryModal.mode === 'add') {
+                if (state.categories.includes(name)) return window.showMsg("이미 존재합니다.");
+                state.categories.push(name);
+            } else {
+                const old = state.categoryModal.oldName;
+                state.categories = state.categories.map(c => c === old ? name : c);
+                state.inventory = state.inventory.map(i => i.cat === old ? { ...i, cat: name } : i);
+                if (state.activeCat === old) state.activeCat = name;
+            }
+            state.categoryModal = null; window.saveDataToStorage(); window.showMsg("분류가 저장되었습니다.");
+        }
+        window.saveCategory = saveCategory;
+
+        function selectAdminItem(id) { state.selectedAdminItemId = id; window.renderApp(); }
+        window.selectAdminItem = selectAdminItem;
+        
+        function setStockManual(itemId, whKey, value) {
+            let item = state.inventory.find(i => i.id == itemId);
+            item.stocks[whKey] = Math.max(0, parseInt(value) || 0);
+            window.saveDataToStorage(); window.renderApp();
+        }
+        window.setStockManual = setStockManual;
+
+        function updateStockManual(itemId, whKey, delta) {
+            let item = state.inventory.find(i => i.id == itemId);
+            item.stocks[whKey] = Math.max(0, (item.stocks[whKey] || 0) + delta);
+            window.saveDataToStorage(); window.renderApp();
+        }
+        window.updateStockManual = updateStockManual;
+        
+        function openTransfer(itemId) { 
+            const warehouseKeys = Object.keys(state.warehouses);
+            state.transferModal = { itemId, unitType: 'base' }; 
+            state.transferQty = 1;
+            // 현재 설정된 출발/도착 창고 키가 warehouses에 없을 경우 첫 번째 키로 초기화
+            if (!state.warehouses[state.transferFrom]) state.transferFrom = warehouseKeys[0] || 'counter';
+            if (!state.warehouses[state.transferTo]) state.transferTo = warehouseKeys[1] || warehouseKeys[0] || 'counter';
+            window.renderApp(); 
+        }
+        window.openTransfer = openTransfer;
+
+        function execTransfer() {
+            const item = state.inventory.find(i => i.id == state.transferModal.itemId);
+            const multiplier = state.transferModal.unitType === 'bulk' ? (item.bulkRatio || 1) : 1;
+            const totalTransfer = (parseInt(document.getElementById('transQty').value) || 0) * multiplier;
+            
+            if((item.stocks[state.transferFrom] || 0) < totalTransfer) return window.showMsg("출발 창고 재고 부족");
+            if(state.transferFrom === state.transferTo) return window.showMsg("동일 위치 이동 불가");
+            if(totalTransfer <= 0) return window.showMsg("수량을 올바르게 입력하세요");
+            
+            item.stocks[state.transferFrom] -= totalTransfer;
+            item.stocks[state.transferTo] = (item.stocks[state.transferTo] || 0) + totalTransfer;
+            state.transferModal = null; window.saveDataToStorage(); window.showMsg("재고 이동 완료");
+        }
+        window.execTransfer = execTransfer;
+
+        function openAddItem() {
+            state.isAddingNew = true;
+            const initialStocks = {};
+            Object.keys(state.warehouses).forEach(k => { initialStocks[k] = 0; });
+            state.editingItem = { id: Date.now(), name: '', cat: state.activeCat, unitBase: '개', unitBulk: '', bulkRatio: 1, stocks: initialStocks, maxReserveQty: 100, alertQty: 10 };
+            window.renderApp();
+        }
+        window.openAddItem = openAddItem;
+
+        function openEditItem(itemId) { 
+            const item = state.inventory.find(i => i.id == itemId);
+            if (!item) return;
+            state.isAddingNew = false;
+            state.editingItem = JSON.parse(JSON.stringify(item)); 
+            window.renderApp(); 
+        }
+        window.openEditItem = openEditItem;
+
+        function closeEditItem() {
+            state.editingItem = null;
+            state.isAddingNew = false;
+            window.renderApp();
+        }
+        window.closeEditItem = closeEditItem;
+        
+        function deleteAdminItem(id) {
+            const item = state.inventory.find(i => i.id == id);
+            window.openConfirmModal('품목 삭제 확인', `정말 <span class="text-red-600 font-bold">[${item.name}]</span> 품목을 삭제하시겠습니까?<br/>해당 품목에 관련된 재고 데이터가 영구적으로 사라집니다.`, 'deleteItem', id, '삭제하기', true);
+        }
+        window.deleteAdminItem = deleteAdminItem;
+
+        function saveItem() {
+            const name = document.getElementById('editName').value.trim();
+            const base = document.getElementById('editUnitBase').value.trim();
+            const bulk = document.getElementById('editUnitBulk').value.trim();
+            const ratio = parseInt(document.getElementById('editBulkRatio').value) || 1;
+            
+            const maxReserveQty = parseInt(document.getElementById('editMaxReserveQty').value) || 0;
+            const alertQty = parseInt(document.getElementById('editAlertQty').value) || 0;
+            
+            if(!name || !base) return window.showMsg("품목명과 기본 단위를 입력하세요.");
+            
+            state.editingItem.name = name;
+            state.editingItem.unitBase = base;
+            state.editingItem.unitBulk = bulk;
+            state.editingItem.bulkRatio = ratio;
+            state.editingItem.maxReserveQty = maxReserveQty;
+            state.editingItem.alertQty = alertQty;
+            
+            if (!state.editingItem.stocks) {
+                const initialStocks = {};
+                Object.keys(state.warehouses).forEach(k => { initialStocks[k] = 0; });
+                state.editingItem.stocks = initialStocks;
+            } else {
+                // 기존 품목에도 누락된 창고 키가 있으면 0으로 채움
+                Object.keys(state.warehouses).forEach(k => {
+                    if (state.editingItem.stocks[k] === undefined) state.editingItem.stocks[k] = 0;
+                });
+            }
+            
+            const existingIdx = state.inventory.findIndex(i => i.id == state.editingItem.id);
+            if(existingIdx >= 0) state.inventory[existingIdx] = state.editingItem;
+            else state.inventory.push(state.editingItem);
+            
+            state.selectedAdminItemId = state.editingItem.id; state.editingItem = null; window.saveDataToStorage(); window.showMsg("저장 완료");
+        }
+        window.saveItem = saveItem;
+
+        function updateSetting(key, value) {
+            if (!state.settings) state.settings = {};
+            state.settings[key] = value.trim();
+            window.saveDataToStorage();
+            window.showMsg("설정이 저장되었습니다.");
+        }
+        window.updateSetting = updateSetting;
+
+        function doSearchStaff() { state.staffSearchQuery = document.getElementById('staffSearchInput').value.toUpperCase(); window.renderApp(); }
+        window.doSearchStaff = doSearchStaff;
+
+        function openEditStaff(idx) { state.editingStaffItem = { idx, ...state.staffList[idx] }; window.renderApp(); }
+        window.openEditStaff = openEditStaff;
+
+        function saveStaffEdit() {
+            const item = state.editingStaffItem;
+            item.brand = document.getElementById('editStaffBrand').value.toUpperCase();
+            item.id = document.getElementById('editStaffId').value.toUpperCase();
+            item.name = document.getElementById('editStaffName').value.toUpperCase();
+            item.tagId = window.convertAccessControlID(document.getElementById('editStaffTag').value.toUpperCase());
+            if(!item.brand || !item.id || !item.name || !item.tagId) return window.showMsg("모든 정보를 입력해주세요.");
+            state.staffList[item.idx] = { brand: item.brand, id: item.id, name: item.name, tagId: item.tagId };
+            state.editingStaffItem = null; window.saveDataToStorage(); window.showMsg("직원 정보가 수정되었습니다.");
+        }
+        window.saveStaffEdit = saveStaffEdit;
+
+        function doBulkImport() {
+            const text = document.getElementById('bulkText').value; if(!text.trim()) return;
+            const lines = text.split('\n'); let count = 0;
+            lines.forEach(line => {
+                const data = line.split(/[\t\s,]+/).filter(v => v.trim());
+                if(data.length >= 3) {
+                    state.staffList.push({ brand: data[0].toUpperCase(), id: data[1].toUpperCase(), name: data[2].toUpperCase(), tagId: window.convertAccessControlID((data[3] || '임시-'+Math.random().toString(16).slice(2,6)).toUpperCase()) });
+                    count++;
+                }
+            });
+            window.saveDataToStorage(); window.showMsg(`${count}명 등록 완료`); window.renderApp();
+        }
+        window.doBulkImport = doBulkImport;
+
+        function deleteStaff(idx, name) { window.openConfirmModal('직원 삭제 확인', `[${name}] 님을 정말 삭제하시겠습니까?`, 'deleteStaff', idx, '삭제하기', true); }
+        window.deleteStaff = deleteStaff;
+
+        function exportStaffCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; csvContent += "브랜드,사번,이름,카드번호(TagID)\n"; 
+            if (state.staffList.length === 0) { csvContent += "예시) 나이키,2024001,홍길동,12345678\n"; } 
+            else { state.staffList.forEach(s => { csvContent += `${s.brand},${s.id},${s.name},${s.tagId}\n`; }); }
+            const encodedUri = encodeURI(csvContent); const link = document.createElement("a");
+            link.setAttribute("href", encodedUri); link.setAttribute("download", "warehouse_staff_list.csv");
+            document.body.appendChild(link); link.click(); link.remove(); window.showMsg("엑셀 다운로드 완료");
+        }
+        window.exportStaffCSV = exportStaffCSV;
+
+        function importStaffCSV(event) {
+            const file = event.target.files[0]; if (!file) return;
+            const parseCSV = function(text) {
+                const lines = text.split('\n'); let count = 0;
+                lines.forEach((line, index) => {
+                    if (index === 0) return; 
+                    const data = line.split(',').map(v => v.trim());
+                    if (data.length >= 3 && data[1] && data[2] && !data[0].includes('예시)')) {
+                        state.staffList.push({ brand: data[0].toUpperCase(), id: data[1].toUpperCase(), name: data[2].toUpperCase(), tagId: window.convertAccessControlID((data[3] || '임시-'+Math.random().toString(16).slice(2,6)).toUpperCase()) });
+                        count++;
+                    }
+                });
+                event.target.value = ''; window.saveDataToStorage(); window.showMsg(`엑셀을 통해 ${count}명 등록 완료`); window.renderApp();
+            };
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const text = e.target.result;
+                if (text.includes('')) {
+                    const readerEucKr = new FileReader();
+                    readerEucKr.onload = function(e2) { parseCSV(e2.target.result); };
+                    readerEucKr.readAsText(file, "euc-kr");
+                } else { parseCSV(text); }
+            };
+            reader.readAsText(file, "utf-8");
+        }
+        window.importStaffCSV = importStaffCSV;
+
+        function getStats() {
+            const filtered = state.logs.filter(log => (log.rawDate >= state.startDate && log.rawDate <= state.endDate) && (state.filterItem === "전체" || log.itemName === state.filterItem));
+            const summary = {};
+            filtered.forEach(log => {
+                const key = state.filterItem === "전체" ? log.itemName : log.brand;
+                summary[key] = (summary[key] || 0) + log.qty;
+            });
+            const statsData = Object.entries(summary).map(([label, value]) => ({ label, value })).sort((a,b) => b.value - a.value).slice(0,5);
+            const maxVal = statsData.length ? Math.max(...statsData.map(d=>d.value)) : 1;
+            return { filtered, statsData, maxVal };
+        }
+
+        function updateWarehouseName(key, name) { if(name.trim()) { state.warehouses[key] = name.trim(); window.saveDataToStorage(); window.showMsg("창고 명칭이 변경되었습니다."); } }
+        window.updateWarehouseName = updateWarehouseName;
+
+        function clearLogsData() { window.openConfirmModal('수령 내역 전체 삭제', '정말 모든 수령 내역(로그)을 삭제하시겠습니까?<br/>(※ 재고는 복구되지 않으며 기록만 지워집니다)', 'clearLogs', null, '전체 삭제', true); }
+        window.clearLogsData = clearLogsData;
+
+        function clearAllInventory() { window.openConfirmModal('품목 및 분류 전체 삭제', '모든 재고 품목과 분류 데이터를 완전히 삭제하시겠습니까?<br/>(백지 상태에서 새로 등록할 때 사용합니다)', 'clearInventory', null, '전체 삭제', true); }
+        window.clearAllInventory = clearAllInventory;
+
+        function clearAllStaff() { window.openConfirmModal('직원 명단 전체 삭제', '등록된 모든 직원 데이터를 삭제하시겠습니까?<br/>(이 작업은 되돌릴 수 없습니다)', 'clearStaff', null, '전체 삭제', true); }
+        window.clearAllStaff = clearAllStaff;
+
+        function factoryReset() { window.openConfirmModal('🚨 시스템 공장초기화', '경고: 모든 직원, 재고, 분류, 로그, 비밀번호 데이터가 영구 삭제됩니다!<br/>정말 앱을 완전 초기 상태로 되돌리시겠습니까?', 'factoryReset', null, '초기화 실행', true); }
+        window.factoryReset = factoryReset;
+        
+        function exportAllData() {
+            const dataToExport = { adminPassword: state.adminPassword, warehouses: state.warehouses, staffList: state.staffList, categories: state.categories, inventory: state.inventory, logs: state.logs, reservations: state.reservations, settings: state.settings, exportDate: new Date().toISOString() };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataToExport, null, 2));
+            const downloadAnchorNode = document.createElement('a'); downloadAnchorNode.setAttribute("href", dataStr); downloadAnchorNode.setAttribute("download", `warehouse_backup_${new Date().toISOString().split('T')[0]}.json`);
+            document.body.appendChild(downloadAnchorNode); downloadAnchorNode.click(); downloadAnchorNode.remove(); window.showMsg("전체 데이터 백업 완료");
+        }
+        window.exportAllData = exportAllData;
+
+        function importAllData(event) {
+            const file = event.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if(parsed.inventory && parsed.categories) {
+                        state.adminPassword = parsed.adminPassword || initialState.adminPassword; state.warehouses = parsed.warehouses || initialState.warehouses; state.staffList = parsed.staffList || []; state.categories = parsed.categories || initialState.categories; state.inventory = parsed.inventory || initialState.inventory; state.logs = parsed.logs || []; state.reservations = parsed.reservations || []; state.settings = parsed.settings || initialState.settings;
+                        window.saveDataToStorage(); window.showMsg("데이터 복원 성공!"); window.renderApp();
+                    } else { window.showMsg("올바른 백업 파일이 아닙니다."); }
+                } catch(err) { window.showMsg("파일을 읽는 중 오류가 발생했습니다."); console.error(err); }
+                event.target.value = ''; 
+            };
+            reader.readAsText(file);
+        }
+        window.importAllData = importAllData;
+
+        function changeReserveFilter(status) {
+            state.reserveFilterStatus = status;
+            window.renderApp();
+        }
+        window.changeReserveFilter = changeReserveFilter;
+
+        // ==========================================
+        // 3. 앱 구동 파트 (백지 화면 방지 로직)
+        // ==========================================
+        
+        // 함수들이 모두 메모리에 로드된 후 무조건 즉시 화면을 그립니다.
+        window.loadLocalDataFallback(); 
+        window.renderApp();      
+
+        // 화면이 먼저 뜬 후 백그라운드에서 파이어베이스 연결을 시도합니다.
+        async function initFirebase() {
+            try {
+                if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") {
+                    app = initializeApp(firebaseConfig);
+                    auth = getAuth(app);
+                    db = getFirestore(app);
+                    
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                    
+                    onAuthStateChanged(auth, (user) => {
+                        authUser = user;
+                        if (!user) return;
+                        docRef = doc(db, "artifacts", appId, "public", "data", "store_data", "main_state");
+                        onSnapshot(docRef, (docSnap) => {
+                            if (docSnap.exists()) {
+                                const parsed = docSnap.data();
+                                state.adminPassword = parsed.adminPassword || initialState.adminPassword;
+                                state.warehouses = parsed.warehouses || initialState.warehouses;
+                                state.staffList = parsed.staffList || [];
+                                state.categories = parsed.categories || initialState.categories;
+                                state.inventory = parsed.inventory || initialState.inventory;
+                                state.logs = parsed.logs || [];
+                                state.reservations = parsed.reservations || [];
+                                state.settings = parsed.settings || initialState.settings;
+                            } else {
+                                window.saveDataToStorage();
+                            }
+                            isFirebaseActive = true;
+                            if (document.activeElement && ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
+                                console.log("입력 중 렌더링 보류");
+                            } else {
+                                window.renderApp();
+                            }
+                        }, (error) => {
+                            console.error("Firestore Error:", error);
+                        });
+                    });
+                }
+            } catch(e) {
+                console.error("Firebase Init Error:", e);
+            }
+        }
+        
+        // 브라우저 렌더링 주기에 맞추어 안전하게 비동기 초기화를 실행합니다.
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initFirebase);
+        } else {
+            initFirebase();
+        }
+
+        // ==========================================
+        // 4. UI 렌더링 영역 (컴포넌트)
+        // ==========================================
+        function renderHeader() {
+            return `
+            <div class="h-20 bg-slate-900 flex items-center justify-between px-10 shrink-0 border-b border-slate-800 p-8 z-10">
+                <div class="flex items-center gap-4 text-white">
+                    <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-xl shadow-lg p-2">W</div>
+                    <span class="text-2xl tracking-tighter uppercase italic">Warehouse v26.9</span>
+                </div>
+                <div class="flex items-center gap-6 text-right">
+                    ${window.state.user.name ? `
+                    <div>
+                        <span class="text-blue-400 text-sm block mb-1 uppercase tracking-widest whitespace-nowrap">${window.state.user.brand} | ${window.state.user.id}</span>
+                        <span class="text-white text-xl leading-none whitespace-nowrap">${window.state.user.name} 님 로그인 중 ${window.state.reserveMode ? '<span class="ml-2 text-amber-400 text-base border border-amber-400 px-2 rounded-full font-bold">예약 모드</span>' : ''}</span>
+                    </div>` : ''}
+                    ${window.state.isAdminAuthenticated ? `<button onclick="window.state.pwdChangeModal=true; window.renderApp();" class="bg-amber-600 text-white px-6 py-2 rounded-xl text-lg tap-effect shadow-md font-bold whitespace-nowrap">비밀번호 변경</button>` : ''}
+                    ${window.state.user.name ? `<button onclick="window.logout()" class="bg-slate-800 text-slate-400 px-6 py-2 rounded-xl text-lg tap-effect border border-slate-700 whitespace-nowrap">로그아웃</button>` : ''}
+                </div>
+            </div>`;
+        }
+
+        function renderFooter() {
+            return `
+            <div class="flex flex-col shrink-0 z-[100] relative">
+                <div class="bg-slate-100 flex items-center justify-around px-10 border-t-8 border-slate-200 shadow-[0_-15px_40px_rgba(0,0,0,0.15)] py-4 mobile-footer">
+                    <button onclick="window.changeView('scan')" class="flex flex-col items-center gap-1 tap-effect flex-1 ${window.state.view!=='admin'?'text-blue-600':'text-slate-400'}">
+                        <span class="footer-icon drop-shadow-sm">🏠</span><span class="footer-text uppercase tracking-widest whitespace-nowrap">홈 화면</span>
+                    </button>
+                    <div class="bg-slate-300 rounded-full mx-4 footer-divider"></div>
+                    <button onclick="window.tryEnterAdmin()" class="flex flex-col items-center gap-1 tap-effect flex-1 ${window.state.view==='admin'?'text-amber-600':'text-slate-400'}">
+                        <span class="footer-icon drop-shadow-sm">⚙️</span><span class="footer-text uppercase tracking-widest whitespace-nowrap">시스템 관리</span>
+                    </button>
+                </div>
+            </div>`;
+        }
+
+        function renderView() {
+            if (window.state.view === 'scan') {
+                return `
+                <div class="flex-1 flex flex-col items-center justify-center p-10 pb-32 gap-12" style="overflow-y:auto;">
+                    <div class="bg-blue-50 rounded-full flex items-center justify-center relative shrink-0" style="width:350px; height:350px;">
+                        <div class="bg-blue-600 rounded-full flex items-center justify-center shadow-2xl z-10 shrink-0" style="width:280px; height:280px;"><span class="text-8xl" style="font-size: 8rem;">💳</span></div>
+                    </div>
+                    <div class="text-center gap-6 flex flex-col">
+                        <h2 class="text-7xl text-slate-800 tracking-tighter uppercase italic word-keep">카드 태그 대기</h2>
+                        <p class="text-4xl text-slate-400 word-keep">사원증을 리더기에 태그하면 자동으로 로그인됩니다</p>
+                    </div>
+                    
+                    <button onclick="window.changeView('reserveLogin')" class="mt-8 bg-white border-4 border-blue-500 text-blue-600 px-10 py-6 rounded-full text-3xl tap-effect shadow-md whitespace-nowrap font-bold hover:bg-blue-50 flex items-center gap-4">
+                        <span class="text-4xl">📱</span> 직원 모바일/PC 사전 예약하기
+                    </button>
+                </div>`;
+            } 
+            if (window.state.view === 'reserveLogin') {
+                return `
+                <div class="flex-1 flex items-center justify-center p-10 custom-scroll" style="overflow-y:auto;">
+                    <div class="bg-white p-16 rounded-[4rem] shadow-2xl border-4 border-slate-100 w-full max-w-2xl my-auto fade-in">
+                        <h2 class="text-6xl mb-4 text-slate-800 text-center word-keep tracking-tighter italic">📱 직원 사전 예약</h2>
+                        <p class="text-2xl text-slate-500 text-center mb-4 word-keep">예약을 진행할 본인의 <span class="font-bold text-blue-600">사번</span>을 입력해주세요.</p>
+                        
+                        <p class="text-xl text-red-500 text-center mb-10 word-keep font-bold px-4">※ 신규 직원의 경우, 현장 키오스크에서 최초 1회 사원증 태그를 통한 정보 등록 후 이용이 가능합니다.</p>
+                        
+                        <div class="flex flex-col gap-10">
+                            <div class="flex flex-col gap-2">
+                                <label class="text-2xl text-slate-400 ml-6 font-bold whitespace-nowrap">직원 사번 (ID)</label>
+                                <input id="reserveStaffId" class="input-standard uppercase-input text-center tracking-widest text-3xl" placeholder="예: S001" onkeydown="if(event.key==='Enter') window.verifyReserveStaff()">
+                            </div>
+                            <div class="flex gap-4 mt-4">
+                                <button onclick="window.changeView('scan')" class="flex-1 py-8 bg-slate-100 text-slate-600 rounded-full text-3xl tap-effect whitespace-nowrap font-bold">뒤로</button>
+                                <button onclick="window.verifyReserveStaff()" class="flex-[2] py-8 bg-blue-600 text-white rounded-full text-3xl tap-effect shadow-xl font-bold whitespace-nowrap">예약 화면 입장</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            }
+            if (window.state.view === 'register') {
+                return `
+                <div class="flex-1 flex items-center justify-center p-10 custom-scroll" style="overflow-y:auto;">
+                    <div class="bg-white p-16 rounded-[4rem] shadow-2xl border-4 border-slate-100 w-full max-w-2xl my-auto fade-in">
+                        <h2 class="text-6xl mb-4 text-slate-800 text-center word-keep">직원 신규 등록</h2>
+                        <p class="text-2xl text-slate-500 text-center mb-12 word-keep">입력하신 정보는 사원증과 연동되어 수령 시 식별에 사용됩니다.</p>
+                        <div class="flex flex-col gap-10">
+                            <div class="flex flex-col gap-2"><label class="text-xl text-slate-400 ml-6 font-bold whitespace-nowrap">카드번호 (Tag ID) <span class="text-red-500">*필수</span></label><input id="regTagId" class="input-standard uppercase-input bg-slate-100 text-blue-600 font-black" value="${window.state.user.tagId}" readonly></div>
+                            <div class="flex flex-col gap-2"><label class="text-xl text-slate-400 ml-6 font-bold whitespace-nowrap">소속 브랜드 <span class="text-red-500">*필수</span></label><input id="regBrand" class="input-standard uppercase-input" value="${window.state.user.brand}"></div>
+                            <div class="flex flex-col gap-2"><label class="text-xl text-slate-400 ml-6 font-bold whitespace-nowrap">사번 <span class="text-red-500">*필수</span></label><input id="regId" class="input-standard uppercase-input" value="${window.state.user.id}"></div>
+                            <div class="flex flex-col gap-2"><label class="text-xl text-slate-400 ml-6 font-bold whitespace-nowrap">성함 <span class="text-red-500">*필수</span></label><input id="regName" class="input-standard uppercase-input" value="${window.state.user.name}"></div>
+                            <div class="flex flex-col gap-4 mt-2 bg-slate-50 p-8 rounded-[2rem] border-4 border-slate-200">
+                                <h4 class="text-2xl font-bold text-slate-700 ml-2 word-keep">개인정보 수집 및 이용 안내</h4>
+                                <div class="text-xl text-slate-500 h-[120px] overflow-y-auto p-6 bg-white border-2 border-slate-200 rounded-[1.5rem] leading-tight custom-scroll word-keep">
+                                    <span class="font-bold text-slate-700">1. 수집 항목:</span> 브랜드, 사번, 성함, 카드번호<br>
+                                    <span class="font-bold text-slate-700">2. 수집 목적:</span> 본인 인증 및 수령 이력 관리<br>
+                                    <span class="font-bold text-slate-700">3. 보유 기간:</span> 목적 달성 또는 파기 전까지
+                                </div>
+                                <label class="flex items-center gap-4 cursor-pointer mt-4 pl-2">
+                                    <input type="checkbox" id="privacyConsent" style="width: 2.5rem; height: 2.5rem; accent-color: var(--blue-600);">
+                                    <span class="text-2xl text-slate-700 font-bold word-keep">개인정보 수집 및 이용에 동의합니다. <span class="text-red-500">*필수</span></span>
+                                </label>
+                            </div>
+                            <button onclick="window.registerUser()" class="w-full py-10 bg-blue-600 text-white rounded-full text-4xl tap-effect shadow-xl mt-4 word-keep">정보 저장 후 입장</button>
+                        </div>
+                    </div>
+                </div>`;
+            }
+            if (window.state.view === 'explorer') {
+                const items = window.state.inventory.filter(i => i.cat === window.state.activeCat);
+                return `
+                <div class="flex-1 flex flex-col overflow-hidden">
+                    ${window.state.reserveMode ? `
+                    <div class="bg-amber-500 text-amber-900 text-center py-3 text-2xl font-bold px-4 word-keep shadow-inner relative z-20 shrink-0">
+                        💡 사전 예약 수령은 <span class="text-white">신청 익일 14시 이후</span> 현장에서만 가능합니다.
+                    </div>` : ''}
+                    <div class="bg-white border-b flex overflow-x-auto custom-scroll shrink-0 px-8 items-center gap-4 explorer-cat-bar">
+                        ${window.state.categories.map(cat => `<button onclick="window.setCategory('${cat}')" class="px-10 h-full shrink-0 text-3xl transition-all whitespace-nowrap ${window.state.activeCat === cat ? "category-tab-active" : "text-slate-400"}">${cat}</button>`).join('')}
+                    </div>
+                    <div class="explorer-list-zone custom-scroll">
+                        <div class="grid grid-cols-2 gap-8 pb-10">
+                            ${items.map(item => {
+                                const totalStock = item.stocks.counter || 0;
+                                const isSoldOut = totalStock <= 0;
+                                return `
+                                <button onclick="${!isSoldOut ? `window.openItemModal(${item.id})` : ''}" class="bg-white flex flex-col justify-between relative overflow-hidden text-left tap-effect explorer-item-card ${isSoldOut ? 'grayscale border-slate-100' : 'border-transparent hover:border-blue-500 shadow-xl border-4'}">
+                                    <div class="z-10 w-full overflow-hidden">
+                                        <h3 class="text-slate-800 leading-tight word-keep item-title truncate">${item.name}</h3>
+                                        ${isSoldOut ? `<span class="inline-block mt-2 bg-red-600 text-white rounded-full uppercase whitespace-nowrap item-soldout-badge">품절</span>` : ''}
+                                    </div>
+                                    <div class="flex flex-wrap gap-3 z-10 shrink-0">
+                                        <span class="rounded-full italic border-2 item-stock-text ${isSoldOut ? 'bg-slate-100 text-slate-400 border-slate-200' : 'bg-blue-50 text-blue-600 border-blue-100'}">재고: ${window.formatStock(totalStock, item.unitBase, item.unitBulk, item.bulkRatio)}</span>
+                                    </div>
+                                </button>`;
+                            }).join('')}
+                        </div>
+                    </div>
+                    <div class="bg-slate-900 flex flex-col shrink-0 text-white rounded-t-[4rem] border-t-2 border-slate-800 explorer-cart-zone">
+                        <div class="px-12 py-8 border-b border-slate-800 flex justify-between items-center shrink-0">
+                            <div class="flex items-center gap-4"><span class="text-5xl">🛒</span><h3 class="text-4xl italic tracking-tighter text-blue-400 uppercase whitespace-nowrap">${window.state.reserveMode ? '예약 바구니' : '장바구니'}</h3></div>
+                            <div class="flex items-center gap-6"><span class="text-2xl bg-slate-800 px-6 py-3 rounded-2xl border border-slate-700 whitespace-nowrap">${window.state.cart.length}개 담김</span><button onclick="window.state.cart=[]; window.renderApp();" class="text-xl text-slate-400 underline whitespace-nowrap">전체 비우기</button></div>
+                        </div>
+                        <div class="flex-1 overflow-x-auto custom-scroll ${window.state.cart.length === 0 ? 'flex items-center justify-center p-8' : 'cart-grid'}">
+                            ${window.state.cart.length===0 ? `<div class="w-full text-center text-slate-500 italic text-4xl word-keep">${window.state.reserveMode ? '예약하실 물품을 선택해 주세요' : '수령하실 물품을 선택해 주세요'}</div>` : ''}
+                            ${window.state.cart.map(c => `
+                            <div class="bg-slate-800 flex flex-col justify-between border-2 border-slate-700 shadow-2xl shrink-0 explorer-cart-item">
+                                <div class="flex flex-col flex-1 overflow-hidden">
+                                    <div class="flex justify-between items-start gap-2">
+                                        <div class="flex flex-col flex-1 overflow-hidden pr-2">
+                                            <p class="leading-tight text-white font-bold word-keep cart-item-title truncate">${c.itemName}</p>
+                                            <span class="text-slate-400 cart-item-unit-detail word-keep mt-1 block truncate">단위: ${c.unitBase}${c.unitBulk ? ` (1${c.unitBulk}=${c.bulkRatio})` : ''}</span>
+                                        </div>
+                                        <button onclick="window.removeFromCart(${c.itemId})" class="bg-red-900 text-red-400 hover:text-red-300 flex items-center justify-center shrink-0 rounded-full cart-item-del tap-effect">✕</button>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between bg-slate-900 p-2 border border-slate-700 shrink-0" style="border-radius: 1.2rem;">
+                                    <button onclick="window.updateCartQty(${c.itemId}, -1)" class="bg-slate-800 tap-effect flex items-center justify-center text-slate-400 cart-qty-btn shrink-0">-</button>
+                                    <div class="flex flex-col items-center justify-center flex-1 overflow-hidden px-1">
+                                        <span class="cart-main-qty w-full">${window.formatStock(c.amount, c.unitBase, c.unitBulk, c.bulkRatio, true)}</span>
+                                        <span class="cart-sub-qty w-full">(총 ${c.amount}${c.unitBase})</span>
+                                    </div>
+                                    <button onclick="window.updateCartQty(${c.itemId}, 1)" class="bg-slate-800 tap-effect flex items-center justify-center text-slate-400 cart-qty-btn shrink-0">+</button>
+                                </div>
+                            </div>`).join('')}
+                        </div>
+                        <div class="bg-slate-900 border-t border-slate-800 text-center cart-checkout-zone shrink-0">
+                            <button onclick="window.openCheckoutConfirm()" class="bg-blue-600 tap-effect shadow-xl italic tracking-widest whitespace-nowrap cart-checkout-btn ${window.state.cart.length===0?'grayscale':''}" ${window.state.cart.length===0?'disabled':''}>${window.state.reserveMode ? '사전 예약 확정' : '수령 최종 확정'}</button>
+                        </div>
+                    </div>
+                </div>`;
+            }
+            if (window.state.view === 'admin') {
+                return `
+                <div class="flex-1 flex flex-col bg-white overflow-hidden h-full fade-in">
+                    <div class="bg-slate-100 flex items-center px-10 justify-start shrink-0 border-b-4 border-slate-200 overflow-x-auto custom-scroll py-6 gap-4">
+                        <button onclick="window.changeAdminSubView('inventory')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView==='inventory'?'bg-blue-600 text-white shadow-xl':'bg-white text-slate-500 shadow-md'}">📦 재고 관리</button>
+                        <button onclick="window.changeAdminSubView('logs')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView==='logs'?'bg-blue-600 text-white shadow-xl':'bg-white text-slate-500 shadow-md'}">📊 수령 내역</button>
+                        <button onclick="window.changeAdminSubView('reservations')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView==='reservations'?'bg-blue-600 text-white shadow-xl':'bg-white text-slate-500 shadow-md'}">📅 예약 관리</button>
+                        <button onclick="window.changeAdminSubView('staff')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView==='staff'?'bg-blue-600 text-white shadow-xl':'bg-white text-slate-500 shadow-md'}">👥 직원 관리</button>
+                        <button onclick="window.changeAdminSubView('settings')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView==='settings'?'bg-slate-800 text-white shadow-xl':'bg-white text-slate-500 shadow-md'}">⚙️ 시스템 설정</button>
+                    </div>
+                    <div class="flex-1 overflow-y-auto custom-scroll p-12">
+                        ${window.state.adminSubView === 'inventory' ? renderAdminInventory() : ''}
+                        ${window.state.adminSubView === 'logs' ? renderAdminLogs() : ''}
+                        ${window.state.adminSubView === 'reservations' ? renderAdminReservations() : ''}
+                        ${window.state.adminSubView === 'staff' ? renderAdminStaff() : ''}
+                        ${window.state.adminSubView === 'settings' ? renderAdminSettings() : ''}
+                    </div>
+                </div>`;
+            }
+        }
+
+        function renderAdminReservations() {
+            const filterStatus = window.state.reserveFilterStatus || '전체';
+            const filtered = window.state.reservations.filter(r => filterStatus === '전체' || r.status === filterStatus);
+            
+            const getStatusHtml = (status) => {
+                if(status === 'pending') return `<span class="bg-amber-100 text-amber-600 px-4 py-2 rounded-full text-lg font-bold">현장 대기중</span>`;
+                if(status === 'completed') return `<span class="bg-blue-100 text-blue-600 px-4 py-2 rounded-full text-lg font-bold">수령 완료</span>`;
+                if(status === 'cancelled') return `<span class="bg-red-100 text-red-600 px-4 py-2 rounded-full text-lg font-bold">취소됨</span>`;
+                return status;
+            }
+
+            return `
+            <div class="flex flex-col gap-10">
+                <div class="bg-white p-12 rounded-[4rem] border-4 border-slate-200 flex flex-col gap-8 shadow-lg">
+                    <div class="flex flex-wrap justify-between items-center border-b-4 border-slate-200 pb-6 gap-4">
+                        <h3 class="text-4xl text-slate-800 border-l-[10px] border-blue-500 pl-6 uppercase tracking-widest italic font-black word-keep">📅 사전 예약 종합 관리</h3>
+                        <div class="flex flex-wrap gap-4">
+                            <button onclick="window.changeReserveFilter('전체')" class="px-6 py-3 rounded-2xl text-xl font-bold tap-effect ${filterStatus==='전체'?'bg-slate-800 text-white':'bg-slate-100 text-slate-500'}">전체보기</button>
+                            <button onclick="window.changeReserveFilter('pending')" class="px-6 py-3 rounded-2xl text-xl font-bold tap-effect ${filterStatus==='pending'?'bg-amber-500 text-white':'bg-slate-100 text-slate-500'}">현장 대기중</button>
+                            <button onclick="window.changeReserveFilter('completed')" class="px-6 py-3 rounded-2xl text-xl font-bold tap-effect ${filterStatus==='completed'?'bg-blue-600 text-white':'bg-slate-100 text-slate-500'}">수령 완료</button>
+                            <button onclick="window.changeReserveFilter('cancelled')" class="px-6 py-3 rounded-2xl text-xl font-bold tap-effect ${filterStatus==='cancelled'?'bg-red-600 text-white':'bg-slate-100 text-slate-500'}">취소 내역</button>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto rounded-[2rem] border-4 border-slate-300 shadow-sm">
+                        <table class="excel-table">
+                            <thead><tr><th class="whitespace-nowrap">예약일시</th><th class="whitespace-nowrap">사용자 정보</th><th class="whitespace-nowrap">요청 물품 내역</th><th class="whitespace-nowrap">진행 상태</th><th class="whitespace-nowrap">관리</th></tr></thead>
+                            <tbody>
+                                ${filtered.map(r => `
+                                <tr>
+                                    <td class="text-slate-500 whitespace-nowrap"><span class="text-sm block">${r.rawDate}</span>${r.time}</td>
+                                    <td class="whitespace-nowrap">${r.staffId} <span class="text-xl text-slate-500 block">(${r.name} / ${r.brand})</span></td>
+                                    <td class="text-left text-slate-700 text-xl font-bold whitespace-nowrap">
+                                        ${r.cart.map(c => `<div class="mb-1 border-b border-slate-200 pb-1 last:border-0 whitespace-nowrap">- ${c.itemName} <span class="text-blue-500 font-black ml-2">${window.formatStock(c.amount, c.unitBase, c.unitBulk, c.bulkRatio, false)}</span></div>`).join('')}
+                                    </td>
+                                    <td class="whitespace-nowrap">${getStatusHtml(r.status)}</td>
+                                    <td class="whitespace-nowrap">
+                                        ${r.status === 'pending' ? `<button onclick="window.cancelReservation('${r.id}')" class="bg-red-50 text-red-600 text-lg px-4 py-2 rounded-xl tap-effect border border-red-200 font-bold hover:bg-red-100 whitespace-nowrap">강제 취소(재고복구)</button>` : '-'}
+                                    </td>
+                                </tr>`).join('')}
+                                ${filtered.length===0 ? `<tr><td colspan="5" class="text-center py-16 text-slate-400 word-keep">예약 기록이 없습니다.</td></tr>`:''}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function renderAdminSettings() {
+            return `
+            <div class="flex flex-col gap-10">
+                <div class="bg-blue-50 p-12 rounded-[4rem] border-4 border-blue-200 shadow-md flex flex-col gap-8">
+                    <h3 class="text-4xl text-blue-800 border-l-[10px] border-blue-500 pl-6 uppercase tracking-widest italic font-black word-keep">📧 일일 전체 재고 현황 메일 발송</h3>
+                    <p class="text-2xl text-slate-600 word-keep leading-tight">아래 버튼을 누르시면 관리자님의 이메일 앱이 실행되며, 현재 창고에 남아있는 전체 품목의 재고가 일목요연하게 자동 작성됩니다.</p>
+                    <button onclick="window.sendMorningReport()" class="w-full md:w-auto bg-blue-600 text-white py-6 px-10 rounded-[3rem] text-3xl tap-effect font-bold shadow-xl whitespace-nowrap text-center">전체 재고현황 발송하기</button>
+                </div>
+                <div class="bg-white p-12 rounded-[4rem] border-4 border-slate-200 shadow-md flex flex-col gap-8">
+                    <h3 class="text-4xl text-slate-800 border-l-[10px] border-blue-500 pl-6 uppercase tracking-widest italic font-black word-keep">발주 알림 이메일 수신자 설정</h3>
+                    <div class="flex flex-col gap-4">
+                        <label class="text-2xl text-slate-400 font-bold whitespace-nowrap">재고 부족 시 알림을 받을 이메일 주소</label>
+                        <input type="email" value="${window.state.settings?.alertEmail || ''}" onchange="window.updateSetting('alertEmail', this.value)" class="input-standard bg-slate-50" placeholder="예: admin@warehouse.com" style="width: 100%; max-width: 500px;">
+                    </div>
+                </div>
+                <div class="bg-white p-12 rounded-[4rem] border-4 border-slate-200 shadow-md flex flex-col gap-8">
+                    <h3 class="text-4xl text-slate-800 border-l-[10px] border-blue-500 pl-6 uppercase tracking-widest italic font-black word-keep">창고 명칭 커스텀</h3>
+                    <div class="grid grid-cols-3 gap-10">
+                        <div class="flex flex-col gap-4"><label class="text-2xl text-slate-400 font-bold whitespace-nowrap">제1구역</label><input value="${window.state.warehouses.counter}" onchange="window.updateWarehouseName('counter', this.value)" class="input-standard bg-slate-50"></div>
+                        <div class="flex flex-col gap-4"><label class="text-2xl text-slate-400 font-bold whitespace-nowrap">제2구역</label><input value="${window.state.warehouses.wh1}" onchange="window.updateWarehouseName('wh1', this.value)" class="input-standard bg-slate-50"></div>
+                        <div class="flex flex-col gap-4"><label class="text-2xl text-slate-400 font-bold whitespace-nowrap">제3구역</label><input value="${window.state.warehouses.wh2}" onchange="window.updateWarehouseName('wh2', this.value)" class="input-standard bg-slate-50"></div>
+                    </div>
+                </div>
+                <div class="bg-red-50 p-12 rounded-[4rem] border-4 border-red-200 shadow-md flex flex-col gap-8 mt-4">
+                    <h3 class="text-4xl text-red-800 border-l-[10px] border-red-500 pl-6 uppercase tracking-widest italic font-black word-keep">데이터 강제 초기화 구역</h3>
+                    <div class="grid grid-cols-2 gap-6">
+                        <button onclick="window.exportAllData()" class="bg-white border-4 border-blue-300 text-blue-600 py-8 rounded-[3rem] text-3xl tap-effect font-bold shadow-sm hover:bg-blue-50 whitespace-nowrap">💾 전체 데이터 백업 (다운로드)</button>
+                        <div class="relative">
+                            <input type="file" id="importDataInput" accept=".json" style="display:none;" onchange="window.importAllData(event)">
+                            <button onclick="document.getElementById('importDataInput').click()" class="w-full h-full bg-white border-4 border-blue-300 text-blue-600 py-8 rounded-[3rem] text-3xl tap-effect font-bold shadow-sm hover:bg-blue-50 whitespace-nowrap">📂 데이터 파일 복원 (업로드)</button>
+                        </div>
+                        <button onclick="window.clearLogsData()" class="bg-white border-4 border-red-300 text-red-600 py-8 rounded-[3rem] text-3xl tap-effect font-bold shadow-sm hover:bg-red-100 whitespace-nowrap mt-4">🗑 수령 내역 전체 삭제</button>
+                        <button onclick="window.clearAllInventory()" class="bg-white border-4 border-red-300 text-red-600 py-8 rounded-[3rem] text-3xl tap-effect font-bold shadow-sm hover:bg-red-100 whitespace-nowrap mt-4">📦 품목 및 분류 전체 삭제</button>
+                        <button onclick="window.clearAllStaff()" class="bg-white border-4 border-red-300 text-red-600 py-8 rounded-[3rem] text-3xl tap-effect font-bold shadow-sm hover:bg-red-100 whitespace-nowrap">👥 직원 명단 전체 삭제</button>
+                        <button onclick="window.factoryReset()" class="bg-red-600 text-white py-8 rounded-[3rem] text-3xl tap-effect font-black shadow-lg hover:bg-red-700 whitespace-nowrap">🚨 시스템 완전 공장초기화</button>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function renderAdminInventory() {
+            const activeItem = window.state.inventory.find(i => i.id === window.state.selectedAdminItemId);
+            return `
+            <div class="flex flex-col gap-12">
+                <div class="flex flex-col gap-6">
+                    <div class="flex justify-between items-center px-4">
+                        <h3 class="text-3xl text-slate-400 border-l-[10px] border-slate-300 pl-6 uppercase tracking-widest word-keep">분류 구성</h3>
+                        <button onclick="window.openAddCategory()" class="bg-blue-100 text-blue-600 px-8 py-4 rounded-3xl text-2xl tap-effect whitespace-nowrap">+ 분류 추가</button>
+                    </div>
+                    <div class="flex flex-wrap gap-4 px-2">
+                        ${window.state.categories.map(cat => `
+                        <div class="flex items-center gap-4 px-8 py-5 rounded-[2rem] transition-all ${window.state.activeCat === cat ? 'bg-blue-600 text-white shadow-xl' : 'bg-slate-100 text-slate-500'}">
+                            <button onclick="window.setCategory('${cat}')" class="text-3xl whitespace-nowrap">${cat}</button>
+                            <div class="flex gap-4 border-l border-slate-300 pl-6 ml-2">
+                                <button onclick="window.openEditCategory('${cat}')" class="text-2xl opacity-60">✏️</button>
+                                <button onclick="window.deleteCategory('${cat}')" class="text-2xl text-red-400 opacity-80">✕</button>
+                            </div>
+                        </div>`).join('')}
+                    </div>
+                </div>
+                <div class="flex flex-col gap-6 pt-12 border-t-4 border-slate-100">
+                    <div class="flex justify-between items-center px-4">
+                        <h3 class="text-3xl text-slate-400 border-l-[10px] border-slate-300 pl-6 uppercase tracking-widest word-keep">상세 품목</h3>
+                        <button onclick="window.openAddItem()" class="bg-blue-100 text-blue-600 px-8 py-4 rounded-3xl text-2xl tap-effect whitespace-nowrap">+ 새 품목 등록</button>
+                    </div>
+                    <div class="grid grid-cols-3 gap-6">
+                        ${window.state.inventory.filter(i => i.cat === window.state.activeCat).map(item => `
+                        <button onclick="window.selectAdminItem(${item.id})" class="p-10 rounded-[3rem] text-3xl text-left border-8 tap-effect text-truncate-2 word-keep ${window.state.selectedAdminItemId === item.id ? 'border-amber-500 bg-amber-50 text-amber-900 shadow-inner' : 'border-slate-100 bg-white shadow-md text-slate-700'}">${item.name}</button>
+                        `).join('')}
+                    </div>
+                </div>
+                ${activeItem ? `
+                <div class="bg-slate-50 p-12 rounded-[4rem] border-4 border-slate-200 mt-10 shadow-inner">
+                    <div class="flex flex-wrap justify-between items-center mb-12 border-b-4 border-slate-200 pb-8 gap-6">
+                        <div>
+                            <h3 class="text-6xl text-slate-800 word-keep">${activeItem.name}</h3>
+                            <p class="text-2xl text-slate-400 uppercase mt-4 italic tracking-widest word-keep">
+                                단위: 기본(${activeItem.unitBase}) ${activeItem.unitBulk ? `| 묶음(${activeItem.unitBulk}, 1${activeItem.unitBulk}=${activeItem.bulkRatio}${activeItem.unitBase})` : ''}
+                                <br/><span class="text-amber-500 text-lg font-bold inline-block mt-2">1인 예약 한도: ${activeItem.maxReserveQty ?? 100}${activeItem.unitBase} / 발주 기준 알림: 총재고 ${activeItem.alertQty ?? 10}${activeItem.unitBase} 이하</span>
+                            </p>
+                        </div>
+                        <div class="flex gap-4 shrink-0">
+                            <button onclick="window.openEditItem(${activeItem.id})" class="bg-white border-4 border-blue-500 text-blue-600 px-10 py-4 rounded-3xl text-2xl tap-effect whitespace-nowrap">수정</button>
+                            <button onclick="window.deleteAdminItem(${activeItem.id})" class="bg-white border-4 border-red-500 text-red-500 px-10 py-4 rounded-3xl text-2xl tap-effect whitespace-nowrap">삭제</button>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-8">
+                        ${Object.keys(window.state.warehouses).map(wh => `
+                        <div class="bg-white p-8 rounded-[3rem] flex flex-wrap justify-between items-center shadow-md gap-4">
+                            <span class="text-4xl text-slate-600 italic whitespace-nowrap w-full md:w-auto">${window.state.warehouses[wh]}</span>
+                            <div class="flex-1 flex flex-col items-end gap-4 w-full">
+                                <div class="text-3xl text-slate-800 font-bold whitespace-nowrap">${window.formatStock(activeItem.stocks[wh], activeItem.unitBase, activeItem.unitBulk, activeItem.bulkRatio)}</div>
+                                <div class="flex flex-wrap items-center justify-end gap-4 w-full">
+                                    <span class="text-2xl text-slate-400 uppercase whitespace-nowrap">총 낱개조절</span>
+                                    <div class="flex items-center bg-slate-50 border-4 rounded-[2rem] p-2 shrink-0">
+                                        ${activeItem.unitBulk ? `<button onclick="window.updateStockManual(${activeItem.id}, '${wh}', -${activeItem.bulkRatio})" class="w-14 h-14 bg-red-50 text-red-600 rounded-2xl text-xl font-bold shadow-sm tap-effect flex items-center justify-center">-1${activeItem.unitBulk}</button>` : ''}
+                                        <button onclick="window.updateStockManual(${activeItem.id}, '${wh}', -1)" class="w-14 h-14 bg-white rounded-2xl text-4xl shadow-sm tap-effect flex items-center justify-center ml-2">-</button>
+                                        
+                                        <input type="number" 
+                                               value="${activeItem.stocks[wh] || 0}" 
+                                               onchange="window.setStockManual(${activeItem.id}, '${wh}', this.value)"
+                                               class="text-4xl tabular-nums text-center bg-transparent outline-none font-black text-slate-800 uppercase-input" style="width: 100px; border:none; box-shadow:none;" />
+                                        
+                                        <button onclick="window.updateStockManual(${activeItem.id}, '${wh}', 1)" class="w-14 h-14 bg-white rounded-2xl text-4xl shadow-sm tap-effect flex items-center justify-center mr-2">+</button>
+                                        ${activeItem.unitBulk ? `<button onclick="window.updateStockManual(${activeItem.id}, '${wh}', ${activeItem.bulkRatio})" class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl text-xl font-bold shadow-sm tap-effect flex items-center justify-center">+1${activeItem.unitBulk}</button>` : ''}
+                                    </div>
+                                    <button onclick="window.openTransfer(${activeItem.id})" class="bg-blue-100 text-blue-600 px-6 py-4 rounded-3xl text-xl tap-effect whitespace-nowrap font-bold shrink-0">이동</button>
+                                </div>
+                            </div>
+                        </div>`).join('')}
+                    </div>
+                </div>` : ''}
+            </div>`;
+        }
+
+        function renderAdminLogs() {
+            const { filtered, statsData, maxVal } = getStats();
+            return `
+            <div class="flex flex-col gap-12">
+                <div class="bg-slate-900 p-16 rounded-[4rem] shadow-2xl">
+                    <h3 class="text-amber-400 text-4xl uppercase mb-12 italic tracking-widest underline decoration-amber-500 underline-offset-10 word-keep">📊 실시간 수령 통계 분석</h3>
+                    <div class="flex flex-col gap-10">
+                        ${statsData.map(d => `
+                        <div class="flex flex-col gap-4">
+                            <div class="flex justify-between text-3xl text-slate-300 px-6"><span class="whitespace-nowrap">${d.label}</span><span class="whitespace-nowrap">${d.value} 개</span></div>
+                            <div class="w-full bg-slate-800 h-12 rounded-full overflow-hidden border border-slate-700 p-1">
+                                <div class="h-full bg-amber-500 rounded-full" style="width: ${(d.value/maxVal)*100}%; box-shadow: 0 0 20px rgba(245,158,11,0.5);"></div>
+                            </div>
+                        </div>`).join('')}
+                        ${statsData.length === 0 ? `<p class="text-slate-500 italic text-4xl py-10 text-center word-keep">데이터가 없습니다.</p>` : ''}
+                    </div>
+                </div>
+                <div class="bg-white p-12 rounded-[4rem] border-4 border-slate-200 flex flex-col gap-10 shadow-lg">
+                    <div class="grid grid-cols-2 gap-10">
+                        <div class="flex flex-col gap-4"><label class="text-2xl text-slate-400 ml-6 uppercase whitespace-nowrap">시작일자</label><input type="date" value="${window.state.startDate}" onchange="window.state.startDate=this.value; window.renderApp();" class="input-standard"></div>
+                        <div class="flex flex-col gap-4"><label class="text-2xl text-slate-400 ml-6 uppercase whitespace-nowrap">종료일자</label><input type="date" value="${window.state.endDate}" onchange="window.state.endDate=this.value; window.renderApp();" class="input-standard"></div>
+                    </div>
+                    <div class="flex flex-col gap-4">
+                        <label class="text-2xl text-slate-400 ml-6 uppercase tracking-widest whitespace-nowrap">품목 필터</label>
+                        <select onchange="window.state.filterItem=this.value; window.renderApp();" class="input-standard appearance-none">
+                            <option value="전체" ${window.state.filterItem==='전체'?'selected':''}>모든 품목 합계</option>
+                            ${window.state.inventory.map(i => `<option value="${i.name}" ${window.state.filterItem===i.name?'selected':''}>${i.name}</option>`).join('')}
+                        </select>
+                    </div>
+                </div>
+                <div class="overflow-x-auto pt-8 bg-white p-8 rounded-[4rem] border-4 border-slate-200 shadow-md">
+                    <table>
+                        <thead><tr><th class="whitespace-nowrap">시간(날짜)</th><th class="whitespace-nowrap">사용자(사번)</th><th class="whitespace-nowrap">브랜드</th><th class="whitespace-nowrap">차감량</th></tr></thead>
+                        <tbody>
+                            ${filtered.map(log => `
+                            <tr>
+                                <td class="text-slate-400 whitespace-nowrap"><span class="text-sm block">${log.rawDate}</span>${log.time}</td>
+                                <td class="whitespace-nowrap">${log.staffId} <span class="text-xl text-slate-500">(${log.name})</span></td>
+                                <td class="text-blue-600 uppercase whitespace-nowrap">${log.brand}</td>
+                                <td class="text-red-500 italic whitespace-nowrap">
+                                    <div class="flex items-center justify-center gap-4">
+                                        <span>-${log.amountStr}</span>
+                                        <button onclick="window.deleteLog('${log.id}')" class="bg-red-100 text-red-600 text-xl px-4 py-2 rounded-2xl tap-effect not-italic border border-red-200 font-bold hover:bg-red-200 whitespace-nowrap">취소/복구</button>
+                                    </div>
+                                </td>
+                            </tr>`).join('')}
+                            ${filtered.length===0 ? `<tr><td colspan="4" class="text-center py-16 text-slate-400 word-keep">기록이 없습니다.</td></tr>`:''}
+                        </tbody>
+                    </table>
+                </div>
+            </div>`;
+        }
+
+        function renderAdminStaff() {
+            const filteredStaff = window.state.staffList.filter(s => 
+                s.name.toUpperCase().includes(window.state.staffSearchQuery) || 
+                s.id.toUpperCase().includes(window.state.staffSearchQuery) || 
+                s.brand.toUpperCase().includes(window.state.staffSearchQuery)
+            );
+            return `
+            <div class="flex flex-col gap-10">
+                <div class="bg-slate-800 p-10 rounded-[3rem] border-4 border-slate-700 shadow-inner flex flex-col shrink-0">
+                    <div class="flex flex-wrap justify-between items-center mb-6 border-b-4 border-slate-700 pb-6 gap-4">
+                        <h3 class="text-4xl text-white italic uppercase tracking-tighter word-keep">사원 일괄 등록 (엑셀 연동)</h3>
+                        <div class="flex flex-wrap gap-4">
+                            <input type="file" id="csvFileInput" accept=".csv" style="display:none;" onchange="window.importStaffCSV(event)">
+                            <button onclick="document.getElementById('csvFileInput').click()" class="bg-blue-600 text-white px-8 py-4 rounded-2xl text-2xl tap-effect shadow-md whitespace-nowrap font-bold">엑셀 업로드</button>
+                            <button onclick="window.exportStaffCSV()" class="bg-slate-100 border-4 border-slate-300 text-slate-800 px-8 py-4 rounded-2xl text-2xl tap-effect shadow-md whitespace-nowrap font-bold">엑셀 다운로드</button>
+                        </div>
+                    </div>
+                    <textarea id="bulkText" class="w-full p-8 bg-slate-900 border-2 border-slate-600 rounded-2xl font-black text-2xl mb-6 outline-none shadow-inner custom-scroll text-blue-200 uppercase-input word-keep" style="min-height: 200px;" placeholder="※ 엑셀 다운로드 후 양식에 맞춰 수정하거나, 직접 텍스트를 붙여넣으세요.\\n\\n[양식] 브랜드, 사번, 이름, 카드번호(TagID)"></textarea>
+                    <button onclick="window.doBulkImport()" class="w-full py-6 bg-blue-500 text-white rounded-full text-3xl tap-effect shadow-lg uppercase tracking-widest whitespace-nowrap">텍스트 일괄 등록 실행</button>
+                </div>
+                <div class="flex flex-col gap-4 pt-6">
+                    <h3 class="text-3xl text-slate-800 px-6 border-l-8 border-blue-500 uppercase tracking-widest italic mb-4 word-keep">직원 데이터 관리 (총 ${window.state.staffList.length}명)</h3>
+                    <div class="flex flex-wrap gap-4 mb-4">
+                        <input id="staffSearchInput" class="input-standard flex-1 bg-white uppercase-input" placeholder="직원 검색" value="${window.state.staffSearchQuery}">
+                        <button onclick="window.doSearchStaff()" class="bg-slate-700 text-white px-10 py-4 rounded-3xl text-2xl font-bold tap-effect whitespace-nowrap">검색</button>
+                        <button onclick="window.state.staffSearchQuery=''; window.renderApp();" class="bg-slate-200 text-slate-600 px-10 py-4 rounded-3xl text-2xl font-bold tap-effect whitespace-nowrap">초기화</button>
+                    </div>
+                    <div class="overflow-x-auto rounded-[2rem] border-4 border-slate-300 shadow-md">
+                        <table class="excel-table">
+                            <thead>
+                                <tr>
+                                    <th class="whitespace-nowrap">브랜드</th><th class="whitespace-nowrap">사번</th><th class="whitespace-nowrap">이름</th><th class="whitespace-nowrap">카드번호 (Tag ID)</th><th class="whitespace-nowrap">관리</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${filteredStaff.map((s, filteredIdx) => {
+                                    const originalIdx = window.state.staffList.indexOf(s);
+                                    return `
+                                    <tr>
+                                        <td class="text-blue-600 uppercase tracking-widest whitespace-nowrap">${s.brand}</td>
+                                        <td class="text-slate-600 uppercase whitespace-nowrap">${s.id}</td>
+                                        <td class="text-slate-800 uppercase whitespace-nowrap">${s.name}</td>
+                                        <td class="text-slate-500 font-normal tracking-widest uppercase whitespace-nowrap">${s.tagId}</td>
+                                        <td class="whitespace-nowrap">
+                                            <div class="flex justify-center gap-2">
+                                                <button onclick="window.openEditStaff(${originalIdx})" class="bg-blue-100 text-blue-600 px-4 py-2 rounded-xl text-lg tap-effect font-bold">수정</button>
+                                                <button onclick="window.deleteStaff(${originalIdx}, '${s.name}')" class="bg-red-50 text-red-500 px-4 py-2 rounded-xl text-lg tap-effect font-bold">삭제</button>
+                                            </div>
+                                        </td>
+                                    </tr>`
+                                }).join('')}
+                                ${filteredStaff.length === 0 ? `<tr><td colspan="5" class="py-12 text-slate-400 word-keep">검색된 직원이 없습니다.</td></tr>` : ''}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function renderModals() {
+            let html = '';
+            
+            if (window.state.stockAlertModal) {
+                html += `
+                <div class="modal-overlay fade-in z-[9000]">
+                    <div class="bg-white w-full max-w-[700px] rounded-[4rem] p-12 border-8 border-red-500 shadow-2xl flex flex-col gap-6 text-center">
+                        <div class="text-6xl mb-2">⚠️</div>
+                        <h2 class="text-4xl font-black text-red-600 word-keep">재고 발주 알림</h2>
+                        <div class="bg-red-50 p-6 rounded-[2rem] border-4 border-red-200 max-h-[300px] overflow-y-auto custom-scroll text-left">
+                            ${window.state.stockAlertModal.map(i => `
+                                <div class="mb-4 last:mb-0 border-b-2 border-red-100 pb-4 last:border-0">
+                                    <span class="text-2xl text-slate-800 font-bold block">${i.name}</span>
+                                    <span class="text-xl text-red-600 font-black mt-1 block">남은 수량: ${i.formattedStock} <span class="text-lg text-slate-500 font-normal">(경고 기준: ${i.alertQty} 이하)</span></span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <button onclick="window.state.stockAlertModal = null; window.renderApp();" class="mt-4 py-6 bg-slate-800 text-white rounded-full text-3xl shadow-xl tap-effect font-bold">확인했습니다</button>
+                    </div>
+                </div>`;
+            }
+
+            if (window.state.checkoutConfirmModal) {
+                html += `
+                <div class="modal-overlay fade-in z-[7000]">
+                    <div class="bg-white w-full max-w-[800px] rounded-[4rem] p-12 border-8 border-blue-500 shadow-2xl flex flex-col gap-6">
+                        <div class="text-center">
+                            <h2 class="text-5xl font-black text-slate-800 word-keep">${window.state.reserveMode ? '사전 예약 내역 확인' : '수령 내역 확인'}</h2>
+                            <p class="text-2xl text-slate-500 mt-4">아래 품목과 수량이 맞는지 확인해주세요.</p>
+                        </div>
+                        <div class="bg-slate-50 p-6 rounded-[2rem] border-4 border-slate-200 max-h-[300px] overflow-y-auto custom-scroll">
+                            ${window.state.cart.map(c => `
+                            <div class="flex justify-between items-center border-b-2 border-slate-200 py-4 last:border-0 gap-4">
+                                <span class="text-2xl text-slate-700 font-bold">${c.itemName}</span>
+                                <div class="text-right">
+                                    <div class="text-2xl text-blue-600 font-black whitespace-nowrap">${window.formatStock(c.amount, c.unitBase, c.unitBulk, c.bulkRatio, true)}</div>
+                                    <div class="text-xl text-slate-400">(총 ${c.amount}${c.unitBase})</div>
+                                </div>
+                            </div>
+                            `).join('')}
+                        </div>
+                        <div class="flex gap-4 mt-4">
+                            <button onclick="window.state.checkoutConfirmModal=false; window.renderApp();" class="flex-1 py-6 bg-slate-100 rounded-full text-3xl text-slate-600 tap-effect font-bold border-4 border-slate-200">취소</button>
+                            <button onclick="window.executeCheckout()" class="flex-[2] py-6 bg-blue-600 text-white rounded-full text-3xl shadow-xl tap-effect font-bold">${window.state.reserveMode ? '예약 최종 확정' : '수령 최종 확정'}</button>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            if (window.state.confirmModal) {
+                const m = window.state.confirmModal;
+                html += `
+                <div class="modal-overlay fade-in z-[8000]">
+                    <div class="bg-white w-full max-w-[600px] rounded-[4rem] p-16 border-8 ${m.isRed ? 'border-red-500' : 'border-blue-500'} shadow-2xl flex flex-col gap-8 text-center">
+                        <div class="text-6xl mb-2">${m.isRed ? '⚠️' : '❓'}</div>
+                        <h2 class="text-5xl font-black text-slate-800 word-keep">${m.title}</h2>
+                        <p class="text-2xl text-slate-500 word-keep leading-tight">${m.desc}</p>
+                        <div class="flex gap-4 mt-6">
+                            <button onclick="window.closeConfirmModal()" class="flex-1 py-6 bg-slate-100 rounded-full text-3xl text-slate-600 tap-effect whitespace-nowrap font-bold border-4 border-slate-200">닫기</button>
+                            <button onclick="window.executeConfirmAction()" class="flex-1 py-6 ${m.isRed ? 'bg-red-600' : 'bg-blue-600'} text-white rounded-full text-3xl shadow-xl tap-effect font-bold whitespace-nowrap">${m.confirmText}</button>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            if (window.state.pendingReservations && window.state.pendingReservations.length > 0 && !window.state.confirmModal && !window.state.checkoutConfirmModal) {
+                const res = window.state.pendingReservations[0];
+                html += `
+                <div class="modal-overlay fade-in">
+                    <div class="bg-white w-full max-w-[900px] rounded-[5rem] p-16 border-[12px] border-amber-500 shadow-2xl flex flex-col gap-6">
+                        <div class="text-center">
+                            <h2 class="text-6xl font-black text-slate-800 mb-4 word-keep">📅 사전 예약 물품 도착</h2>
+                            <p class="text-3xl text-slate-500 word-keep">미리 예약해두신 아래 물품들을 지금 수령하시겠습니까?</p>
+                        </div>
+                        <div class="bg-slate-50 p-8 rounded-[3rem] border-4 border-slate-200 mb-4 mt-6 max-h-[350px] overflow-y-auto custom-scroll">
+                            ${res.cart.map(c => `
+                            <div class="flex justify-between items-center border-b-2 border-slate-200 py-6 last:border-0">
+                                <span class="text-3xl text-slate-700 font-bold">${c.itemName}</span>
+                                <span class="text-3xl text-blue-600 font-black">${c.amountStr} <span class="text-2xl text-slate-400">(총 ${c.amount}${c.unitBase})</span></span>
+                            </div>
+                            `).join('')}
+                        </div>
+                        <div class="flex flex-col gap-4">
+                            <button onclick="window.confirmReserveReceipt('${res.id}')" class="w-full py-8 bg-blue-600 text-white rounded-full text-4xl shadow-xl tap-effect font-bold whitespace-nowrap">예약 물품 일괄 수령 확정</button>
+                            <div class="flex gap-4">
+                                <button onclick="window.delayReserveReceipt()" class="flex-1 py-6 bg-slate-100 text-slate-600 rounded-full text-2xl tap-effect font-bold border-4 border-slate-200 whitespace-nowrap">나중에 수령</button>
+                                <button onclick="window.cancelReservation('${res.id}')" class="flex-1 py-6 bg-red-50 text-red-600 rounded-full text-2xl tap-effect font-bold border-4 border-red-200 whitespace-nowrap hover:bg-red-100">예약 전체 강제 취소</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            if (window.state.authModal) {
+                html += `
+                <div class="modal-overlay fade-in">
+                    <div class="bg-white w-full max-w-[600px] rounded-[4rem] p-16 border-8 border-slate-800 shadow-2xl flex flex-col gap-10">
+                        <div class="text-center gap-4 flex flex-col"><span class="text-6xl">🔒</span><h2 class="text-5xl font-black text-slate-800 word-keep">관리자 인증</h2></div>
+                        <input id="adminPwdInput" type="password" class="input-standard text-center tracking-widest" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter') window.verifyAdminPwd()">
+                        <div class="flex gap-4">
+                            <button onclick="window.cancelAdminAuth()" class="flex-1 py-6 bg-slate-100 rounded-full text-2xl text-slate-600 tap-effect whitespace-nowrap">취소</button>
+                            <button onclick="window.verifyAdminPwd()" class="flex-1 py-6 bg-slate-800 text-white rounded-full text-2xl tap-effect whitespace-nowrap">인증하기</button>
+                        </div>
+                    </div>
+                </div>`;
+            }
+            if (window.state.pwdChangeModal) {
+                html += `
+                <div class="modal-overlay fade-in">
+                    <div class="bg-white w-full max-w-[700px] rounded-[4rem] p-16 border-8 border-slate-700 shadow-2xl flex flex-col gap-10">
+                        <h2 class="text-5xl font-black text-slate-800 mb-4 border-b-4 border-slate-200 pb-4 word-keep">관리자 비밀번호 변경</h2>
+                        <div class="flex flex-col gap-6">
+                            <div class="flex flex-col gap-2"><label class="text-2xl text-slate-500 ml-4 whitespace-nowrap">현재 비밀번호</label><input id="oldPwdInput" type="password" class="input-standard"></div>
+                            <div class="flex flex-col gap-2"><label class="text-2xl text-blue-500 ml-4 whitespace-nowrap">새 비밀번호 (4자리 이상)</label><input id="newPwdInput" type="password" class="input-standard border-blue-300"></div>
+                        </div>
+                        <div class="flex gap-4 mt-6">
+                            <button onclick="window.state.pwdChangeModal=false; window.renderApp();" class="flex-1 py-8 bg-slate-100 rounded-full text-3xl text-slate-600 tap-effect whitespace-nowrap">취소</button>
+                            <button onclick="window.changeAdminPwd()" class="flex-1 py-8 bg-blue-600 text-white rounded-full text-3xl tap-effect whitespace-nowrap">변경 저장</button>
+                        </div>
+                    </div>
+                </div>`;
+            }
+            if (window.state.editingStaffItem && !window.state.confirmModal && !window.state.checkoutConfirmModal) {
+                const s = window.state.editingStaffItem;
+                html += `
+                <div class="modal-overlay fade-in">
+                    <div class="bg-white w-full max-w-[800px] rounded-[4rem] p-16 border-8 border-blue-500 shadow-2xl flex flex-col gap-8">
+                        <h2 class="text-5xl font-black text-slate-800 mb-4 border-b-4 border-blue-100 pb-6 word-keep">직원 정보 수정</h2>
+                        <div class="flex flex-col gap-6">
+                            <div class="flex flex-col gap-2"><label class="text-xl text-slate-500 ml-4 whitespace-nowrap">소속 브랜드</label><input id="editStaffBrand" value="${s.brand}" class="input-standard uppercase-input"></div>
+                            <div class="flex flex-col gap-2"><label class="text-xl text-slate-500 ml-4 whitespace-nowrap">사번</label><input id="editStaffId" value="${s.id}" class="input-standard uppercase-input"></div>
+                            <div class="flex flex-col gap-2"><label class="text-xl text-slate-500 ml-4 whitespace-nowrap">이름</label><input id="editStaffName" value="${s.name}" class="input-standard uppercase-input"></div>
+                            <div class="flex flex-col gap-2"><label class="text-xl text-slate-500 ml-4 whitespace-nowrap">카드번호 (Tag ID)</label><input id="editStaffTag" value="${s.tagId}" class="input-standard uppercase-input"></div>
+                        </div>
+                        <div class="flex gap-4 mt-6 shrink-0">
+                            <button onclick="window.state.editingStaffItem=null; window.renderApp();" class="flex-1 py-8 bg-slate-100 rounded-full text-3xl text-slate-600 tap-effect whitespace-nowrap">취소</button>
+                            <button onclick="window.saveStaffEdit()" class="flex-[2] py-8 bg-blue-600 text-white rounded-full text-3xl tap-effect whitespace-nowrap">정보 업데이트</button>
+                        </div>
+                    </div>
+                </div>`;
+            }
+            if (window.state.selectedItem && !window.state.confirmModal && !window.state.checkoutConfirmModal) {
+                const item = window.state.selectedItem;
+                const inCartItem = window.state.cart.find(c => c.itemId === item.id);
+                const availableNow = (item.stocks.counter || 0) - (inCartItem ? inCartItem.amount : 0);
+                const isSoldOut = availableNow <= 0;
+                
+                html += `
+                <div class="modal-overlay fade-in">
+                    <div class="bg-white w-full max-w-[1000px] rounded-[6rem] p-16 shadow-2xl border-[20px] border-blue-600 flex flex-col relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-50 rounded-full opacity-50 blur-3xl" style="transform: translate(30%, -30%);"></div>
+                        <div class="flex justify-between items-start mb-12 relative z-10 px-4">
+                            <div class="flex flex-col gap-4">
+                                <div class="inline-block bg-blue-600 text-white px-8 py-3 rounded-full text-2xl uppercase tracking-widest shadow-lg italic w-max whitespace-nowrap">${window.state.reserveMode ? '사전 예약 진행 중' : '수령 진행 중'}</div>
+                                <h2 class="text-6xl italic tracking-tighter text-slate-800 word-keep">[${item.name}]</h2>
+                            </div>
+                            <button onclick="window.closeItemModal()" class="text-slate-300 text-7xl tap-effect">✕</button>
+                        </div>
+                        <div class="flex flex-col gap-8 relative z-10 overflow-y-auto custom-scroll">
+                            <div class="bg-slate-50 p-10 rounded-[3rem] border-4 border-slate-200 shadow-inner">
+                                <div class="flex justify-between items-end mb-8 px-4 border-b-4 border-slate-200 pb-6">
+                                    <div class="flex flex-col gap-1 w-[55%] pr-2">
+                                        <span class="text-xl text-slate-400 uppercase tracking-widest italic whitespace-nowrap">단위 정보</span>
+                                        <span class="text-2xl italic text-blue-600 word-keep leading-snug font-bold">
+                                            기본(${item.unitBase})
+                                            ${item.unitBulk ? `<br/><span class="text-slate-500 text-xl mt-1 inline-block">묶음(${item.unitBulk}, 1${item.unitBulk}=${item.bulkRatio})</span>` : ''}
+                                        </span>
+                                    </div>
+                                    <div class="flex flex-col gap-1 text-right w-[45%] items-end pl-2 border-l-2 border-slate-200">
+                                        <span class="text-xl text-slate-400 uppercase tracking-widest italic whitespace-nowrap">현재 잔고</span>
+                                        <span class="text-3xl italic uppercase whitespace-nowrap ${isSoldOut?'text-red-500':'text-slate-700'} font-black">${isSoldOut ? '품절' : window.formatStock(availableNow, item.unitBase, item.unitBulk, item.bulkRatio)}</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-6 px-2">
+                                    <div class="flex items-center gap-4">
+                                        <select onchange="window.changeCartInputUnit(this.value)" class="bg-white border-4 border-slate-300 px-6 rounded-[2rem] text-3xl outline-none font-bold shadow-sm" style="height: 5.5rem;">
+                                            <option value="base" ${window.state.cartInputUnit==='base'?'selected':''}>기본 (${item.unitBase})</option>
+                                            ${item.unitBulk && item.bulkRatio > 1 ? `<option value="bulk" ${window.state.cartInputUnit==='bulk'?'selected':''}>묶음 (${item.unitBulk})</option>` : ''}
+                                        </select>
+                                        <div class="flex items-center bg-white border-4 border-slate-300 rounded-[2rem] p-2 flex-1 shadow-sm" style="height: 5.5rem;">
+                                            <button onclick="if(window.state.cartInputQty>1){window.changeCartInputQty(-1);}" class="w-14 h-14 bg-slate-100 rounded-2xl text-4xl tap-effect flex items-center justify-center text-slate-500 font-bold">-</button>
+                                            <input type="number" value="${window.state.cartInputQty}" onchange="window.setCartInputQty(this.value)" class="text-4xl tabular-nums text-center bg-transparent outline-none font-black text-slate-800 flex-1 w-full" style="border:none; box-shadow:none;" />
+                                            <button onclick="window.changeCartInputQty(1)" class="w-14 h-14 bg-slate-100 rounded-2xl text-4xl tap-effect flex items-center justify-center text-slate-500 font-bold">+</button>
+                                        </div>
+                                    </div>
+                                    <button onclick="window.confirmAddToCart()" class="bg-blue-600 text-white py-6 rounded-[3rem] text-4xl tap-effect shadow-xl font-bold tracking-widest flex flex-col items-center justify-center gap-2 ${isSoldOut?'grayscale':''}" ${isSoldOut?'disabled':''}>
+                                        <span>${window.state.reserveMode ? '예약 바구니 담기' : '장바구니 담기'}</span>
+                                        <span class="text-xl text-blue-200 font-normal tracking-normal truncate w-full px-4 text-center">담길 총량: ${window.state.cartInputUnit === 'bulk' ? (window.state.cartInputQty * (item.bulkRatio || 1)) : window.state.cartInputQty}${item.unitBase} ${item.unitBulk && item.bulkRatio > 1 ? `(${window.formatStock(window.state.cartInputUnit === 'bulk' ? (window.state.cartInputQty * (item.bulkRatio || 1)) : window.state.cartInputQty, item.unitBase, item.unitBulk, item.bulkRatio, true)})` : ''}</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="window.closeItemModal()" class="mt-8 shrink-0 w-full py-12 text-slate-500 border-8 border-dashed border-slate-300 rounded-[5rem] text-4xl uppercase tracking-widest tap-effect bg-slate-50 relative z-10 whitespace-nowrap">취소하고 돌아가기</button>
+                    </div>
+                </div>`;
+            }
+            if (window.state.categoryModal && !window.state.confirmModal) {
+                html += `
+                <div class="modal-overlay fade-in">
+                    <div class="bg-white w-full max-w-[800px] rounded-[5rem] p-16 border-8 border-blue-500 shadow-2xl flex flex-col">
+                        <h2 class="text-6xl mb-12 italic border-b-8 border-blue-100 pb-8 text-slate-800 word-keep">[${window.state.categoryModal.mode==='add'?'분류 신규 추가':'분류 명칭 수정'}]</h2>
+                        <div class="flex flex-col gap-12 overflow-y-auto custom-scroll">
+                            <div class="flex flex-col gap-4"><label class="text-3xl text-slate-500 ml-6 italic whitespace-nowrap">분류 이름</label><input id="catInput" class="input-standard" value="${window.state.categoryInputValue}" placeholder="분류명을 입력하세요"></div>
+                            <div class="flex gap-6 mt-8 shrink-0">
+                                <button onclick="window.state.categoryModal=null; window.renderApp();" class="flex-1 py-10 bg-slate-100 rounded-full text-4xl text-slate-600 border-4 border-slate-200 tap-effect whitespace-nowrap">취소</button>
+                                <button onclick="window.saveCategory()" class="flex-[2] py-10 bg-blue-600 text-white rounded-full text-4xl shadow-2xl tap-effect whitespace-nowrap">저장하기</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            }
+            if (window.state.editingItem && !window.state.confirmModal) {
+                html += `
+                <div class="modal-overlay fade-in">
+                    <div class="bg-white w-full max-w-[900px] rounded-[5rem] p-16 border-8 border-amber-500 shadow-2xl flex flex-col max-h-[90vh]">
+                        <h2 class="text-6xl mb-12 italic border-b-8 border-amber-100 pb-8 text-slate-800 shrink-0 word-keep">[${window.state.isAddingNew?'품목 신규 등록':'품목 정보 수정'}]</h2>
+                        <div class="flex flex-col gap-8 overflow-y-auto custom-scroll pr-4 mb-8">
+                            <div class="flex flex-col gap-2"><label class="text-2xl text-slate-500 ml-4 font-bold">품목 정식 명칭</label><input id="editName" class="input-standard" value="${window.state.editingItem.name}" placeholder="품목 명칭 입력"></div>
+                            <div class="grid grid-cols-2 gap-6">
+                                <div class="flex flex-col gap-2"><label class="text-2xl text-slate-500 ml-4 font-bold">기본 단위(낱개) <span class="text-red-500">*</span></label><input id="editUnitBase" class="input-standard" value="${window.state.editingItem.unitBase}" placeholder="예: 개, 장, 부"></div>
+                                <div class="flex flex-col gap-2"><label class="text-2xl text-slate-500 ml-4 font-bold">묶음 단위(박스) (선택)</label><input id="editUnitBulk" class="input-standard" value="${window.state.editingItem.unitBulk}" placeholder="예: 박스, 묶음"></div>
+                            </div>
+                            <div class="flex flex-col gap-2"><label class="text-2xl text-slate-500 ml-4 font-bold">1묶음당 기본 수량 비율 (비묶음품목은 1)</label><input type="number" id="editBulkRatio" class="input-standard uppercase-input" value="${window.state.editingItem.bulkRatio}" placeholder="예: 50"></div>
+                            
+                            <div class="grid grid-cols-2 gap-6 mt-4 p-6 bg-slate-50 rounded-[2rem] border-4 border-slate-200">
+                                <div class="flex flex-col gap-2"><label class="text-2xl text-slate-500 ml-4 font-bold">1인당 예약 한도 (기본단위)</label><input type="number" id="editMaxReserveQty" class="input-standard uppercase-input bg-white" value="${window.state.editingItem.maxReserveQty ?? 100}"></div>
+                                <div class="flex flex-col gap-2"><label class="text-2xl text-slate-500 ml-4 font-bold">발주 알림 수량 (총재고 기준)</label><input type="number" id="editAlertQty" class="input-standard uppercase-input bg-white" value="${window.state.editingItem.alertQty ?? 10}"></div>
+                            </div>
+                        </div>
+                        <div class="flex gap-6 shrink-0 mt-auto">
+                            <button onclick="window.closeEditItem()" class="flex-1 py-10 bg-slate-100 rounded-full text-4xl text-slate-600 border-4 border-slate-200 tap-effect whitespace-nowrap">취소</button>
+                            <button onclick="window.saveItem()" class="flex-[2] py-10 bg-amber-500 text-white rounded-full text-4xl shadow-2xl tap-effect whitespace-nowrap">저장하기</button>
+                        </div>
+                    </div>
+                </div>`;
+            }
+            if (window.state.transferModal && !window.state.confirmModal) {
+                const item = window.state.inventory.find(i=>i.id == window.state.transferModal.itemId);
+                if (item) {
+                    html += `
+                    <div class="modal-overlay fade-in">
+                        <div class="bg-white w-full max-w-[900px] rounded-[5rem] p-16 border-8 border-blue-500 shadow-2xl flex flex-col max-h-[90vh]">
+                            <h2 class="text-6xl mb-12 italic border-b-8 border-blue-100 pb-8 text-slate-800 word-keep shrink-0">[${item.name}] 재고 이동</h2>
+                            <div class="flex flex-col gap-12 overflow-y-auto custom-scroll mb-8">
+                                <div class="grid grid-cols-2 gap-8">
+                                    <div class="flex flex-col gap-4"><label class="text-3xl text-slate-500 ml-6 whitespace-nowrap">출발 창고</label>
+                                        <select id="transFrom" onchange="window.state.transferFrom=this.value" class="input-standard appearance-none">
+                                            ${Object.entries(window.state.warehouses).map(([k,v])=>`<option value="${k}" ${window.state.transferFrom===k?'selected':''}>${v}</option>`).join('')}
+                                        </select>
+                                    </div>
+                                    <div class="flex flex-col gap-4"><label class="text-3xl text-slate-500 ml-6 whitespace-nowrap">도착 창고</label>
+                                        <select id="transTo" onchange="window.state.transferTo=this.value" class="input-standard appearance-none">
+                                            ${Object.entries(window.state.warehouses).map(([k,v])=>`<option value="${k}" ${window.state.transferTo===k?'selected':''}>${v}</option>`).join('')}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-4">
+                                    <div class="flex justify-between items-center">
+                                        <label class="text-3xl text-slate-500 ml-6 whitespace-nowrap">이동 단위 및 수량</label>
+                                        <select onchange="window.state.transferModal.unitType=this.value" class="bg-slate-100 p-4 rounded-2xl text-2xl outline-none font-bold border-4 border-slate-200">
+                                            <option value="base" ${window.state.transferModal.unitType==='base'?'selected':''}>기본 단위 (${item.unitBase})</option>
+                                            ${item.unitBulk && item.bulkRatio > 1 ? `<option value="bulk" ${window.state.transferModal.unitType==='bulk'?'selected':''}>묶음 단위 (${item.unitBulk})</option>` : ''}
+                                        </select>
+                                    </div>
+                                    <div class="flex items-center gap-6">
+                                        <input type="number" id="transQty" value="${window.state.transferQty}" onchange="window.state.transferQty=parseInt(this.value)||1" class="input-standard flex-1">
+                                        <div class="flex gap-4">
+                                            ${[1,10,50,100].map(n=>`<button onclick="window.state.transferQty+=${n}; document.getElementById('transQty').value=window.state.transferQty;" class="bg-slate-100 px-8 py-6 rounded-3xl text-3xl tap-effect text-slate-600 whitespace-nowrap">+${n}</button>`).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex gap-6 shrink-0 mt-auto">
+                                <button onclick="window.state.transferModal=null; window.renderApp();" class="flex-1 py-10 bg-slate-100 rounded-full text-4xl text-slate-600 border-4 border-slate-200 tap-effect whitespace-nowrap">취소</button>
+                                <button onclick="window.execTransfer()" class="flex-[2] py-10 bg-blue-600 text-white rounded-full text-4xl shadow-2xl tap-effect whitespace-nowrap">이동 실행</button>
+                            </div>
+                        </div>
+                    </div>`;
+                }
+            }
+            return html;
+        }
+
+    </script>
+</body>
+</html>
