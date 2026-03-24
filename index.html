@@ -883,9 +883,14 @@
             const timeStr = new Date().toLocaleTimeString('ko-KR', { hour12: false });
             
             const cartCopy = JSON.parse(JSON.stringify(state.cart));
-            // [추가된 부분] 장바구니 데이터를 비우기 전에 영수증 프린터 출력 함수 호출!
-            window.printReceipt(cartCopy, state.user, state.reserveMode);
+            
+            // 👇 [핵심 로직] 현장 오프라인 태그 수령일 때만 즉시 프린트!
+            if (!state.reserveMode && window.printReceipt) {
+                window.printReceipt(cartCopy, state.user, false);
+            }
+
             if (state.reserveMode) {
+                // 사전 예약 로직 (출력 없이 데이터만 저장)
                 const reserveCart = state.cart.map(c => {
                     const realItem = state.inventory.find(i => i.id === c.itemId);
                     realItem.stocks.counter -= c.amount; 
@@ -901,7 +906,7 @@
                     name: state.user.name,
                     brand: state.user.brand,
                     cart: reserveCart,
-                    status: 'new'
+                    status: 'new' // 신규 예약은 '준비중' 상태
                 });
                 
                 state.cart = []; window.saveDataToStorage(); 
@@ -909,6 +914,7 @@
                 setTimeout(() => { state.reserveMode = false; window.changeView('scan'); }, 3000);
 
             } else {
+                // 오프라인 현장 수령 로직 (데이터 저장 및 로그 기록)
                 state.cart.forEach(c => {
                     const realItem = state.inventory.find(i => i.id === c.itemId);
                     realItem.stocks.counter -= c.amount;
