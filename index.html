@@ -687,12 +687,35 @@
         }
         window.simulateTag = simulateTag;
 
+        // [수정됨] 키오스크 RFID 리더기 전용 이벤트 리스너 (한영키/속도 문제 보완)
+        let lastKeyTime = Date.now();
         window.addEventListener('keydown', function(e) {
+            // 1. 입력창 포커스 시 무시
             if (document.activeElement && ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
-            const key = e.key;
+            
+            // 2. 모달창 활성화 시 무시
             if (state.authModal || state.pwdChangeModal || state.categoryModal || state.editingItem || state.transferModal || state.editingStaffItem || state.confirmModal || state.checkoutConfirmModal || state.stockAlertModal) return; 
-            if (key === 'Enter') { if (tagBuffer.trim()) { window.simulateTag(tagBuffer.trim()); tagBuffer = ""; } } 
-            else if (key.length === 1) { tagBuffer += key; }
+
+            const currentTime = Date.now();
+            
+            // 3. 키 입력 간격이 50ms 이상이면 사람의 손 타이핑으로 간주하고 버퍼 초기화 (바코드/RFID 리더기는 10~20ms 이내로 매우 빠름)
+            if (currentTime - lastKeyTime > 50) {
+                tagBuffer = "";
+            }
+            lastKeyTime = currentTime;
+
+            const key = e.key;
+            if (key === 'Enter') { 
+                e.preventDefault(); // 기본 Enter 동작(스크롤 이동 등) 방지
+                if (tagBuffer.trim()) { 
+                    window.simulateTag(tagBuffer.trim()); 
+                    tagBuffer = ""; 
+                } 
+            } 
+            // 4. 한글 입력 방지 및 영문/숫자만 수집 (e.code를 사용해 물리적 키보드 값 추출)
+            else if (e.code && (e.code.startsWith('Key') || e.code.startsWith('Digit'))) { 
+                tagBuffer += e.code.replace('Key', '').replace('Digit', ''); 
+            }
         });
 
         function verifyReserveStaff() {
@@ -860,7 +883,8 @@
             const timeStr = new Date().toLocaleTimeString('ko-KR', { hour12: false });
             
             const cartCopy = JSON.parse(JSON.stringify(state.cart));
-            
+            // [추가된 부분] 장바구니 데이터를 비우기 전에 영수증 프린터 출력 함수 호출!
+            window.printReceipt(cartCopy, state.user, state.reserveMode);
             if (state.reserveMode) {
                 const reserveCart = state.cart.map(c => {
                     const realItem = state.inventory.find(i => i.id === c.itemId);
@@ -1745,7 +1769,101 @@
                 </div>
             </div>`;
         }
+        // [신규] 감열지 영수증 프린터 출력용 함수
+        function printReceipt(cart, user, isReserve) {
+            // 현재 시간 생성
+            const dateStr = new Date().toLocaleString('ko-KR');
+            let itemsHtml = '';
+            let totalQty = 0;
+            
+            // 장바구니 내역을 표(Table) 형태의 HTML로 변환
+            cart.forEach(c => {
+                itemsHtml += `
+                    <tr>
+                        <td style="text-align: left; padding: 4px 0; font-size: 14px; word-break: keep-all;">${c.itemName}</td>
+                        <td style="text-align: right; font-size: 14px;">${c.amount}${c.unitBase}</td>
+                    </tr>
+                `;
+                totalQty += c.amount;
+            });
 
+            // 감열지 프린터용 (가로 80mm 기준) 영수증 HTML 템플릿
+            const printContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>영수증</title>
+                    <style>
+                        @page { margin: 0; } /* 용지 여백 제거 */
+                        body { 
+                            font-family: 'Malgun Gothic', '맑은 고딕', sans-serif; 
+                            width: 280px; /* 80mm 프린터 기준 (58mm 프린터인 경우 200px 정도로 줄이세요) */
+                            margin: 0 auto; 
+                            padding: 10px; 
+                            color: #000;
+                        }
+                        .header { text-align: center; border-bottom: 2px dashed #000; padding-bottom: 10px; margin-bottom: 10px; }
+                        .title { font-size: 22px; font-weight: bold; margin: 0; }
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+                        th { border-bottom: 1px solid #000; padding: 4px 0; text-align: left; font-size: 14px;}
+                        .footer { text-align: center; border-top: 2px dashed #000; padding-top: 10px; margin-top: 10px; font-size: 12px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h2 class="title">[ 창고 출고 ${isReserve ? '예약증' : '영수증'} ]</h2>
+                        <p style="margin: 5px 0 0 0; font-size: 12px;">${dateStr}</p>
+                    </div>
+                    <div style="margin-bottom: 10px; font-size: 14px;">
+                        <strong>출고자:</strong> ${user.brand} / ${user.name} <br>
+                        <strong>사 번:</strong> ${user.id}
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>품목명</th>
+                                <th style="text-align: right;">수량</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${itemsHtml}
+                        </tbody>
+                    </table>
+                    <div style="text-align: right; font-weight: bold; font-size: 16px;">
+                        총 합계: ${totalQty} 개
+                    </div>
+                    <div class="footer">
+                        서명: ___________________<br><br>
+                        출고가 완료되었습니다.
+                    </div>
+                </body>
+                </html>
+            `;
+
+            // 보이지 않는 iframe을 생성하여 그 안에서 인쇄 실행
+            const printFrame = document.createElement('iframe');
+            printFrame.style.position = 'fixed';
+            printFrame.style.right = '0';
+            printFrame.style.bottom = '0';
+            printFrame.style.width = '0';
+            printFrame.style.height = '0';
+            printFrame.style.border = '0';
+            document.body.appendChild(printFrame);
+
+            const doc = printFrame.contentWindow.document;
+            doc.open();
+            doc.write(printContent);
+            doc.close();
+
+            // 내용이 로드될 시간을 짧게 준 뒤 인쇄 호출
+            setTimeout(() => {
+                printFrame.contentWindow.focus();
+                printFrame.contentWindow.print();
+                // 인쇄 다이얼로그가 닫히면 iframe 제거
+                setTimeout(() => document.body.removeChild(printFrame), 1000);
+            }, 300);
+        }
+        window.printReceipt = printReceipt;
         function renderModals() {
             let html = '';
             
