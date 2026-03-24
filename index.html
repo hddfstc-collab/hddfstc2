@@ -1522,45 +1522,63 @@
             const filterStatus = window.state.reserveFilterStatus || '전체';
             const filtered = window.state.reservations.filter(r => filterStatus === '전체' || r.status === filterStatus);
             
+            // 배지(상태창) 폰트와 패딩 축소
             const getStatusHtml = (status) => {
-                // 👇 [추가됨] 'new' 상태에 대한 라벨 디자인 추가
-                if(status === 'new') return `<span class="bg-white border-2 border-blue-500 text-blue-600 px-4 py-2 rounded-full text-lg font-bold">신규 (준비중)</span>`;
-                if(status === 'pending') return `<span class="bg-amber-100 text-amber-600 px-4 py-2 rounded-full text-lg font-bold">현장 대기중</span>`;
-                if(status === 'completed') return `<span class="bg-blue-100 text-blue-600 px-4 py-2 rounded-full text-lg font-bold">수령 완료</span>`;
-                if(status === 'cancelled') return `<span class="bg-red-100 text-red-600 px-4 py-2 rounded-full text-lg font-bold">취소됨</span>`;
+                if(status === 'new') return `<span class="bg-white border-2 border-blue-500 text-blue-600 px-3 py-1 rounded-full text-sm font-bold whitespace-nowrap">신규(준비중)</span>`;
+                if(status === 'pending') return `<span class="bg-amber-100 text-amber-600 px-3 py-1 rounded-full text-sm font-bold whitespace-nowrap">현장 대기</span>`;
+                if(status === 'completed') return `<span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm font-bold whitespace-nowrap">수령 완료</span>`;
+                if(status === 'cancelled') return `<span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-bold whitespace-nowrap">취소됨</span>`;
                 return status;
             }
 
             return `
             <div class="flex flex-col gap-10">
-                <div class="bg-white p-12 rounded-[4rem] border-4 border-slate-200 flex flex-col gap-8 shadow-lg">
+                <div class="bg-white p-6 lg:p-12 rounded-[4rem] border-4 border-slate-200 flex flex-col gap-8 shadow-lg">
                     <div class="flex flex-wrap justify-between items-center border-b-4 border-slate-200 pb-6 gap-4">
-                        <h3 class="text-4xl text-slate-800 border-l-[10px] border-blue-500 pl-6 uppercase tracking-widest italic font-black word-keep">📅 사전 예약 종합 관리</h3>
-                        <div class="flex flex-wrap gap-4">
-                            <button onclick="window.changeReserveFilter('전체')" class="px-6 py-3 rounded-2xl text-xl font-bold tap-effect ${filterStatus==='전체'?'bg-slate-800 text-white':'bg-slate-100 text-slate-500'}">전체보기</button>
-                            <button onclick="window.changeReserveFilter('new')" class="px-6 py-3 rounded-2xl text-xl font-bold tap-effect ${filterStatus==='new'?'bg-blue-600 text-white':'bg-slate-100 text-slate-500'}">신규 (준비중)</button>
-                            <button onclick="window.changeReserveFilter('pending')" class="px-6 py-3 rounded-2xl text-xl font-bold tap-effect ${filterStatus==='pending'?'bg-amber-500 text-white':'bg-slate-100 text-slate-500'}">현장 대기중</button>
-                            <button onclick="window.changeReserveFilter('completed')" class="px-6 py-3 rounded-2xl text-xl font-bold tap-effect ${filterStatus==='completed'?'bg-slate-600 text-white':'bg-slate-100 text-slate-500'}">수령 완료</button>
-                            <button onclick="window.changeReserveFilter('cancelled')" class="px-6 py-3 rounded-2xl text-xl font-bold tap-effect ${filterStatus==='cancelled'?'bg-red-600 text-white':'bg-slate-100 text-slate-500'}">취소 내역</button>
+                        <h3 class="text-3xl lg:text-4xl text-slate-800 border-l-[10px] border-blue-500 pl-4 uppercase tracking-widest italic font-black word-keep">📅 예약 종합 관리</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="window.changeReserveFilter('전체')" class="px-4 py-2 rounded-xl text-sm lg:text-base font-bold tap-effect ${filterStatus==='전체'?'bg-slate-800 text-white':'bg-slate-100 text-slate-500'}">전체</button>
+                            <button onclick="window.changeReserveFilter('new')" class="px-4 py-2 rounded-xl text-sm lg:text-base font-bold tap-effect ${filterStatus==='new'?'bg-blue-600 text-white':'bg-slate-100 text-slate-500'}">신규</button>
+                            <button onclick="window.changeReserveFilter('pending')" class="px-4 py-2 rounded-xl text-sm lg:text-base font-bold tap-effect ${filterStatus==='pending'?'bg-amber-500 text-white':'bg-slate-100 text-slate-500'}">대기</button>
+                            <button onclick="window.changeReserveFilter('completed')" class="px-4 py-2 rounded-xl text-sm lg:text-base font-bold tap-effect ${filterStatus==='completed'?'bg-slate-600 text-white':'bg-slate-100 text-slate-500'}">완료</button>
+                            <button onclick="window.changeReserveFilter('cancelled')" class="px-4 py-2 rounded-xl text-sm lg:text-base font-bold tap-effect ${filterStatus==='cancelled'?'bg-red-600 text-white':'bg-slate-100 text-slate-500'}">취소</button>
                         </div>
                     </div>
                     
                     <div class="overflow-x-auto rounded-[2rem] border-4 border-slate-300 shadow-sm">
-                        <table class="excel-table">
-                            <thead><tr><th class="whitespace-nowrap">예약일시</th><th class="whitespace-nowrap">사용자 정보</th><th class="whitespace-nowrap">요청 물품 내역</th><th class="whitespace-nowrap">진행 상태</th><th class="whitespace-nowrap">관리</th></tr></thead>
+                        <table class="excel-table w-full">
+                            <thead>
+                                <tr>
+                                    <th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">일시</th>
+                                    <th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">사용자</th>
+                                    <th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">내역</th>
+                                    <th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">상태</th>
+                                    <th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">관리</th>
+                                </tr>
+                            </thead>
                             <tbody>
                                 ${filtered.map(r => `
                                 <tr>
-                                    <td class="text-slate-500 whitespace-nowrap"><span class="text-sm block">${r.rawDate}</span>${r.time}</td>
-                                    <td class="whitespace-nowrap">${r.staffId} <span class="text-xl text-slate-500 block">(${r.name} / ${r.brand})</span></td>
-                                    <td class="text-left text-slate-700 text-xl font-bold whitespace-nowrap">
-                                        ${r.cart.map(c => `<div class="mb-1 border-b border-slate-200 pb-1 last:border-0 whitespace-nowrap">- ${c.itemName} <span class="text-blue-500 font-black ml-2">${window.formatStock(c.amount, c.unitBase, c.unitBulk, c.bulkRatio, false)}</span></div>`).join('')}
+                                    <td style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: normal; line-height: 1.3;">
+                                        <span class="text-xs text-slate-400 block">${r.rawDate}</span><span class="font-bold text-slate-700">${r.time}</span>
                                     </td>
-                                    <td class="whitespace-nowrap">${getStatusHtml(r.status)}</td>
-                                    <td class="whitespace-nowrap">
-                                        ${r.status === 'new' ? `<button onclick="window.printAndReadyReservation('${r.id}')" class="bg-blue-50 text-blue-600 text-lg px-4 py-2 rounded-xl tap-effect border border-blue-200 font-bold hover:bg-blue-100 whitespace-nowrap mr-2">🖨️ 출력 및 준비</button> <button onclick="window.cancelReservation('${r.id}')" class="bg-red-50 text-red-600 text-lg px-4 py-2 rounded-xl tap-effect border border-red-200 font-bold hover:bg-red-100 whitespace-nowrap">취소</button>` : ''}
-                                        ${r.status === 'pending' ? `<button onclick="window.cancelReservation('${r.id}')" class="bg-red-50 text-red-600 text-lg px-4 py-2 rounded-xl tap-effect border border-red-200 font-bold hover:bg-red-100 whitespace-nowrap">강제 취소(재고복구)</button>` : ''}
+                                    <td style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: normal; line-height: 1.3; word-break: break-all;">
+                                        <div class="font-bold text-slate-800">${r.name}</div>
+                                        <div class="text-sm text-slate-500 mt-1">${r.brand}<br/>${r.staffId}</div>
+                                    </td>
+                                    <td style="padding: 1rem 0.5rem; font-size: 1.1rem; text-align: left; white-space: normal; line-height: 1.4;">
+                                        ${r.cart.map(c => `<div class="mb-1 border-b border-slate-100 pb-1 last:border-0 word-keep text-sm lg:text-base">- ${c.itemName} <strong class="text-blue-500 ml-1">${window.formatStock(c.amount, c.unitBase, c.unitBulk, c.bulkRatio, false)}</strong></div>`).join('')}
+                                    </td>
+                                    <td style="padding: 1rem 0.5rem;">${getStatusHtml(r.status)}</td>
+                                    <td style="padding: 1rem 0.5rem;">
+                                        <div class="flex flex-col gap-2 items-center">
+                                        ${r.status === 'new' ? `
+                                            <button onclick="window.printAndReadyReservation('${r.id}')" class="bg-blue-50 text-blue-600 text-sm px-3 py-2 rounded-lg tap-effect border border-blue-200 font-bold hover:bg-blue-100 w-full whitespace-nowrap">🖨️ 출력/준비</button> 
+                                            <button onclick="window.cancelReservation('${r.id}')" class="bg-red-50 text-red-600 text-sm px-3 py-2 rounded-lg tap-effect border border-red-200 font-bold hover:bg-red-100 w-full whitespace-nowrap">취소</button>
+                                        ` : ''}
+                                        ${r.status === 'pending' ? `<button onclick="window.cancelReservation('${r.id}')" class="bg-red-50 text-red-600 text-sm px-3 py-2 rounded-lg tap-effect border border-red-200 font-bold hover:bg-red-100 w-full whitespace-nowrap">강제 취소</button>` : ''}
                                         ${r.status === 'completed' || r.status === 'cancelled' ? '-' : ''}
+                                        </div>
                                     </td>
                                 </tr>`).join('')}
                                 ${filtered.length===0 ? `<tr><td colspan="5" class="text-center py-16 text-slate-400 word-keep">예약 기록이 없습니다.</td></tr>`:''}
@@ -1747,30 +1765,36 @@
             );
             return `
             <div class="flex flex-col gap-10">
-                <div class="bg-slate-800 p-10 rounded-[3rem] border-4 border-slate-700 shadow-inner flex flex-col shrink-0">
+                <div class="bg-slate-800 p-8 lg:p-10 rounded-[3rem] border-4 border-slate-700 shadow-inner flex flex-col shrink-0">
                     <div class="flex flex-wrap justify-between items-center mb-6 border-b-4 border-slate-700 pb-6 gap-4">
-                        <h3 class="text-4xl text-white italic uppercase tracking-tighter word-keep">사원 일괄 등록 (엑셀 연동)</h3>
-                        <div class="flex flex-wrap gap-4">
+                        <h3 class="text-3xl lg:text-4xl text-white italic uppercase tracking-tighter word-keep">사원 일괄 등록</h3>
+                        <div class="flex flex-wrap gap-2">
                             <input type="file" id="csvFileInput" accept=".csv" style="display:none;" onchange="window.importStaffCSV(event)">
-                            <button onclick="document.getElementById('csvFileInput').click()" class="bg-blue-600 text-white px-8 py-4 rounded-2xl text-2xl tap-effect shadow-md whitespace-nowrap font-bold">엑셀 업로드</button>
-                            <button onclick="window.exportStaffCSV()" class="bg-slate-100 border-4 border-slate-300 text-slate-800 px-8 py-4 rounded-2xl text-2xl tap-effect shadow-md whitespace-nowrap font-bold">엑셀 다운로드</button>
+                            <button onclick="document.getElementById('csvFileInput').click()" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm lg:text-base tap-effect shadow-md whitespace-nowrap font-bold">엑셀 업로드</button>
+                            <button onclick="window.exportStaffCSV()" class="bg-slate-100 border-2 border-slate-300 text-slate-800 px-4 py-2 rounded-xl text-sm lg:text-base tap-effect shadow-md whitespace-nowrap font-bold">다운로드</button>
                         </div>
                     </div>
-                    <textarea id="bulkText" class="w-full p-8 bg-slate-900 border-2 border-slate-600 rounded-2xl font-black text-2xl mb-6 outline-none shadow-inner custom-scroll text-blue-200 uppercase-input word-keep" style="min-height: 200px;" placeholder="※ 엑셀 다운로드 후 양식에 맞춰 수정하거나, 직접 텍스트를 붙여넣으세요.\\n\\n[양식] 브랜드, 사번, 이름, 카드번호(TagID)"></textarea>
-                    <button onclick="window.doBulkImport()" class="w-full py-6 bg-blue-500 text-white rounded-full text-3xl tap-effect shadow-lg uppercase tracking-widest whitespace-nowrap">텍스트 일괄 등록 실행</button>
+                    <textarea id="bulkText" class="w-full p-6 bg-slate-900 border-2 border-slate-600 rounded-2xl font-black text-lg lg:text-xl mb-6 outline-none shadow-inner custom-scroll text-blue-200 uppercase-input word-keep" style="min-height: 150px;" placeholder="※ 엑셀 다운로드 후 양식에 맞춰 수정하거나, 직접 텍스트를 붙여넣으세요.\\n\\n[양식] 브랜드, 사번, 이름, 카드번호(TagID)"></textarea>
+                    <button onclick="window.doBulkImport()" class="w-full py-4 lg:py-6 bg-blue-500 text-white rounded-full text-xl lg:text-2xl tap-effect shadow-lg uppercase tracking-widest whitespace-nowrap font-bold">텍스트 일괄 등록 실행</button>
                 </div>
+                
                 <div class="flex flex-col gap-4 pt-6">
-                    <h3 class="text-3xl text-slate-800 px-6 border-l-8 border-blue-500 uppercase tracking-widest italic mb-4 word-keep">직원 데이터 관리 (총 ${window.state.staffList.length}명)</h3>
-                    <div class="flex flex-wrap gap-4 mb-4">
-                        <input id="staffSearchInput" class="input-standard flex-1 bg-white uppercase-input" placeholder="직원 검색" value="${window.state.staffSearchQuery}">
-                        <button onclick="window.doSearchStaff()" class="bg-slate-700 text-white px-10 py-4 rounded-3xl text-2xl font-bold tap-effect whitespace-nowrap">검색</button>
-                        <button onclick="window.state.staffSearchQuery=''; window.renderApp();" class="bg-slate-200 text-slate-600 px-10 py-4 rounded-3xl text-2xl font-bold tap-effect whitespace-nowrap">초기화</button>
+                    <h3 class="text-2xl lg:text-3xl text-slate-800 px-4 border-l-8 border-blue-500 uppercase tracking-widest italic mb-4 word-keep">직원 데이터 관리 (총 ${window.state.staffList.length}명)</h3>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <input id="staffSearchInput" class="input-standard flex-1 bg-white uppercase-input !text-xl !py-4" placeholder="직원 검색" value="${window.state.staffSearchQuery}">
+                        <button onclick="window.doSearchStaff()" class="bg-slate-700 text-white px-6 py-4 rounded-2xl text-xl font-bold tap-effect whitespace-nowrap">검색</button>
+                        <button onclick="window.state.staffSearchQuery=''; window.renderApp();" class="bg-slate-200 text-slate-600 px-6 py-4 rounded-2xl text-xl font-bold tap-effect whitespace-nowrap">초기화</button>
                     </div>
+                    
                     <div class="overflow-x-auto rounded-[2rem] border-4 border-slate-300 shadow-md">
-                        <table class="excel-table">
+                        <table class="excel-table w-full">
                             <thead>
                                 <tr>
-                                    <th class="whitespace-nowrap">브랜드</th><th class="whitespace-nowrap">사번</th><th class="whitespace-nowrap">이름</th><th class="whitespace-nowrap">카드번호 (Tag ID)</th><th class="whitespace-nowrap">관리</th>
+                                    <th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">브랜드</th>
+                                    <th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">사번</th>
+                                    <th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">이름</th>
+                                    <th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">카드번호</th>
+                                    <th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">관리</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1778,14 +1802,14 @@
                                     const originalIdx = window.state.staffList.indexOf(s);
                                     return `
                                     <tr>
-                                        <td class="text-blue-600 uppercase tracking-widest whitespace-nowrap">${s.brand}</td>
-                                        <td class="text-slate-600 uppercase whitespace-nowrap">${s.id}</td>
-                                        <td class="text-slate-800 uppercase whitespace-nowrap">${s.name}</td>
-                                        <td class="text-slate-500 font-normal tracking-widest uppercase whitespace-nowrap">${s.tagId}</td>
-                                        <td class="whitespace-nowrap">
-                                            <div class="flex justify-center gap-2">
-                                                <button onclick="window.openEditStaff(${originalIdx})" class="bg-blue-100 text-blue-600 px-4 py-2 rounded-xl text-lg tap-effect font-bold">수정</button>
-                                                <button onclick="window.deleteStaff(${originalIdx}, '${s.name}')" class="bg-red-50 text-red-500 px-4 py-2 rounded-xl text-lg tap-effect font-bold">삭제</button>
+                                        <td style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: normal; word-break: break-all; line-height: 1.3;" class="text-blue-600 font-bold uppercase">${s.brand}</td>
+                                        <td style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: normal; word-break: break-all; line-height: 1.3;" class="text-slate-600 uppercase">${s.id}</td>
+                                        <td style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: normal; word-break: keep-all; line-height: 1.3;" class="text-slate-800 font-bold uppercase">${s.name}</td>
+                                        <td style="padding: 1rem 0.5rem; font-size: 1rem; white-space: normal; word-break: break-all; line-height: 1.3;" class="text-slate-500 tracking-widest uppercase">${s.tagId}</td>
+                                        <td style="padding: 1rem 0.5rem;">
+                                            <div class="flex flex-col gap-2 items-center justify-center">
+                                                <button onclick="window.openEditStaff(${originalIdx})" class="bg-blue-100 text-blue-600 px-3 py-2 rounded-lg text-sm tap-effect font-bold w-full whitespace-nowrap">수정</button>
+                                                <button onclick="window.deleteStaff(${originalIdx}, '${s.name}')" class="bg-red-50 text-red-500 px-3 py-2 rounded-lg text-sm tap-effect font-bold w-full whitespace-nowrap">삭제</button>
                                             </div>
                                         </td>
                                     </tr>`
