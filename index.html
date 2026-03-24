@@ -901,7 +901,7 @@
                     name: state.user.name,
                     brand: state.user.brand,
                     cart: reserveCart,
-                    status: 'pending'
+                    status: 'new'
                 });
                 
                 state.cart = []; window.saveDataToStorage(); 
@@ -964,7 +964,24 @@
             window.openConfirmModal('예약 강제 취소', '이 예약을 정말 취소하시겠습니까?<br/>미리 차감되었던 창고 재고가 다시 복구됩니다.', 'cancelReservation', resId, '강제 취소', true);
         }
         window.cancelReservation = cancelReservation;
-
+// [신규 기능] 예약건 출력 및 준비 완료 처리
+        function printAndReadyReservation(resId) {
+            const res = state.reservations.find(r => r.id == resId);
+            if(res) {
+                // 1. 감열지 프린터로 영수증 출력 (이전 답변에서 추가한 printReceipt 함수 활용)
+                const userObj = { brand: res.brand, name: res.name, id: res.staffId };
+                if (window.printReceipt) {
+                    window.printReceipt(res.cart, userObj, true);
+                }
+                
+                // 2. 상태를 '현장 대기중(pending)'으로 변경
+                res.status = 'pending';
+                window.saveDataToStorage();
+                window.showMsg("🖨️ 주문 내역이 출력되었으며, '현장 대기중'으로 변경되었습니다.");
+                window.renderApp();
+            }
+        }
+        window.printAndReadyReservation = printAndReadyReservation;
         function deleteLog(id) {
             window.openConfirmModal('수령 기록 취소', '이 수령 기록을 삭제하고 차감된 재고를 다시 원상 복구하시겠습니까?', 'deleteLog', id, '취소 및 복구', true);
         }
@@ -1500,6 +1517,8 @@
             const filtered = window.state.reservations.filter(r => filterStatus === '전체' || r.status === filterStatus);
             
             const getStatusHtml = (status) => {
+                // 👇 [추가됨] 'new' 상태에 대한 라벨 디자인 추가
+                if(status === 'new') return `<span class="bg-white border-2 border-blue-500 text-blue-600 px-4 py-2 rounded-full text-lg font-bold">신규 (준비중)</span>`;
                 if(status === 'pending') return `<span class="bg-amber-100 text-amber-600 px-4 py-2 rounded-full text-lg font-bold">현장 대기중</span>`;
                 if(status === 'completed') return `<span class="bg-blue-100 text-blue-600 px-4 py-2 rounded-full text-lg font-bold">수령 완료</span>`;
                 if(status === 'cancelled') return `<span class="bg-red-100 text-red-600 px-4 py-2 rounded-full text-lg font-bold">취소됨</span>`;
@@ -1513,8 +1532,9 @@
                         <h3 class="text-4xl text-slate-800 border-l-[10px] border-blue-500 pl-6 uppercase tracking-widest italic font-black word-keep">📅 사전 예약 종합 관리</h3>
                         <div class="flex flex-wrap gap-4">
                             <button onclick="window.changeReserveFilter('전체')" class="px-6 py-3 rounded-2xl text-xl font-bold tap-effect ${filterStatus==='전체'?'bg-slate-800 text-white':'bg-slate-100 text-slate-500'}">전체보기</button>
+                            <button onclick="window.changeReserveFilter('new')" class="px-6 py-3 rounded-2xl text-xl font-bold tap-effect ${filterStatus==='new'?'bg-blue-600 text-white':'bg-slate-100 text-slate-500'}">신규 (준비중)</button>
                             <button onclick="window.changeReserveFilter('pending')" class="px-6 py-3 rounded-2xl text-xl font-bold tap-effect ${filterStatus==='pending'?'bg-amber-500 text-white':'bg-slate-100 text-slate-500'}">현장 대기중</button>
-                            <button onclick="window.changeReserveFilter('completed')" class="px-6 py-3 rounded-2xl text-xl font-bold tap-effect ${filterStatus==='completed'?'bg-blue-600 text-white':'bg-slate-100 text-slate-500'}">수령 완료</button>
+                            <button onclick="window.changeReserveFilter('completed')" class="px-6 py-3 rounded-2xl text-xl font-bold tap-effect ${filterStatus==='completed'?'bg-slate-600 text-white':'bg-slate-100 text-slate-500'}">수령 완료</button>
                             <button onclick="window.changeReserveFilter('cancelled')" class="px-6 py-3 rounded-2xl text-xl font-bold tap-effect ${filterStatus==='cancelled'?'bg-red-600 text-white':'bg-slate-100 text-slate-500'}">취소 내역</button>
                         </div>
                     </div>
@@ -1532,7 +1552,9 @@
                                     </td>
                                     <td class="whitespace-nowrap">${getStatusHtml(r.status)}</td>
                                     <td class="whitespace-nowrap">
-                                        ${r.status === 'pending' ? `<button onclick="window.cancelReservation('${r.id}')" class="bg-red-50 text-red-600 text-lg px-4 py-2 rounded-xl tap-effect border border-red-200 font-bold hover:bg-red-100 whitespace-nowrap">강제 취소(재고복구)</button>` : '-'}
+                                        ${r.status === 'new' ? `<button onclick="window.printAndReadyReservation('${r.id}')" class="bg-blue-50 text-blue-600 text-lg px-4 py-2 rounded-xl tap-effect border border-blue-200 font-bold hover:bg-blue-100 whitespace-nowrap mr-2">🖨️ 출력 및 준비</button> <button onclick="window.cancelReservation('${r.id}')" class="bg-red-50 text-red-600 text-lg px-4 py-2 rounded-xl tap-effect border border-red-200 font-bold hover:bg-red-100 whitespace-nowrap">취소</button>` : ''}
+                                        ${r.status === 'pending' ? `<button onclick="window.cancelReservation('${r.id}')" class="bg-red-50 text-red-600 text-lg px-4 py-2 rounded-xl tap-effect border border-red-200 font-bold hover:bg-red-100 whitespace-nowrap">강제 취소(재고복구)</button>` : ''}
+                                        ${r.status === 'completed' || r.status === 'cancelled' ? '-' : ''}
                                     </td>
                                 </tr>`).join('')}
                                 ${filtered.length===0 ? `<tr><td colspan="5" class="text-center py-16 text-slate-400 word-keep">예약 기록이 없습니다.</td></tr>`:''}
@@ -1797,7 +1819,7 @@
                         @page { margin: 0; } /* 용지 여백 제거 */
                         body { 
                             font-family: 'Malgun Gothic', '맑은 고딕', sans-serif; 
-                            width: 280px; /* 80mm 프린터 기준 (58mm 프린터인 경우 200px 정도로 줄이세요) */
+                            width: 270px; /* 80mm 프린터 기준 (58mm 프린터인 경우 200px 정도로 줄이세요) */
                             margin: 0 auto; 
                             padding: 10px; 
                             color: #000;
