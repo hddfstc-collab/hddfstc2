@@ -553,7 +553,10 @@ body {
 .border-b-8 {
     border-bottom: 8px solid var(--slate-200);
 }
-
+/* 문제확인: 아래 클래스명이 CSS에서 유효하지 않음 (대괄호 [] 사용 불가)
+   수정: 유효한 이름(예: .border-l-10, .border-l-15)으로 대체 또는 필요시 HTML에서 직접 스타일 적용 필요
+*/
+/*
 .border-l-[10px] {
     border-left: 10px solid var(--slate-200);
 }
@@ -561,6 +564,7 @@ body {
 .border-l-[15px] {
     border-left: 15px solid var(--slate-200);
 }
+*/
 
 .border-slate-100 {
     border-color: var(--slate-100);
@@ -646,31 +650,32 @@ body {
     border-radius: 1.5rem;
 }
 
-.rounded-[2rem] {
+/* 예시: 대괄호 없이 순수 CSS로 재정의 */
+.rounded-2rem {
     border-radius: 2rem;
 }
 
-.rounded-[3rem] {
+.rounded-3rem {
     border-radius: 3rem;
 }
 
-.rounded-[3.5rem] {
+.rounded-3_5rem {
     border-radius: 3.5rem;
 }
 
-.rounded-[4rem] {
+.rounded-4rem {
     border-radius: 4rem;
 }
 
-.rounded-[5rem] {
+.rounded-5rem {
     border-radius: 5rem;
 }
 
-.rounded-[6rem] {
+.rounded-6rem {
     border-radius: 6rem;
 }
 
-.rounded-[7rem] {
+.rounded-7rem {
     border-radius: 7rem;
 }
 
@@ -678,7 +683,7 @@ body {
     border-radius: 9999px;
 }
 
-.rounded-t-[4rem] {
+.rounded-t-4rem {
     border-top-left-radius: 4rem;
     border-top-right-radius: 4rem;
 }
@@ -1553,9 +1558,12 @@ td {
     }
 }
 
-</style></head><body><div id="app" class="h-screen flex flex-col bg-slate-50 overflow-hidden relative"></div><script type="module">import {
-    initializeApp
-}
+</style>
+</head>
+<body>
+    <div id="app" class="h-screen flex flex-col bg-slate-50 overflow-hidden relative"></div>
+    <script type="module">
+        import { initializeApp } 
 
 from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 
@@ -2098,30 +2106,15 @@ function renderApp() {
             });
     });
 
-document.getElementById('app').innerHTML=` $ {
-    state.message ? `<div class="absolute top-[100px] left-[50%] z-[9999] bg-blue-600 text-white px-8 py-4 rounded-full text-2xl shadow-2xl fade-in" style="transform: translateX(-50%);">$ {
-        state.message
-    }
-
-    </div>` : ''
-}
-
-$ {
-    renderHeader()
-}
-
-<div class="flex-1 flex flex-col relative overflow-hidden bg-slate-50">$ {
-    renderView()
-}
-
-</div>$ {
-    renderFooter()
-}
-
-$ {
-    renderModals()
-}
-
+// 문제확인: JavaScript 템플릿 리터럴 내부 $ { ... } 띄어쓰기 오류 발생, 올바른 문법으로 수정 필요
+document.getElementById('app').innerHTML = `
+    ${state.message ? `<div class="absolute top-[100px] left-[50%] z-[9999] bg-blue-600 text-white px-8 py-4 rounded-full text-2xl shadow-2xl fade-in" style="transform: translateX(-50%);">${state.message}</div>` : ''}
+    ${renderHeader()}
+    <div class="flex-1 flex flex-col relative overflow-hidden bg-slate-50">
+        ${renderView()}
+    </div>
+    ${renderFooter()}
+    ${renderModals()}
 `;
 
 const newScrollEls=document.querySelectorAll('.custom-scroll, .overflow-y-auto, .overflow-x-auto, #app > div');
@@ -3492,32 +3485,40 @@ else {
 // 4. UI 렌더링 영역 (컴포넌트)
 // ==========================================
 function renderHeader() {
-    return ` <div class="h-20 bg-slate-900 flex items-center justify-between px-10 shrink-0 border-b border-slate-800 p-8 z-10"><div class="flex items-center gap-4 text-white"><div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-xl shadow-lg p-2">W</div><span class="text-2xl tracking-tighter uppercase italic">Warehouse v26.9</span></div><div class="flex items-center gap-6 text-right">$ {
-        window.state.user.name ? ` <div><span class="text-blue-400 text-sm block mb-1 uppercase tracking-widest whitespace-nowrap">$ {
-            window.state.user.brand
-        }
+    // 오류 확인: `${ ... }` 내부에 불필요한 띄어쓰기가 있어 문법 오류가 발생함.
+    // 템플릿 리터럴 내부 `${ ... }`는 `${...}`로, 중괄호와 변수명 사이에 공백이 없어야 함.
 
-        | $ {
-            window.state.user.id
-        }
+    return `
+        <div class="h-20 bg-slate-900 flex items-center justify-between px-10 shrink-0 border-b border-slate-800 p-8 z-10">
+            <div class="flex items-center gap-4 text-white">
+                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-xl shadow-lg p-2">W</div>
+                <span class="text-2xl tracking-tighter uppercase italic">Warehouse v26.9</span>
+            </div>
+            <div class="flex items-center gap-6 text-right">
+                ${
+                    window.state.user.name ? `
+                        <div>
+                            <span class="text-blue-400 text-sm block mb-1 uppercase tracking-widest whitespace-nowrap">
+                                ${window.state.user.brand}
+                                | ${window.state.user.id}
+                            </span>
+                            <span class="text-white text-xl leading-none whitespace-nowrap">
+                                ${window.state.user.name}
+                                님 로그인 중
+                                ${window.state.reserveMode ? '<span class="ml-2 text-amber-400 text-base border border-amber-400 px-2 rounded-full font-bold">예약 모드</span>' : ''}
+                            </span>
+                        </div>
+                    ` : ''
+                }
 
-        </span><span class="text-white text-xl leading-none whitespace-nowrap">$ {
-            window.state.user.name
-        }
-
-        님 로그인 중 $ {
-            window.state.reserveMode ? '<span class="ml-2 text-amber-400 text-base border border-amber-400 px-2 rounded-full font-bold">예약 모드</span>': ''
-        }
-
-        </span></div>` : ''
+    ${
+        window.state.isAdminAuthenticated
+            ? `<button onclick="window.state.pwdChangeModal=true; window.renderApp();" class="bg-amber-600 text-white px-6 py-2 rounded-xl text-lg tap-effect shadow-md font-bold whitespace-nowrap">비밀번호 변경</button>`
+            : ''
     }
 
-    $ {
-        window.state.isAdminAuthenticated ? `<button onclick="window.state.pwdChangeModal=true; window.renderApp();" class="bg-amber-600 text-white px-6 py-2 rounded-xl text-lg tap-effect shadow-md font-bold whitespace-nowrap">비밀번호 변경</button>`: ''
-    }
-
-    $ {
-        window.state.user.name ? `<button onclick="window.logout()" class="bg-slate-800 text-slate-400 px-6 py-2 rounded-xl text-lg tap-effect border border-slate-700 whitespace-nowrap">로그아웃</button>`: ''
+    ${
+        window.state.user.name ? `<button onclick="window.logout()" class="bg-slate-800 text-slate-400 px-6 py-2 rounded-xl text-lg tap-effect border border-slate-700 whitespace-nowrap">로그아웃</button>` : ''
     }
 
     </div></div>`;
@@ -3541,409 +3542,396 @@ function renderView() {
         return ` <div class="flex-1 flex items-center justify-center p-10 custom-scroll" style="overflow-y:auto;"><div class="bg-white p-16 rounded-[4rem] shadow-2xl border-4 border-slate-100 w-full max-w-2xl my-auto fade-in"><h2 class="text-6xl mb-4 text-slate-800 text-center word-keep">직원 신규 등록</h2><p class="text-2xl text-slate-500 text-center mb-12 word-keep">입력하신 정보는 사원증과 연동되어 수령 시 식별에 사용됩니다.</p><div class="flex flex-col gap-10"><div class="flex flex-col gap-2"><label class="text-xl text-slate-400 ml-6 font-bold whitespace-nowrap">카드번호 (Tag ID) <span class="text-red-500">*필수</span></label><input id="regTagId" class="input-standard uppercase-input bg-slate-100 text-blue-600 font-black" value="${window.state.user.tagId}" readonly></div><div class="flex flex-col gap-2"><label class="text-xl text-slate-400 ml-6 font-bold whitespace-nowrap">소속 브랜드 <span class="text-red-500">*필수</span></label><input id="regBrand" class="input-standard uppercase-input" value="${window.state.user.brand}"></div><div class="flex flex-col gap-2"><label class="text-xl text-slate-400 ml-6 font-bold whitespace-nowrap">사번 <span class="text-red-500">*필수</span></label><input id="regId" class="input-standard uppercase-input" value="${window.state.user.id}"></div><div class="flex flex-col gap-2"><label class="text-xl text-slate-400 ml-6 font-bold whitespace-nowrap">성함 <span class="text-red-500">*필수</span></label><input id="regName" class="input-standard uppercase-input" value="${window.state.user.name}"></div><div class="flex flex-col gap-4 mt-2 bg-slate-50 p-8 rounded-[2rem] border-4 border-slate-200"><h4 class="text-2xl font-bold text-slate-700 ml-2 word-keep">개인정보 수집 및 이용 안내</h4><div class="text-xl text-slate-500 h-[120px] overflow-y-auto p-6 bg-white border-2 border-slate-200 rounded-[1.5rem] leading-tight custom-scroll word-keep"><span class="font-bold text-slate-700">1. 수집 항목: </span> 브랜드, 사번, 성함, 카드번호<br> <span class="font-bold text-slate-700" >2. 수집 목적:</span> 본인 인증 및 수령 이력 관리<br> <span class="font-bold text-slate-700" >3. 보유 기간:</span> 목적 달성 또는 파기 전까지 </div> <label class="flex items-center gap-4 cursor-pointer mt-4 pl-2" > <input type="checkbox" id="privacyConsent" style="width: 2.5rem; height: 2.5rem; accent-color: var(--blue-600);" > <span class="text-2xl text-slate-700 font-bold word-keep" >개인정보 수집 및 이용에 동의합니다. <span class="text-red-500" >*필수</span></span> </label> </div> <button onclick="window.registerUser()" class="w-full py-10 bg-blue-600 text-white rounded-full text-4xl tap-effect shadow-xl mt-4 word-keep" >정보 저장 후 입장</button> </div> </div> </div>`;
     }
 
-    if (window.state.view==='explorer') {
-        const items=window.state.inventory.filter(i=> i.cat===window.state.activeCat);
+    // 문제확인
+    if (window.state.view === 'explorer') {
+        const items = window.state.inventory.filter(i => i.cat === window.state.activeCat);
 
-        return ` <div class="flex-1 flex flex-col overflow-hidden">$ {
-            window.state.reserveMode ? ` <div class="bg-amber-500 text-amber-900 text-center py-3 text-2xl font-bold px-4 word-keep shadow-inner relative z-20 shrink-0">💡 사전 예약 수령은 <span class="text-white">신청 익일 14시 이후</span>현장에서만 가능합니다. </div>`: ''
-        }
+        return `
+            <div class="flex-1 flex flex-col overflow-hidden">
+                ${window.state.reserveMode ? `
+                    <div class="bg-amber-500 text-amber-900 text-center py-3 text-2xl font-bold px-4 word-keep shadow-inner relative z-20 shrink-0">
+                        💡 사전 예약 수령은 <span class="text-white">신청 익일 14시 이후</span>현장에서만 가능합니다.
+                    </div>
+                ` : ''}
 
-        <div class="bg-white border-b flex overflow-x-auto custom-scroll shrink-0 px-8 items-center gap-4 explorer-cat-bar">$ {
-            window.state.categories.map(cat=> `<button onclick="window.setCategory('${cat}')" class="px-10 h-full shrink-0 text-3xl transition-all whitespace-nowrap ${window.state.activeCat === cat ? " category-tab-active" : " text-slate-400"}" >$ {
-                    cat
-                }
-
-                </button>`).join('')
-        }
-
-        </div><div class="explorer-list-zone custom-scroll"><div class="grid grid-cols-2 gap-8 pb-10">$ {
-            items.map(item=> {
-                    const totalStock=item.stocks.counter || 0;
-                    const isSoldOut=totalStock <=0;
-
-                    return ` <button onclick="${!isSoldOut ? `window.openItemModal(${item.id})` : ''}" class="bg-white flex flex-col justify-between relative overflow-hidden text-left tap-effect explorer-item-card ${isSoldOut ? 'grayscale border-slate-100' : 'border-transparent hover:border-blue-500 shadow-xl border-4'}" > <div class="z-10 w-full overflow-hidden" > <h3 class="text-slate-800 leading-tight word-keep item-title truncate" >$ {
-                        item.name
-                    }
-
-                    </h3> $ {
-                        isSoldOut ? `<span class="inline-block mt-2 bg-red-600 text-white rounded-full uppercase whitespace-nowrap item-soldout-badge" >품절</span>` : ''
-                    }
-
-                    </div> <div class="flex flex-wrap gap-3 z-10 shrink-0" > <span class="rounded-full italic border-2 item-stock-text ${isSoldOut ? 'bg-slate-100 text-slate-400 border-slate-200' : 'bg-blue-50 text-blue-600 border-blue-100'}" >재고: $ {
-                        window.formatStock(totalStock, item.unitBase, item.unitBulk, item.bulkRatio)
-                    }
-
-                    </span> </div> </button>`;
-                }).join('')
-        }
-
-        </div></div><div class="bg-slate-900 flex flex-col shrink-0 text-white rounded-t-[4rem] border-t-2 border-slate-800 explorer-cart-zone"><div onclick="toggleCart()"
-
-        class="px-12 py-8 border-b border-slate-800 flex justify-between items-center shrink-0 cursor-pointer"><div class="flex items-center gap-4"><span class="text-5xl">🛒</span><h3 class="text-4xl italic tracking-tighter text-blue-400 uppercase whitespace-nowrap">$ {
-            window.state.reserveMode ? '예약 바구니': '장바구니'
-        }
-
-        </h3></div><div class="flex items-center gap-6"><span class="text-2xl bg-slate-800 px-6 py-3 rounded-2xl border border-slate-700 whitespace-nowrap">$ {
-            window.state.cart.length
-        }
-
-        개 담김</span><button onclick="window.state.cart=[]; window.renderApp();" class="text-xl text-slate-400 underline whitespace-nowrap">전체 비우기</button></div></div><div class="flex-1 overflow-x-auto custom-scroll ${window.state.cart.length === 0 ? 'flex items-center justify-center p-8' : 'cart-grid'}">$ {
-            window.state.cart.length===0 ? `<div class="w-full text-center text-slate-500 italic text-4xl word-keep">$ {
-                window.state.reserveMode ? '예약하실 물품을 선택해 주세요': '수령하실 물품을 선택해 주세요'
-            }
-
-            </div>` : ''
-        }
-
-        $ {
-            window.state.cart.map(c=> ` <div class="bg-slate-800 flex flex-col justify-between border-2 border-slate-700 shadow-2xl shrink-0 explorer-cart-item" > <div class="flex flex-col flex-1 overflow-hidden" > <div class="flex justify-between items-start gap-2" > <div class="flex flex-col flex-1 overflow-hidden pr-2" > <p class="leading-tight text-white font-bold word-keep cart-item-title truncate" >$ {
-                    c.itemName
-                }
-
-                </p> <span class="text-slate-400 cart-item-unit-detail word-keep mt-1 block truncate" >단위: $ {
-                    c.unitBase
-                }
-
-                $ {
-                    c.unitBulk ? ` (1$ {
-                            c.unitBulk
+                <div class="bg-white border-b flex overflow-x-auto custom-scroll shrink-0 px-8 items-center gap-4 explorer-cat-bar">
+                    ${window.state.categories.map(cat => `
+                        <button onclick="window.setCategory('${cat}')"
+                            class="px-10 h-full shrink-0 text-3xl transition-all whitespace-nowrap ${window.state.activeCat === cat ? " category-tab-active" : " text-slate-400"}">
+                            ${cat}
+                        </button>
+                    `).join('')}
+                </div>
+                <div class="explorer-list-zone custom-scroll">
+                    <div class="grid grid-cols-2 gap-8 pb-10">
+                        ${items.map(item => {
+                            const totalStock = item.stocks.counter || 0;
+                            const isSoldOut = totalStock <= 0;
+                            return `
+                                <button
+                                    onclick="${!isSoldOut ? `window.openItemModal(${item.id})` : ''}"
+                                    class="bg-white flex flex-col justify-between relative overflow-hidden text-left tap-effect explorer-item-card ${isSoldOut ? 'grayscale border-slate-100' : 'border-transparent hover:border-blue-500 shadow-xl border-4'}"
+                                >
+                                    <div class="z-10 w-full overflow-hidden">
+                                        <h3 class="text-slate-800 leading-tight word-keep item-title truncate">${item.name}</h3>
+                                        ${
+                                            isSoldOut
+                                            ? `<span class="inline-block mt-2 bg-red-600 text-white rounded-full uppercase whitespace-nowrap item-soldout-badge">품절</span>`
+                                            : ''
+                                        }
+                                    </div>
+                                    <div class="flex flex-wrap gap-3 z-10 shrink-0">
+                                        <span class="rounded-full italic border-2 item-stock-text ${isSoldOut ? 'bg-slate-100 text-slate-400 border-slate-200' : 'bg-blue-50 text-blue-600 border-blue-100'}">
+                                            재고: ${window.formatStock(totalStock, item.unitBase, item.unitBulk, item.bulkRatio)}
+                                        </span>
+                                    </div>
+                                </button>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+                <div class="bg-slate-900 flex flex-col shrink-0 text-white rounded-t-[4rem] border-t-2 border-slate-800 explorer-cart-zone">
+                    <div onclick="toggleCart()"
+                        class="px-12 py-8 border-b border-slate-800 flex justify-between items-center shrink-0 cursor-pointer"
+                    >
+                        <div class="flex items-center gap-4">
+                            <span class="text-5xl">🛒</span>
+                            <h3 class="text-4xl italic tracking-tighter text-blue-400 uppercase whitespace-nowrap">
+                                ${window.state.reserveMode ? '예약 바구니' : '장바구니'}
+                            </h3>
+                        </div>
+                        <div class="flex items-center gap-6">
+                            <span class="text-2xl bg-slate-800 px-6 py-3 rounded-2xl border border-slate-700 whitespace-nowrap">
+                                ${window.state.cart.length} 개 담김
+                            </span>
+                            <button onclick="window.state.cart=[]; window.renderApp();" class="text-xl text-slate-400 underline whitespace-nowrap">전체 비우기</button>
+                        </div>
+                    </div>
+                    <div class="flex-1 overflow-x-auto custom-scroll ${window.state.cart.length === 0 ? 'flex items-center justify-center p-8' : 'cart-grid'}">
+                        ${
+                            window.state.cart.length===0
+                                ? `<div class="w-full text-center text-slate-500 italic text-4xl word-keep">
+                                    ${window.state.reserveMode ? '예약하실 물품을 선택해 주세요' : '수령하실 물품을 선택해 주세요'}
+                                </div>`
+                                : ''
                         }
-
-                        =$ {
-                            c.bulkRatio
-                        })` : ''
-                }
-
-                </span> </div> <button onclick="window.removeFromCart(${c.itemId})" class="bg-red-900 text-red-400 hover:text-red-300 flex items-center justify-center shrink-0 rounded-full cart-item-del tap-effect" >✕</button> </div> </div> <div class="flex items-center justify-between bg-slate-900 p-2 border border-slate-700 shrink-0" style="border-radius: 1.2rem;" > <button onclick="window.updateCartQty(${c.itemId}, -1)" class="bg-slate-800 tap-effect flex items-center justify-center text-slate-400 cart-qty-btn shrink-0" >-</button> <div class="flex flex-col items-center justify-center flex-1 overflow-hidden px-1" > <span class="cart-main-qty w-full" >$ {
-                    window.formatStock(c.amount, c.unitBase, c.unitBulk, c.bulkRatio, true)
-                }
-
-                </span> <span class="cart-sub-qty w-full" >(총 $ {
-                        c.amount
-                    }
-
-                    $ {
-                        c.unitBase
-                    })</span> </div> <button onclick="window.updateCartQty(${c.itemId}, 1)" class="bg-slate-800 tap-effect flex items-center justify-center text-slate-400 cart-qty-btn shrink-0" >+</button> </div> </div>`).join('')
-        }
-
-        </div><div class="bg-slate-900 border-t border-slate-800 text-center cart-checkout-zone shrink-0"><button onclick="window.openCheckoutConfirm()" class="bg-blue-600 tap-effect shadow-xl italic tracking-widest whitespace-nowrap cart-checkout-btn ${window.state.cart.length===0?'grayscale':''}"$ {
-            window.state.cart.length===0?'disabled': ''
-        }
-
-        >$ {
-            window.state.reserveMode ? '사전 예약 확정': '수령 최종 확정'
-        }
-
-        </button></div></div></div>`;
+                        ${
+                            window.state.cart.map(c => `
+                                <div class="bg-slate-800 flex flex-col justify-between border-2 border-slate-700 shadow-2xl shrink-0 explorer-cart-item">
+                                    <div class="flex flex-col flex-1 overflow-hidden">
+                                        <div class="flex justify-between items-start gap-2">
+                                            <div class="flex flex-col flex-1 overflow-hidden pr-2">
+                                                <p class="leading-tight text-white font-bold word-keep cart-item-title truncate">${c.itemName}</p>
+                                                <span class="text-slate-400 cart-item-unit-detail word-keep mt-1 block truncate">
+                                                    단위: ${c.unitBase}
+                                                    ${
+                                                        c.unitBulk
+                                                        ? ` (1${c.unitBulk}=${c.bulkRatio})`
+                                                        : ''
+                                                    }
+                                                </span>
+                                            </div>
+                                            <button onclick="window.removeFromCart(${c.itemId})"
+                                                class="bg-red-900 text-red-400 hover:text-red-300 flex items-center justify-center shrink-0 rounded-full cart-item-del tap-effect"
+                                            >✕</button>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between bg-slate-900 p-2 border border-slate-700 shrink-0" style="border-radius: 1.2rem;">
+                                        <button onclick="window.updateCartQty(${c.itemId}, -1)" class="bg-slate-800 tap-effect flex items-center justify-center text-slate-400 cart-qty-btn shrink-0">-</button>
+                                        <div class="flex flex-col items-center justify-center flex-1 overflow-hidden px-1">
+                                            <span class="cart-main-qty w-full">
+                                                ${window.formatStock(c.amount, c.unitBase, c.unitBulk, c.bulkRatio, true)}
+                                            </span>
+                                            <span class="cart-sub-qty w-full">(총 ${c.amount} ${c.unitBase})</span>
+                                        </div>
+                                        <button onclick="window.updateCartQty(${c.itemId}, 1)" class="bg-slate-800 tap-effect flex items-center justify-center text-slate-400 cart-qty-btn shrink-0">+</button>
+                                    </div>
+                                </div>
+                            `).join('')
+                        }
+                    </div>
+                    <div class="bg-slate-900 border-t border-slate-800 text-center cart-checkout-zone shrink-0">
+                        <button
+                            onclick="window.openCheckoutConfirm()"
+                            class="bg-blue-600 tap-effect shadow-xl italic tracking-widest whitespace-nowrap cart-checkout-btn ${window.state.cart.length===0?'grayscale':''}"
+                            ${window.state.cart.length===0 ? 'disabled' : ''}
+                        >
+                            ${window.state.reserveMode ? '사전 예약 확정' : '수령 최종 확정'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
     }
 
-    if (window.state.view==='admin') {
-        return ` <div class="flex-1 flex flex-col bg-white overflow-hidden h-full fade-in"><div class="bg-slate-100 flex items-center px-10 justify-start shrink-0 border-b-4 border-slate-200 overflow-x-auto custom-scroll py-6 gap-4"><button onclick="window.changeAdminSubView('inventory')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView==='inventory'?'bg-blue-600 text-white shadow-xl':'bg-white text-slate-500 shadow-md'}">📦 재고 관리</button><button onclick="window.changeAdminSubView('logs')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView==='logs'?'bg-blue-600 text-white shadow-xl':'bg-white text-slate-500 shadow-md'}">📊 수령 내역</button><button onclick="window.changeAdminSubView('reservations')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView==='reservations'?'bg-blue-600 text-white shadow-xl':'bg-white text-slate-500 shadow-md'}">📅 예약 관리</button><button onclick="window.changeAdminSubView('staff')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView==='staff'?'bg-blue-600 text-white shadow-xl':'bg-white text-slate-500 shadow-md'}">👥 직원 관리</button><button onclick="window.changeAdminSubView('settings')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView==='settings'?'bg-slate-800 text-white shadow-xl':'bg-white text-slate-500 shadow-md'}">⚙️ 시스템 설정</button></div><div class="flex-1 overflow-y-auto custom-scroll p-12">$ {
-            window.state.adminSubView==='inventory' ? renderAdminInventory(): ''
-        }
-
-        $ {
-            window.state.adminSubView==='logs' ? renderAdminLogs(): ''
-        }
-
-        $ {
-            window.state.adminSubView==='reservations' ? renderAdminReservations(): ''
-        }
-
-        $ {
-            window.state.adminSubView==='staff' ? renderAdminStaff(): ''
-        }
-
-        $ {
-            window.state.adminSubView==='settings' ? renderAdminSettings(): ''
-        }
-
-        </div></div>`;
+    if (window.state.view === 'admin') {
+        return `
+            <div class="flex-1 flex flex-col bg-white overflow-hidden h-full fade-in">
+                <div class="bg-slate-100 flex items-center px-10 justify-start shrink-0 border-b-4 border-slate-200 overflow-x-auto custom-scroll py-6 gap-4">
+                    <button onclick="window.changeAdminSubView('inventory')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView==='inventory'?'bg-blue-600 text-white shadow-xl':'bg-white text-slate-500 shadow-md'}">📦 재고 관리</button>
+                    <button onclick="window.changeAdminSubView('logs')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView==='logs'?'bg-blue-600 text-white shadow-xl':'bg-white text-slate-500 shadow-md'}">📊 수령 내역</button>
+                    <button onclick="window.changeAdminSubView('reservations')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView==='reservations'?'bg-blue-600 text-white shadow-xl':'bg-white text-slate-500 shadow-md'}">📅 예약 관리</button>
+                    <button onclick="window.changeAdminSubView('staff')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView==='staff'?'bg-blue-600 text-white shadow-xl':'bg-white text-slate-500 shadow-md'}">👥 직원 관리</button>
+                    <button onclick="window.changeAdminSubView('settings')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView==='settings'?'bg-slate-800 text-white shadow-xl':'bg-white text-slate-500 shadow-md'}">⚙️ 시스템 설정</button>
+                </div>
+                <div class="flex-1 overflow-y-auto custom-scroll p-12">
+                    ${window.state.adminSubView === 'inventory' ? renderAdminInventory() : ''}
+                    ${window.state.adminSubView === 'logs' ? renderAdminLogs() : ''}
+                    ${window.state.adminSubView === 'reservations' ? renderAdminReservations() : ''}
+                    ${window.state.adminSubView === 'staff' ? renderAdminStaff() : ''}
+                    ${window.state.adminSubView === 'settings' ? renderAdminSettings() : ''}
+                </div>
+            </div>
+        `;
     }
 }
 
 function renderAdminReservations() {
-    const filterStatus=window.state.reserveFilterStatus || '전체';
-    const filtered=window.state.reservations.filter(r=> filterStatus==='전체' || r.status===filterStatus);
+    const filterStatus = window.state.reserveFilterStatus || '전체';
 
-    // 배지(상태창) 폰트와 패딩 축소
-    const getStatusHtml=(status)=> {
-        if(status==='new') return `<span class="bg-white border-2 border-blue-500 text-blue-600 px-3 py-1 rounded-full text-sm font-bold whitespace-nowrap">신규(준비중)</span>`;
-        if(status==='pending') return `<span class="bg-amber-100 text-amber-600 px-3 py-1 rounded-full text-sm font-bold whitespace-nowrap">현장 대기</span>`;
-        if(status==='completed') return `<span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm font-bold whitespace-nowrap">수령 완료</span>`;
-        if(status==='cancelled') return `<span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-bold whitespace-nowrap">취소됨</span>`;
+    // [정렬 기능 추가]: 최근순(내림차순), 오래된순(오름차순)  
+    const sortMode = window.state.reserveSortMode || 'desc'; // 'desc' : 최신순, 'asc' : 오래된순
+
+    // 상태별 필터링
+    let filtered = window.state.reservations.filter(r => filterStatus === '전체' || r.status === filterStatus);
+
+    // 정렬 적용
+    filtered = filtered.slice().sort((a, b) => {
+        const d1 = new Date((a.rawDate || '') + ' ' + (a.time || ''));
+        const d2 = new Date((b.rawDate || '') + ' ' + (b.time || ''));
+        if (sortMode === 'desc') {
+            return d2 - d1;
+        } else {
+            return d1 - d2;
+        }
+    });
+
+    // 상태 뱃지 html
+    const getStatusHtml = (status) => {
+        if (status === 'new') return `<span class="bg-white border-2 border-blue-500 text-blue-600 px-3 py-1 rounded-full text-sm font-bold whitespace-nowrap">신규(준비중)</span>`;
+        if (status === 'pending') return `<span class="bg-amber-100 text-amber-600 px-3 py-1 rounded-full text-sm font-bold whitespace-nowrap">현장 대기</span>`;
+        if (status === 'completed') return `<span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm font-bold whitespace-nowrap">수령 완료</span>`;
+        if (status === 'cancelled') return `<span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-bold whitespace-nowrap">취소됨</span>`;
         return status;
     }
 
-    return ` <div class="flex flex-col gap-10"><div class="bg-white p-6 lg:p-12 rounded-[4rem] border-4 border-slate-200 flex flex-col gap-8 shadow-lg"><div class="flex flex-wrap justify-between items-center border-b-4 border-slate-200 pb-6 gap-4"><h3 class="text-3xl lg:text-4xl text-slate-800 border-l-[10px] border-blue-500 pl-4 uppercase tracking-widest italic font-black word-keep">📅 예약 종합 관리</h3><div class="flex flex-wrap gap-2"><button onclick="window.changeReserveFilter('전체')" class="px-4 py-2 rounded-xl text-sm lg:text-base font-bold tap-effect ${filterStatus==='전체'?'bg-slate-800 text-white':'bg-slate-100 text-slate-500'}">전체</button><button onclick="window.changeReserveFilter('new')" class="px-4 py-2 rounded-xl text-sm lg:text-base font-bold tap-effect ${filterStatus==='new'?'bg-blue-600 text-white':'bg-slate-100 text-slate-500'}">신규</button><button onclick="window.changeReserveFilter('pending')" class="px-4 py-2 rounded-xl text-sm lg:text-base font-bold tap-effect ${filterStatus==='pending'?'bg-amber-500 text-white':'bg-slate-100 text-slate-500'}">대기</button><button onclick="window.changeReserveFilter('completed')" class="px-4 py-2 rounded-xl text-sm lg:text-base font-bold tap-effect ${filterStatus==='completed'?'bg-slate-600 text-white':'bg-slate-100 text-slate-500'}">완료</button><button onclick="window.changeReserveFilter('cancelled')" class="px-4 py-2 rounded-xl text-sm lg:text-base font-bold tap-effect ${filterStatus==='cancelled'?'bg-red-600 text-white':'bg-slate-100 text-slate-500'}">취소</button></div></div><div class="overflow-x-auto rounded-[2rem] border-4 border-slate-300 shadow-sm"><table class="excel-table w-full"><thead><tr><th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">일시</th><th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">사용자</th><th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">내역</th><th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">상태</th><th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">관리</th></tr></thead><tbody>$ {
-        filtered.map(r=> ` <tr> <td style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: normal; line-height: 1.3;" > <span class="text-xs text-slate-400 block" >$ {
-                r.rawDate
-            }
-
-            </span><span class="font-bold text-slate-700" >$ {
-                r.time
-            }
-
-            </span> </td> <td style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: normal; line-height: 1.3; word-break: break-all;" > <div class="font-bold text-slate-800" >$ {
-                r.name
-            }
-
-            </div> <div class="text-sm text-slate-500 mt-1" >$ {
-                r.brand
-            }
-
-            <br/>$ {
-                r.staffId
-            }
-
-            </div> </td> <td style="padding: 1rem 0.5rem; font-size: 1.1rem; text-align: left; white-space: normal; line-height: 1.4;" > $ {
-                r.cart.map(c=> `<div class="mb-1 border-b border-slate-100 pb-1 last:border-0 word-keep text-sm lg:text-base" >- $ {
-                        c.itemName
-                    }
-
-                    <strong class="text-blue-500 ml-1" >$ {
-                        window.formatStock(c.amount, c.unitBase, c.unitBulk, c.bulkRatio, false)
-                    }
-
-                    </strong></div>`).join('')
-            }
-
-            </td> <td style="padding: 1rem 0.5rem;" >$ {
-                getStatusHtml(r.status)
-            }
-
-            </td> <td style="padding: 1rem 0.5rem;" > <div class="flex flex-col gap-2 items-center" > $ {
-                r.status==='new' ? ` <button onclick="window.printAndReadyReservation('${r.id}')" class="bg-blue-50 text-blue-600 text-sm px-3 py-2 rounded-lg tap-effect border border-blue-200 font-bold hover:bg-blue-100 w-full whitespace-nowrap" >🖨️ 출력/준비</button> <button onclick="window.cancelReservation('${r.id}')" class="bg-red-50 text-red-600 text-sm px-3 py-2 rounded-lg tap-effect border border-red-200 font-bold hover:bg-red-100 w-full whitespace-nowrap" >취소</button> ` : ''
-            }
-
-            $ {
-                r.status==='pending' ? `<button onclick="window.cancelReservation('${r.id}')" class="bg-red-50 text-red-600 text-sm px-3 py-2 rounded-lg tap-effect border border-red-200 font-bold hover:bg-red-100 w-full whitespace-nowrap" >강제 취소</button>` : ''
-            }
-
-            $ {
-                r.status==='completed' || r.status==='cancelled' ? '-' : ''
-            }
-
-            </div> </td> </tr>`).join('')
+    // 정렬 선택 버튼 UI 추가
+    function renderSortBtn(label, value) {
+        const active = sortMode === value;
+        return `<button 
+            onclick="window.state.reserveSortMode='${value}';window.renderApp();"
+            class="px-4 py-1 rounded text-xs font-bold border 
+            ${active ? 'bg-blue-600 text-white border-blue-600' : 'bg-slate-100 text-slate-500 border-slate-300'} 
+            tap-effect ml-1 whitespace-nowrap"
+            style="min-width:70px"
+        >${label}</button>`;
     }
 
-    $ {
-        filtered.length===0 ? `<tr><td colspan="5" class="text-center py-16 text-slate-400 word-keep">예약 기록이 없습니다.</td></tr>`: ''
-    }
-
-    </tbody></table></div></div></div>`;
-}
-
-function renderAdminSettings() {
-    return ` <div class="flex flex-col gap-10"><div class="bg-blue-50 p-12 rounded-[4rem] border-4 border-blue-200 shadow-md flex flex-col gap-8"><h3 class="text-4xl text-blue-800 border-l-[10px] border-blue-500 pl-6 uppercase tracking-widest italic font-black word-keep">📧 일일 전체 재고 현황 메일 발송</h3><p class="text-2xl text-slate-600 word-keep leading-tight">아래 버튼을 누르시면 관리자님의 이메일 앱이 실행되며,
-    현재 창고에 남아있는 전체 품목의 재고가 일목요연하게 자동 작성됩니다.</p><button onclick="window.sendMorningReport()" class="w-full md:w-auto bg-blue-600 text-white py-6 px-10 rounded-[3rem] text-3xl tap-effect font-bold shadow-xl whitespace-nowrap text-center">전체 재고현황 발송하기</button></div><div class="bg-white p-12 rounded-[4rem] border-4 border-slate-200 shadow-md flex flex-col gap-8"><h3 class="text-4xl text-slate-800 border-l-[10px] border-blue-500 pl-6 uppercase tracking-widest italic font-black word-keep">발주 알림 이메일 수신자 설정</h3><div class="flex flex-col gap-4"><label class="text-2xl text-slate-400 font-bold whitespace-nowrap">재고 부족 시 알림을 받을 이메일 주소</label><input type="email" value="${window.state.settings?.alertEmail || ''}" onchange="window.updateSetting('alertEmail', this.value)" class="input-standard bg-slate-50" placeholder="예: admin@warehouse.com" style="width: 100%; max-width: 500px;"></div></div><div class="bg-white p-12 rounded-[4rem] border-4 border-slate-200 shadow-md flex flex-col gap-8"><h3 class="text-4xl text-slate-800 border-l-[10px] border-blue-500 pl-6 uppercase tracking-widest italic font-black word-keep">창고 명칭 커스텀</h3><div class="grid grid-cols-3 gap-10"><div class="flex flex-col gap-4"><label class="text-2xl text-slate-400 font-bold whitespace-nowrap">제1구역</label><input value="${window.state.warehouses.counter}" onchange="window.updateWarehouseName('counter', this.value)" class="input-standard bg-slate-50"></div><div class="flex flex-col gap-4"><label class="text-2xl text-slate-400 font-bold whitespace-nowrap">제2구역</label><input value="${window.state.warehouses.wh1}" onchange="window.updateWarehouseName('wh1', this.value)" class="input-standard bg-slate-50"></div><div class="flex flex-col gap-4"><label class="text-2xl text-slate-400 font-bold whitespace-nowrap">제3구역</label><input value="${window.state.warehouses.wh2}" onchange="window.updateWarehouseName('wh2', this.value)" class="input-standard bg-slate-50"></div></div></div><div class="bg-red-50 p-12 rounded-[4rem] border-4 border-red-200 shadow-md flex flex-col gap-8 mt-4"><h3 class="text-4xl text-red-800 border-l-[10px] border-red-500 pl-6 uppercase tracking-widest italic font-black word-keep">데이터 강제 초기화 구역</h3><div class="grid grid-cols-2 gap-6"><button onclick="window.exportAllData()" class="bg-white border-4 border-blue-300 text-blue-600 py-8 rounded-[3rem] text-3xl tap-effect font-bold shadow-sm hover:bg-blue-50 whitespace-nowrap">💾 전체 데이터 백업 (다운로드)</button><div class="relative"><input type="file" id="importDataInput" accept=".json" style="display:none;" onchange="window.importAllData(event)"><button onclick="document.getElementById('importDataInput').click()" class="w-full h-full bg-white border-4 border-blue-300 text-blue-600 py-8 rounded-[3rem] text-3xl tap-effect font-bold shadow-sm hover:bg-blue-50 whitespace-nowrap">📂 데이터 파일 복원 (업로드)</button></div><button onclick="window.clearLogsData()" class="bg-white border-4 border-red-300 text-red-600 py-8 rounded-[3rem] text-3xl tap-effect font-bold shadow-sm hover:bg-red-100 whitespace-nowrap mt-4">🗑 수령 내역 전체 삭제</button><button onclick="window.clearAllInventory()" class="bg-white border-4 border-red-300 text-red-600 py-8 rounded-[3rem] text-3xl tap-effect font-bold shadow-sm hover:bg-red-100 whitespace-nowrap mt-4">📦 품목 및 분류 전체 삭제</button><button onclick="window.clearAllStaff()" class="bg-white border-4 border-red-300 text-red-600 py-8 rounded-[3rem] text-3xl tap-effect font-bold shadow-sm hover:bg-red-100 whitespace-nowrap">👥 직원 명단 전체 삭제</button><button onclick="window.factoryReset()" class="bg-red-600 text-white py-8 rounded-[3rem] text-3xl tap-effect font-black shadow-lg hover:bg-red-700 whitespace-nowrap">🚨 시스템 완전 공장초기화</button></div></div></div>`;
-}
-
-function renderAdminInventory() {
-    const activeItem=window.state.inventory.find(i=> i.id===window.state.selectedAdminItemId);
-
-    return ` <div class="flex flex-col gap-12"><div class="flex flex-col gap-6"><div class="flex justify-between items-center px-4"><h3 class="text-3xl text-slate-400 border-l-[10px] border-slate-300 pl-6 uppercase tracking-widest word-keep">분류 구성</h3><button onclick="window.openAddCategory()" class="bg-blue-100 text-blue-600 px-8 py-4 rounded-3xl text-2xl tap-effect whitespace-nowrap">+분류 추가</button></div><div class="flex flex-wrap gap-4 px-2">$ {
-        window.state.categories.map(cat=> ` <div class="flex items-center gap-4 px-8 py-5 rounded-[2rem] transition-all ${window.state.activeCat === cat ? 'bg-blue-600 text-white shadow-xl' : 'bg-slate-100 text-slate-500'}" > <button onclick="window.setCategory('${cat}')" class="text-3xl whitespace-nowrap" >$ {
-                cat
-            }
-
-            </button> <div class="flex gap-4 border-l border-slate-300 pl-6 ml-2" > <button onclick="window.openEditCategory('${cat}')" class="text-2xl opacity-60" >✏️</button> <button onclick="window.deleteCategory('${cat}')" class="text-2xl text-red-400 opacity-80" >✕</button> </div> </div>`).join('')
-    }
-
-    </div></div><div class="flex flex-col gap-6 pt-12 border-t-4 border-slate-100"><div class="flex justify-between items-center px-4"><h3 class="text-3xl text-slate-400 border-l-[10px] border-slate-300 pl-6 uppercase tracking-widest word-keep">상세 품목</h3><button onclick="window.openAddItem()" class="bg-blue-100 text-blue-600 px-8 py-4 rounded-3xl text-2xl tap-effect whitespace-nowrap">+새 품목 등록</button></div><div class="grid grid-cols-3 gap-6">$ {
-        window.state.inventory.filter(i=> i.cat===window.state.activeCat).map(item=> ` <button onclick="window.selectAdminItem(${item.id})" class="p-10 rounded-[3rem] text-3xl text-left border-8 tap-effect text-truncate-2 word-keep ${window.state.selectedAdminItemId === item.id ? 'border-amber-500 bg-amber-50 text-amber-900 shadow-inner' : 'border-slate-100 bg-white shadow-md text-slate-700'}" >$ {
-                item.name
-            }
-
-            </button> `).join('')
-    }
-
-    </div></div>$ {
-        activeItem ? ` <div class="bg-slate-50 p-12 rounded-[4rem] border-4 border-slate-200 mt-10 shadow-inner"><div class="flex flex-wrap justify-between items-center mb-12 border-b-4 border-slate-200 pb-8 gap-6"><div><h3 class="text-6xl text-slate-800 word-keep">$ {
-            activeItem.name
-        }
-
-        </h3><p class="text-2xl text-slate-400 uppercase mt-4 italic tracking-widest word-keep">단위: 기본($ {
-                activeItem.unitBase
-
-            }) $ {
-            activeItem.unitBulk ? `| 묶음($ {
-                    activeItem.unitBulk
-                }
-
-                , 1$ {
-                    activeItem.unitBulk
-                }
-
-                =$ {
-                    activeItem.bulkRatio
-                }
-
-                $ {
-                    activeItem.unitBase
-                })` : ''
-        }
-
-        <br/><span class="text-amber-500 text-lg font-bold inline-block mt-2">1인 예약 한도: $ {
-            activeItem.maxReserveQty ?? 100
-        }
-
-        $ {
-            activeItem.unitBase
-        }
-
-        / 발주 기준 알림: 총재고 $ {
-            activeItem.alertQty ?? 10
-        }
-
-        $ {
-            activeItem.unitBase
-        }
-
-        이하</span></p></div><div class="flex gap-4 shrink-0"><button onclick="window.openEditItem(${activeItem.id})" class="bg-white border-4 border-blue-500 text-blue-600 px-10 py-4 rounded-3xl text-2xl tap-effect whitespace-nowrap">수정</button><button onclick="window.deleteAdminItem(${activeItem.id})" class="bg-white border-4 border-red-500 text-red-500 px-10 py-4 rounded-3xl text-2xl tap-effect whitespace-nowrap">삭제</button></div></div><div class="flex flex-col gap-8">$ {
-            Object.keys(window.state.warehouses).map(wh=> ` <div class="bg-white p-8 rounded-[3rem] flex flex-wrap justify-between items-center shadow-md gap-4" > <span class="text-4xl text-slate-600 italic whitespace-nowrap w-full md:w-auto" >$ {
-                    window.state.warehouses[wh]
-                }
-
-                </span> <div class="flex-1 flex flex-col items-end gap-4 w-full" > <div class="text-3xl text-slate-800 font-bold whitespace-nowrap" >$ {
-                    window.formatStock(activeItem.stocks[wh], activeItem.unitBase, activeItem.unitBulk, activeItem.bulkRatio)
-                }
-
-                </div> <div class="flex flex-wrap items-center justify-end gap-4 w-full" > <span class="text-2xl text-slate-400 uppercase whitespace-nowrap" >총 낱개조절</span> <div class="flex items-center bg-slate-50 border-4 rounded-[2rem] p-2 shrink-0" > $ {
-                    activeItem.unitBulk ? `<button onclick="window.updateStockManual(${activeItem.id}, '${wh}', -${activeItem.bulkRatio})" class="w-14 h-14 bg-red-50 text-red-600 rounded-2xl text-xl font-bold shadow-sm tap-effect flex items-center justify-center" >-1$ {
-                        activeItem.unitBulk
-                    }
-
-                    </button>` : ''
-                }
-
-                <button onclick="window.updateStockManual(${activeItem.id}, '${wh}', -1)" class="w-14 h-14 bg-white rounded-2xl text-4xl shadow-sm tap-effect flex items-center justify-center ml-2" >-</button> <input type="number"
-                value="${activeItem.stocks[wh] || 0}"
-                onchange="window.setStockManual(${activeItem.id}, '${wh}', this.value)"
-
-                class="text-4xl tabular-nums text-center bg-transparent outline-none font-black text-slate-800 uppercase-input" style="width: 100px; border:none; box-shadow:none;" /> <button onclick="window.updateStockManual(${activeItem.id}, '${wh}', 1)" class="w-14 h-14 bg-white rounded-2xl text-4xl shadow-sm tap-effect flex items-center justify-center mr-2" >+</button> $ {
-                    activeItem.unitBulk ? `<button onclick="window.updateStockManual(${activeItem.id}, '${wh}', ${activeItem.bulkRatio})" class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl text-xl font-bold shadow-sm tap-effect flex items-center justify-center" >+1$ {
-                        activeItem.unitBulk
-                    }
-
-                    </button>` : ''
-                }
-
-                </div> <button onclick="window.openTransfer(${activeItem.id})" class="bg-blue-100 text-blue-600 px-6 py-4 rounded-3xl text-xl tap-effect whitespace-nowrap font-bold shrink-0" >이동</button> </div> </div> </div>`).join('')
-        }
-
-        </div></div>` : ''
-    }
-
-    </div>`;
-}
-
-function renderAdminLogs() {
-    const {
-        filtered,
-        statsData,
-        maxVal
-    }
-
-    =getStats();
-
-    return ` <div class="flex flex-col gap-12"><div class="bg-slate-900 p-16 rounded-[4rem] shadow-2xl"><h3 class="text-amber-400 text-4xl uppercase mb-12 italic tracking-widest underline decoration-amber-500 underline-offset-10 word-keep">📊 실시간 수령 통계 분석</h3><div class="flex flex-col gap-10">$ {
-        statsData.map(d=> ` <div class="flex flex-col gap-4" > <div class="flex justify-between text-3xl text-slate-300 px-6" ><span class="whitespace-nowrap" >$ {
-                d.label
-            }
-
-            </span><span class="whitespace-nowrap" >$ {
-                d.value
-            }
-
-            개</span></div> <div class="w-full bg-slate-800 h-12 rounded-full overflow-hidden border border-slate-700 p-1" > <div class="h-full bg-amber-500 rounded-full" style="width: ${(d.value/maxVal)*100}%; box-shadow: 0 0 20px rgba(245,158,11,0.5);" ></div> </div> </div>`).join('')
-    }
-
-    $ {
-        statsData.length===0 ? `<p class="text-slate-500 italic text-4xl py-10 text-center word-keep">데이터가 없습니다.</p>`: ''
-    }
-
-    </div></div><div class="bg-white p-12 rounded-[4rem] border-4 border-slate-200 flex flex-col gap-10 shadow-lg"><div class="grid grid-cols-2 gap-10"><div class="flex flex-col gap-4"><label class="text-2xl text-slate-400 ml-6 uppercase whitespace-nowrap">시작일자</label><input type="date" value="${window.state.startDate}" onchange="window.state.startDate=this.value; window.renderApp();" class="input-standard"></div><div class="flex flex-col gap-4"><label class="text-2xl text-slate-400 ml-6 uppercase whitespace-nowrap">종료일자</label><input type="date" value="${window.state.endDate}" onchange="window.state.endDate=this.value; window.renderApp();" class="input-standard"></div></div><div class="flex flex-col gap-4"><label class="text-2xl text-slate-400 ml-6 uppercase tracking-widest whitespace-nowrap">품목 필터</label><select onchange="window.state.filterItem=this.value; window.renderApp();" class="input-standard appearance-none"><option value="전체"$ {
-        window.state.filterItem==='전체' ?'selected': ''
-    }
-
-    >모든 품목 합계</option>$ {
-        window.state.inventory.map(i=> `<option value="${i.name}"$ {
-                window.state.filterItem===i.name?'selected':''
-            }
-
-            >$ {
-                i.name
-            }
-
-            </option>`).join('')
-    }
-
-    </select></div></div><div class="overflow-x-auto pt-8 bg-white p-8 rounded-[4rem] border-4 border-slate-200 shadow-md"><table><thead><tr><th class="whitespace-nowrap">시간(날짜)</th><th class="whitespace-nowrap">사용자(사번)</th><th class="whitespace-nowrap">브랜드</th><th class="whitespace-nowrap">차감량</th></tr></thead><tbody>$ {
-        filtered.map(log=> ` <tr> <td class="text-slate-400 whitespace-nowrap" ><span class="text-sm block" >$ {
-                log.rawDate
-            }
-
-            </span>$ {
-                log.time
-            }
-
-            </td> <td class="whitespace-nowrap" >$ {
-                log.staffId
-            }
-
-            <span class="text-xl text-slate-500" >($ {
-                    log.name
-
-                })</span></td> <td class="text-blue-600 uppercase whitespace-nowrap" >$ {
-                log.brand
-            }
-
-            </td> <td class="text-red-500 italic whitespace-nowrap" > <div class="flex items-center justify-center gap-4" > <span>-$ {
-                log.amountStr
-            }
-
-            </span> <button onclick="window.deleteLog('${log.id}')" class="bg-red-100 text-red-600 text-xl px-4 py-2 rounded-2xl tap-effect not-italic border border-red-200 font-bold hover:bg-red-200 whitespace-nowrap" >취소/복구</button> </div> </td> </tr>`).join('')
-    }
-
-    $ {
-        filtered.length===0 ? `<tr><td colspan="4" class="text-center py-16 text-slate-400 word-keep">기록이 없습니다.</td></tr>`: ''
-    }
-
-    </tbody></table></div></div>`;
+    return `
+    <div class="flex flex-col gap-10">
+        <div class="bg-white p-6 lg:p-12 rounded-[4rem] border-4 border-slate-200 flex flex-col gap-8 shadow-lg">
+            <div class="flex flex-wrap justify-between items-center border-b-4 border-slate-200 pb-6 gap-4">
+                <h3 class="text-3xl lg:text-4xl text-slate-800 border-l-[10px] border-blue-500 pl-4 uppercase tracking-widest italic font-black word-keep">
+                    📅 예약 종합 관리
+                </h3>
+                <div class="flex flex-wrap gap-2 items-center">
+                    <button onclick="window.changeReserveFilter('전체')" class="px-4 py-2 rounded-xl text-sm lg:text-base font-bold tap-effect ${filterStatus==='전체'?'bg-slate-800 text-white':'bg-slate-100 text-slate-500'}">전체</button>
+                    <button onclick="window.changeReserveFilter('new')" class="px-4 py-2 rounded-xl text-sm lg:text-base font-bold tap-effect ${filterStatus==='new'?'bg-blue-600 text-white':'bg-slate-100 text-slate-500'}">신규</button>
+                    <button onclick="window.changeReserveFilter('pending')" class="px-4 py-2 rounded-xl text-sm lg:text-base font-bold tap-effect ${filterStatus==='pending'?'bg-amber-500 text-white':'bg-slate-100 text-slate-500'}">대기</button>
+                    <button onclick="window.changeReserveFilter('completed')" class="px-4 py-2 rounded-xl text-sm lg:text-base font-bold tap-effect ${filterStatus==='completed'?'bg-slate-600 text-white':'bg-slate-100 text-slate-500'}">완료</button>
+                    <button onclick="window.changeReserveFilter('cancelled')" class="px-4 py-2 rounded-xl text-sm lg:text-base font-bold tap-effect ${filterStatus==='cancelled'?'bg-red-600 text-white':'bg-slate-100 text-slate-500'}">취소</button>
+                    <div class="ml-4 flex items-center whitespace-nowrap">
+                        <span class="text-slate-400 text-xs font-bold">정렬:</span>
+                        ${renderSortBtn('최신순', 'desc')}
+                        ${renderSortBtn('오래된순', 'asc')}
+                    </div>
+                </div>
+            </div>
+            <div class="overflow-x-auto rounded-[2rem] border-4 border-slate-300 shadow-sm">
+                <table class="excel-table w-full">
+                    <thead>
+                        <tr>
+                            <th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">일시</th>
+                            <th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">사용자</th>
+                            <th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">내역</th>
+                            <th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">상태</th>
+                            <th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">관리</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${
+                            filtered.map(r=> `
+                                <tr>
+                                    <td style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: normal; line-height: 1.3;" >
+                                        <span class="text-xs text-slate-400 block">${r.rawDate||''}</span>
+                                        <span class="font-bold text-slate-700">${r.time||''}</span>
+                                    </td>
+                                    <td style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: normal; line-height: 1.3; word-break: break-all;" >
+                                        <div class="font-bold text-slate-800">${r.name||''}</div>
+                                        <div class="text-sm text-slate-500 mt-1">
+                                            ${r.brand||''}<br/>${r.staffId||''}
+                                        </div>
+                                    </td>
+                                    <td style="padding: 1rem 0.5rem; font-size: 1.1rem; text-align: left; white-space: normal; line-height: 1.4;" >
+                                        ${r.cart.map(c=> `
+                                            <div class="mb-1 border-b border-slate-100 pb-1 last:border-0 word-keep text-sm lg:text-base">
+                                                - ${c.itemName}
+                                                <strong class="text-blue-500 ml-1">${window.formatStock(c.amount, c.unitBase, c.unitBulk, c.bulkRatio, false)}</strong>
+                                            </div>
+                                        `).join('')}
+                                    </td>
+                                    <td style="padding: 1rem 0.5rem;" >
+                                        ${getStatusHtml(r.status)}
+                                    </td>
+                                    <td style="padding: 1rem 0.5rem;">
+                                        <div class="flex flex-col gap-2 items-center">
+                                            ${
+                                                r.status === 'new' ? `
+                                                <button onclick="window.printAndReadyReservation('${r.id}')" class="bg-blue-50 text-blue-600 text-sm px-3 py-2 rounded-lg tap-effect border border-blue-200 font-bold hover:bg-blue-100 w-full whitespace-nowrap">🖨️ 출력/준비</button>
+                                                <button onclick="window.cancelReservation('${r.id}')" class="bg-red-50 text-red-600 text-sm px-3 py-2 rounded-lg tap-effect border border-red-200 font-bold hover:bg-red-100 w-full whitespace-nowrap">취소</button>
+                                                ` : ''
+                                            }
+                                            ${
+                                                r.status === 'pending' ? `
+                                                    <button onclick="window.cancelReservation('${r.id}')" class="bg-red-50 text-red-600 text-sm px-3 py-2 rounded-lg tap-effect border border-red-200 font-bold hover:bg-red-100 w-full whitespace-nowrap">강제 취소</button>
+                                                ` : ''
+                                            }
+                                            ${ (r.status==='completed' || r.status==='cancelled') ? '-' : ''}
+                                        </div>
+                                    </td>
+                                </tr>
+                            `).join('')
+                        }
+                        ${
+                            filtered.length === 0 ? `<tr><td colspan="5" class="text-center py-16 text-slate-400 word-keep">예약 기록이 없습니다.</td></tr>` : ''
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    `;
 }
 
 function renderAdminStaff() {
-    const filteredStaff=window.state.staffList.filter(s=> s.name.toUpperCase().includes(window.state.staffSearchQuery) || s.id.toUpperCase().includes(window.state.staffSearchQuery) || s.brand.toUpperCase().includes(window.state.staffSearchQuery));
+    // 정렬 상태: window.state.staffSortKey, window.state.staffSortOrder ('asc'|'desc')
+    // 기본값: 이름 오름차순
+    const sortKey = window.state.staffSortKey || 'name';
+    const sortOrder = window.state.staffSortOrder || 'asc';
 
-    return ` <div class="flex flex-col gap-10"><div class="bg-slate-800 p-8 lg:p-10 rounded-[3rem] border-4 border-slate-700 shadow-inner flex flex-col shrink-0"><div class="flex flex-wrap justify-between items-center mb-6 border-b-4 border-slate-700 pb-6 gap-4"><h3 class="text-3xl lg:text-4xl text-white italic uppercase tracking-tighter word-keep">사원 일괄 등록</h3><div class="flex flex-wrap gap-2"><input type="file" id="csvFileInput" accept=".csv" style="display:none;" onchange="window.importStaffCSV(event)"><button onclick="document.getElementById('csvFileInput').click()" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm lg:text-base tap-effect shadow-md whitespace-nowrap font-bold">엑셀 업로드</button><button onclick="window.exportStaffCSV()" class="bg-slate-100 border-2 border-slate-300 text-slate-800 px-4 py-2 rounded-xl text-sm lg:text-base tap-effect shadow-md whitespace-nowrap font-bold">다운로드</button></div></div><textarea id="bulkText" class="w-full p-6 bg-slate-900 border-2 border-slate-600 rounded-2xl font-black text-lg lg:text-xl mb-6 outline-none shadow-inner custom-scroll text-blue-200 uppercase-input word-keep" style="min-height: 150px;" placeholder="※ 엑셀 다운로드 후 양식에 맞춰 수정하거나, 직접 텍스트를 붙여넣으세요.\\n\\n[양식] 브랜드, 사번, 이름, 카드번호(TagID)"></textarea><button onclick="window.doBulkImport()" class="w-full py-4 lg:py-6 bg-blue-500 text-white rounded-full text-xl lg:text-2xl tap-effect shadow-lg uppercase tracking-widest whitespace-nowrap font-bold">텍스트 일괄 등록 실행</button></div><div class="flex flex-col gap-4 pt-6"><h3 class="text-2xl lg:text-3xl text-slate-800 px-4 border-l-8 border-blue-500 uppercase tracking-widest italic mb-4 word-keep">직원 데이터 관리 (총 $ {
-            window.state.staffList.length
-        }
+    // 검색 필터
+    const filteredStaff = window.state.staffList.filter(s =>
+        (s.name || '').toUpperCase().includes(window.state.staffSearchQuery) ||
+        (s.id || '').toUpperCase().includes(window.state.staffSearchQuery) ||
+        (s.brand || '').toUpperCase().includes(window.state.staffSearchQuery)
+    );
 
-        명)</h3><div class="flex flex-wrap gap-2 mb-4"><input id="staffSearchInput" class="input-standard flex-1 bg-white uppercase-input !text-xl !py-4" placeholder="직원 검색" value="${window.state.staffSearchQuery}"><button onclick="window.doSearchStaff()" class="bg-slate-700 text-white px-6 py-4 rounded-2xl text-xl font-bold tap-effect whitespace-nowrap">검색</button><button onclick="window.state.staffSearchQuery=''; window.renderApp();" class="bg-slate-200 text-slate-600 px-6 py-4 rounded-2xl text-xl font-bold tap-effect whitespace-nowrap">초기화</button></div><div class="overflow-x-auto rounded-[2rem] border-4 border-slate-300 shadow-md"><table class="excel-table w-full"><thead><tr><th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">브랜드</th><th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">사번</th><th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">이름</th><th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">카드번호</th><th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">관리</th></tr></thead><tbody>$ {
-        filteredStaff.map((s, filteredIdx)=> {
-                const originalIdx=window.state.staffList.indexOf(s);
+    // 정렬 함수
+    const sorter = (a, b) => {
+        let vA = (a[sortKey]||'').toUpperCase();
+        let vB = (b[sortKey]||'').toUpperCase();
+        if (vA < vB) return sortOrder === 'asc' ? -1 : 1;
+        if (vA > vB) return sortOrder === 'asc' ? 1 : -1;
+        return 0;
+    };
+    filteredStaff.sort(sorter);
 
-                return ` <tr> <td style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: normal; word-break: break-all; line-height: 1.3;" class="text-blue-600 font-bold uppercase" >$ {
-                    s.brand
-                }
-
-                </td> <td style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: normal; word-break: break-all; line-height: 1.3;" class="text-slate-600 uppercase" >$ {
-                    s.id
-                }
-
-                </td> <td style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: normal; word-break: keep-all; line-height: 1.3;" class="text-slate-800 font-bold uppercase" >$ {
-                    s.name
-                }
-
-                </td> <td style="padding: 1rem 0.5rem; font-size: 1rem; white-space: normal; word-break: break-all; line-height: 1.3;" class="text-slate-500 tracking-widest uppercase" >$ {
-                    s.tagId
-                }
-
-                </td> <td style="padding: 1rem 0.5rem;" > <div class="flex flex-col gap-2 items-center justify-center" > <button onclick="window.openEditStaff(${originalIdx})" class="bg-blue-100 text-blue-600 px-3 py-2 rounded-lg text-sm tap-effect font-bold w-full whitespace-nowrap" >수정</button> <button onclick="window.deleteStaff(${originalIdx}, '${s.name}')" class="bg-red-50 text-red-500 px-3 py-2 rounded-lg text-sm tap-effect font-bold w-full whitespace-nowrap" >삭제</button> </div> </td> </tr>`
-            }).join('')
+    // 테이블 헤더 정렬 토글 아이콘
+    function sortIcon(key) {
+        if (sortKey !== key) return `<span style="font-size:0.9em;color:#bdbdbd;vertical-align:middle;">↕︎</span>`;
+        return sortOrder === 'asc'
+            ? `<span style="font-size:0.9em;color:#2563eb;vertical-align:middle;">▲</span>`
+            : `<span style="font-size:0.9em;color:#2563eb;vertical-align:middle;">▼</span>`;
     }
+
+    return `
+    <div class="flex flex-col gap-10">
+
+        <div class="bg-slate-800 p-8 lg:p-10 rounded-[3rem] border-4 border-slate-700 shadow-inner flex flex-col shrink-0">
+            <div class="flex flex-wrap justify-between items-center mb-6 border-b-4 border-slate-700 pb-6 gap-4">
+                <h3 class="text-3xl lg:text-4xl text-white italic uppercase tracking-tighter word-keep">사원 일괄 등록</h3>
+                <div class="flex flex-wrap gap-2">
+                    <input type="file" id="csvFileInput" accept=".csv" style="display:none;" onchange="window.importStaffCSV(event)">
+                    <button onclick="document.getElementById('csvFileInput').click()" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm lg:text-base tap-effect shadow-md whitespace-nowrap font-bold">엑셀 업로드</button>
+                    <button onclick="window.exportStaffCSV()" class="bg-slate-100 border-2 border-slate-300 text-slate-800 px-4 py-2 rounded-xl text-sm lg:text-base tap-effect shadow-md whitespace-nowrap font-bold">다운로드</button>
+                </div>
+            </div>
+            <textarea id="bulkText" class="w-full p-6 bg-slate-900 border-2 border-slate-600 rounded-2xl font-black text-lg lg:text-xl mb-6 outline-none shadow-inner custom-scroll text-blue-200 uppercase-input word-keep" style="min-height: 150px;" placeholder="※ 엑셀 다운로드 후 양식에 맞춰 수정하거나, 직접 텍스트를 붙여넣으세요.\n\n[양식] 브랜드, 사번, 이름, 카드번호(TagID)"></textarea>
+            <button onclick="window.doBulkImport()" class="w-full py-4 lg:py-6 bg-blue-500 text-white rounded-full text-xl lg:text-2xl tap-effect shadow-lg uppercase tracking-widest whitespace-nowrap font-bold">텍스트 일괄 등록 실행</button>
+        </div>
+
+        <div class="flex flex-col gap-4 pt-6">
+            <h3 class="text-2xl lg:text-3xl text-slate-800 px-4 border-l-8 border-blue-500 uppercase tracking-widest italic mb-4 word-keep">
+                직원 데이터 관리 (총 ${window.state.staffList.length}명)
+            </h3>
+            <div class="flex flex-wrap gap-2 mb-4">
+                <input id="staffSearchInput" class="input-standard flex-1 bg-white uppercase-input !text-xl !py-4" placeholder="직원 검색" value="${window.state.staffSearchQuery}">
+                <button onclick="window.doSearchStaff()" class="bg-slate-700 text-white px-6 py-4 rounded-2xl text-xl font-bold tap-effect whitespace-nowrap">검색</button>
+                <button onclick="window.state.staffSearchQuery=''; window.renderApp();" class="bg-slate-200 text-slate-600 px-6 py-4 rounded-2xl text-xl font-bold tap-effect whitespace-nowrap">초기화</button>
+            </div>
+            <div class="overflow-x-auto rounded-[2rem] border-4 border-slate-300 shadow-md">
+                <table class="excel-table w-full">
+                    <thead>
+                        <tr>
+                            <th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap; cursor:pointer;" onclick="window.changeStaffSort('brand')">
+                                브랜드&nbsp;${sortIcon('brand')}
+                            </th>
+                            <th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap; cursor:pointer;" onclick="window.changeStaffSort('id')">
+                                사번&nbsp;${sortIcon('id')}
+                            </th>
+                            <th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap; cursor:pointer;" onclick="window.changeStaffSort('name')">
+                                이름&nbsp;${sortIcon('name')}
+                            </th>
+                            <th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap; cursor:pointer;" onclick="window.changeStaffSort('tagId')">
+                                카드번호&nbsp;${sortIcon('tagId')}
+                            </th>
+                            <th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">관리</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${
+                            filteredStaff.map((s, filteredIdx) => {
+                                const originalIdx = window.state.staffList.indexOf(s);
+                                return `
+                                <tr>
+                                    <td style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: normal; word-break: break-all; line-height: 1.3;" class="text-blue-600 font-bold uppercase">${s.brand||''}</td>
+                                    <td style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: normal; word-break: break-all; line-height: 1.3;" class="text-slate-600 uppercase">${s.id||''}</td>
+                                    <td style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: normal; word-break: keep-all; line-height: 1.3;" class="text-slate-800 font-bold uppercase">${s.name||''}</td>
+                                    <td style="padding: 1rem 0.5rem; font-size: 1rem; white-space: normal; word-break: break-all; line-height: 1.3;" class="text-slate-500 tracking-widest uppercase">${s.tagId||''}</td>
+                                    <td style="padding: 1rem 0.5rem;">
+                                        <div class="flex flex-col gap-2 items-center justify-center">
+                                            <button onclick="window.openEditStaff(${originalIdx})" class="bg-blue-100 text-blue-600 px-3 py-2 rounded-lg text-sm tap-effect font-bold w-full whitespace-nowrap">수정</button>
+                                            <button onclick="window.deleteStaff(${originalIdx}, '${s.name||''}')" class="bg-red-50 text-red-500 px-3 py-2 rounded-lg text-sm tap-effect font-bold w-full whitespace-nowrap">삭제</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                `;
+                            }).join('')
+                        }
+                        ${
+                            filteredStaff.length === 0
+                            ? `<tr><td colspan="5" class="py-12 text-slate-400 word-keep">검색된 직원이 없습니다.</td></tr>`
+                            : ''
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    `;
+}
+
+// 헤더 클릭시 정렬 변경 함수(글로벌 등록 필요)
+// 예시 구현 (window.changeStaffSort)
+window.changeStaffSort = function(key) {
+    if (!window.state.staffSortKey || window.state.staffSortKey !== key) {
+        window.state.staffSortKey = key;
+        window.state.staffSortOrder = 'asc';
+    } else {
+        window.state.staffSortOrder = window.state.staffSortOrder === 'asc' ? 'desc' : 'asc';
+    }
+    window.renderApp();
+};
 
     $ {
         filteredStaff.length===0 ? `<tr><td colspan="5" class="py-12 text-slate-400 word-keep">검색된 직원이 없습니다.</td></tr>`: ''
@@ -3955,322 +3943,335 @@ function renderAdminStaff() {
 // [신규] 감열지 영수증 프린터 출력용 함수
 function printReceipt(cart, user, isReserve) {
     // 현재 시간 생성
-    const dateStr=new Date().toLocaleString('ko-KR');
-    let itemsHtml='';
-    let totalQty=0;
+    const dateStr = new Date().toLocaleString('ko-KR');
+    let itemsHtml = '';
+    let totalQty = 0;
 
-    // 장바구니 내역을 표(Table) 형태의 HTML로 변환
-    cart.forEach(c=> {
-            itemsHtml +=` <tr> <td style="text-align: left; padding: 4px 0; font-size: 14px; word-break: keep-all;" >$ {
-                c.itemName
-            }
+    // 장바구니 내역을 품목명 오름차순 정렬 후 테이블 HTML로 변환
+    const sortedCart = cart.slice().sort((a, b) => {
+        if (a.itemName < b.itemName) return -1;
+        if (a.itemName > b.itemName) return 1;
+        return 0;
+    });
 
-            </td> <td style="text-align: right; font-size: 14px;" >$ {
-                c.amount
-            }
-
-            $ {
-                c.unitBase
-            }
-
-            </td> </tr> `;
-            totalQty +=c.amount;
-        });
+    sortedCart.forEach(function(c) {
+        itemsHtml += `
+            <tr>
+                <td style="text-align: left; padding: 4px 0; font-size: 14px; word-break: keep-all;">
+                    ${c.itemName}
+                </td>
+                <td style="text-align: right; font-size: 14px;">
+                    ${c.amount} ${c.unitBase}
+                </td>
+            </tr>
+        `;
+        totalQty += c.amount;
+    });
 
     // 감열지 프린터용 (가로 80mm 기준) 영수증 HTML 템플릿
-    const printContent=` < !DOCTYPE html><html><head><title>영수증</title><style>@page {
-        margin: 0;
-    }
-
-    /* 용지 여백 제거 */
-    body {
-        font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
-        width: 270px;
-        /* 80mm 프린터 기준 (58mm 프린터인 경우 200px 정도로 줄이세요) */
-        margin: 0 auto;
-        padding: 10px;
-        color: #000;
-    }
-
-    .header {
-        text-align: center;
-        border-bottom: 2px dashed #000;
-        padding-bottom: 10px;
-        margin-bottom: 10px;
-    }
-
-    .title {
-        font-size: 22px;
-        font-weight: bold;
-        margin: 0;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 10px;
-    }
-
-    th {
-        border-bottom: 1px solid #000;
-        padding: 4px 0;
-        text-align: left;
-        font-size: 14px;
-    }
-
-    .footer {
-        text-align: center;
-        border-top: 2px dashed #000;
-        padding-top: 10px;
-        margin-top: 10px;
-        font-size: 12px;
-    }
-
-    </style></head><body><div class="header"><h2 class="title">[ 창고 출고 $ {
-        isReserve ? '예약증': '영수증'
-    }
-
-    ]</h2><p style="margin: 5px 0 0 0; font-size: 12px;">$ {
-        dateStr
-    }
-
-    </p></div><div style="margin-bottom: 10px; font-size: 14px;"><strong>출고자:</strong>$ {
-        user.brand
-    }
-
-    / $ {
-        user.name
-    }
-
-    <br><strong>사 번:</strong>$ {
-        user.id
-    }
-
-    </div><table><thead><tr><th>품목명</th><th style="text-align: right;">수량</th></tr></thead><tbody>$ {
-        itemsHtml
-    }
-
-    </tbody></table><div style="text-align: right; font-weight: bold; font-size: 16px;">총 합계: $ {
-        totalQty
-    }
-
-    개 </div><div class="footer">서명: ___________________<br><br>출고가 완료되었습니다. </div></body></html>`;
+    const printContent = `<!DOCTYPE html>
+<html>
+<head>
+    <title>영수증</title>
+    <style>
+        @page { margin: 0; }
+        body {
+            font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+            width: 270px;
+            /* 80mm 프린터 기준 (58mm 프린터인 경우 200px 정도로 줄이세요) */
+            margin: 0 auto;
+            padding: 10px;
+            color: #000;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px dashed #000;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        .title {
+            font-size: 22px;
+            font-weight: bold;
+            margin: 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        th {
+            border-bottom: 1px solid #000;
+            padding: 4px 0;
+            text-align: left;
+            font-size: 14px;
+        }
+        .footer {
+            text-align: center;
+            border-top: 2px dashed #000;
+            padding-top: 10px;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2 class="title">[ 창고 출고 ${isReserve ? '예약증' : '영수증'} ]</h2>
+        <p style="margin: 5px 0 0 0; font-size: 12px;">${dateStr}</p>
+    </div>
+    <div style="margin-bottom: 10px; font-size: 14px;">
+        <strong>출고자:</strong> ${user.brand} / ${user.name}<br>
+        <strong>사 번:</strong> ${user.id}
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>품목명</th>
+                <th style="text-align: right;">수량</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${itemsHtml}
+        </tbody>
+    </table>
+    <div style="text-align: right; font-weight: bold; font-size: 16px;">
+        총 합계: ${totalQty}개
+    </div>
+    <div class="footer">
+        서명: ___________________<br><br>출고가 완료되었습니다.
+    </div>
+</body>
+</html>`;
 
     // 보이지 않는 iframe을 생성하여 그 안에서 인쇄 실행
-    const printFrame=document.createElement('iframe');
-    printFrame.style.position='fixed';
-    printFrame.style.right='0';
-    printFrame.style.bottom='0';
-    printFrame.style.width='0';
-    printFrame.style.height='0';
-    printFrame.style.border='0';
+    const printFrame = document.createElement('iframe');
+    printFrame.style.position = 'fixed';
+    printFrame.style.right = '0';
+    printFrame.style.bottom = '0';
+    printFrame.style.width = '0';
+    printFrame.style.height = '0';
+    printFrame.style.border = '0';
     document.body.appendChild(printFrame);
 
-    const doc=printFrame.contentWindow.document;
+    const doc = printFrame.contentWindow.document;
     doc.open();
     doc.write(printContent);
     doc.close();
 
     // 내용이 로드될 시간을 짧게 준 뒤 인쇄 호출
-    setTimeout(()=> {
-            printFrame.contentWindow.focus();
-            printFrame.contentWindow.print();
-            // 인쇄 다이얼로그가 닫히면 iframe 제거
-            setTimeout(()=> document.body.removeChild(printFrame), 1000);
-        }
-
-        , 300);
+    setTimeout(function() {
+        printFrame.contentWindow.focus();
+        printFrame.contentWindow.print();
+        // 인쇄 다이얼로그가 닫히면 iframe 제거
+        setTimeout(function() {
+            document.body.removeChild(printFrame);
+        }, 1000);
+    }, 300);
 }
 
-window.printReceipt=printReceipt;
+window.printReceipt = printReceipt;
 
 function toggleCart() {
-    document .querySelector('.explorer-cart-zone') ?.classList.toggle('expanded');
+    var cartZone = document.querySelector('.explorer-cart-zone');
+    if (cartZone) {
+        cartZone.classList.toggle('expanded');
+    }
 }
 
 function renderModals() {
-    let html='';
+    let html = '';
 
     if (window.state.stockAlertModal) {
-        html+=` <div class="modal-overlay fade-in z-[9000]"><div class="bg-white w-full max-w-[700px] rounded-[4rem] p-12 border-8 border-red-500 shadow-2xl flex flex-col gap-6 text-center"><div class="text-6xl mb-2">⚠️</div><h2 class="text-4xl font-black text-red-600 word-keep">재고 발주 알림</h2><div class="bg-red-50 p-6 rounded-[2rem] border-4 border-red-200 max-h-[300px] overflow-y-auto custom-scroll text-left">$ {
-            window.state.stockAlertModal.map(i=> ` <div class="mb-4 last:mb-0 border-b-2 border-red-100 pb-4 last:border-0" > <span class="text-2xl text-slate-800 font-bold block" >$ {
-                    i.name
+        html += ` <div class="modal-overlay fade-in z-[9000]"><div class="bg-white w-full max-w-[700px] rounded-[4rem] p-12 border-8 border-red-500 shadow-2xl flex flex-col gap-6 text-center"><div class="text-6xl mb-2">⚠️</div><h2 class="text-4xl font-black text-red-600 word-keep">재고 발주 알림</h2><div class="bg-red-50 p-6 rounded-[2rem] border-4 border-red-200 max-h-[300px] overflow-y-auto custom-scroll text-left">${
+            window.state.stockAlertModal.map(function(i) { return ` <div class="mb-4 last:mb-0 border-b-2 border-red-100 pb-4 last:border-0" > <span class="text-2xl text-slate-800 font-bold block" >${
+                i.name
+            }
+
+            </span> <span class="text-xl text-red-600 font-black mt-1 block" >남은 수량: ${
+                i.formattedStock
+            }
+
+            <span class="text-lg text-slate-500 font-normal" >(경고 기준: ${
+                    i.alertQty
                 }
 
-                </span> <span class="text-xl text-red-600 font-black mt-1 block" >남은 수량: $ {
-                    i.formattedStock
-                }
-
-                <span class="text-lg text-slate-500 font-normal" >(경고 기준: $ {
-                        i.alertQty
-                    }
-
-                    이하)</span></span> </div> `).join('')
+                이하)</span></span> </div> `; }).join('')
         }
 
         </div><button onclick="window.state.stockAlertModal = null; window.renderApp();" class="mt-4 py-6 bg-slate-800 text-white rounded-full text-3xl shadow-xl tap-effect font-bold">확인했습니다</button></div></div>`;
     }
 
     if (window.state.checkoutConfirmModal) {
-        html+=` <div class="modal-overlay fade-in z-[7000]"><div class="bg-white w-full max-w-[800px] rounded-[4rem] p-12 border-8 border-blue-500 shadow-2xl flex flex-col gap-6"><div class="text-center"><h2 class="text-5xl font-black text-slate-800 word-keep">$ {
-            window.state.reserveMode ? '사전 예약 내역 확인': '수령 내역 확인'
+        html += ` <div class="modal-overlay fade-in z-[7000]"><div class="bg-white w-full max-w-[800px] rounded-[4rem] p-12 border-8 border-blue-500 shadow-2xl flex flex-col gap-6"><div class="text-center"><h2 class="text-5xl font-black text-slate-800 word-keep">${
+            window.state.reserveMode ? '사전 예약 내역 확인' : '수령 내역 확인'
         }
 
-        </h2><p class="text-2xl text-slate-500 mt-4">아래 품목과 수량이 맞는지 확인해주세요.</p></div><div class="bg-slate-50 p-6 rounded-[2rem] border-4 border-slate-200 max-h-[300px] overflow-y-auto custom-scroll">$ {
-            window.state.cart.map(c=> ` <div class="flex justify-between items-center border-b-2 border-slate-200 py-4 last:border-0 gap-4" > <span class="text-2xl text-slate-700 font-bold" >$ {
+        </h2><p class="text-2xl text-slate-500 mt-4">아래 품목과 수량이 맞는지 확인해주세요.</p></div><div class="bg-slate-50 p-6 rounded-[2rem] border-4 border-slate-200 max-h-[300px] overflow-y-auto custom-scroll">${
+            window.state.cart.map(function(c) { return ` <div class="flex justify-between items-center border-b-2 border-slate-200 py-4 last:border-0 gap-4" > <span class="text-2xl text-slate-700 font-bold" >${
                     c.itemName
                 }
 
-                </span> <div class="text-right" > <div class="text-2xl text-blue-600 font-black whitespace-nowrap" >$ {
+                </span> <div class="text-right" > <div class="text-2xl text-blue-600 font-black whitespace-nowrap" >${
                     window.formatStock(c.amount, c.unitBase, c.unitBulk, c.bulkRatio, true)
                 }
 
-                </div> <div class="text-xl text-slate-400" >(총 $ {
+                </div> <div class="text-xl text-slate-400" >(총 ${
                         c.amount
                     }
 
-                    $ {
+                    ${
                         c.unitBase
-                    })</div> </div> </div> `).join('')
+                    })</div> </div> </div> `; }).join('')
         }
 
-        </div><div class="flex gap-4 mt-4"><button onclick="window.state.checkoutConfirmModal=false; window.renderApp();" class="flex-1 py-6 bg-slate-100 rounded-full text-3xl text-slate-600 tap-effect font-bold border-4 border-slate-200">취소</button><button onclick="window.executeCheckout()" class="flex-[2] py-6 bg-blue-600 text-white rounded-full text-3xl shadow-xl tap-effect font-bold">$ {
-            window.state.reserveMode ? '예약 최종 확정': '수령 최종 확정'
+        </div><div class="flex gap-4 mt-4"><button onclick="window.state.checkoutConfirmModal=false; window.renderApp();" class="flex-1 py-6 bg-slate-100 rounded-full text-3xl text-slate-600 tap-effect font-bold border-4 border-slate-200">취소</button><button onclick="window.executeCheckout()" class="flex-[2] py-6 bg-blue-600 text-white rounded-full text-3xl shadow-xl tap-effect font-bold">${
+            window.state.reserveMode ? '예약 최종 확정' : '수령 최종 확정'
         }
 
         </button></div></div></div>`;
     }
 
     if (window.state.confirmModal) {
-        const m=window.state.confirmModal;
+        const m = window.state.confirmModal;
 
-        html+=` <div class="modal-overlay fade-in z-[8000]"><div class="bg-white w-full max-w-[600px] rounded-[4rem] p-16 border-8 ${m.isRed ? 'border-red-500' : 'border-blue-500'} shadow-2xl flex flex-col gap-8 text-center"><div class="text-6xl mb-2">$ {
-            m.isRed ? '⚠️': '❓'
+        html += ` <div class="modal-overlay fade-in z-[8000]"><div class="bg-white w-full max-w-[600px] rounded-[4rem] p-16 border-8 ${m.isRed ? 'border-red-500' : 'border-blue-500'} shadow-2xl flex flex-col gap-8 text-center"><div class="text-6xl mb-2">${
+            m.isRed ? '⚠️' : '❓'
         }
 
-        </div><h2 class="text-5xl font-black text-slate-800 word-keep">$ {
+        </div><h2 class="text-5xl font-black text-slate-800 word-keep">${
             m.title
         }
 
-        </h2><p class="text-2xl text-slate-500 word-keep leading-tight">$ {
+        </h2><p class="text-2xl text-slate-500 word-keep leading-tight">${
             m.desc
         }
 
-        </p><div class="flex gap-4 mt-6"><button onclick="window.closeConfirmModal()" class="flex-1 py-6 bg-slate-100 rounded-full text-3xl text-slate-600 tap-effect whitespace-nowrap font-bold border-4 border-slate-200">닫기</button><button onclick="window.executeConfirmAction()" class="flex-1 py-6 ${m.isRed ? 'bg-red-600' : 'bg-blue-600'} text-white rounded-full text-3xl shadow-xl tap-effect font-bold whitespace-nowrap">$ {
+        </p><div class="flex gap-4 mt-6"><button onclick="window.closeConfirmModal()" class="flex-1 py-6 bg-slate-100 rounded-full text-3xl text-slate-600 tap-effect whitespace-nowrap font-bold border-4 border-slate-200">닫기</button><button onclick="window.executeConfirmAction()" class="flex-1 py-6 ${m.isRed ? 'bg-red-600' : 'bg-blue-600'} text-white rounded-full text-3xl shadow-xl tap-effect font-bold whitespace-nowrap">${
             m.confirmText
         }
 
         </button></div></div></div>`;
     }
 
-    if (window.state.pendingReservations && window.state.pendingReservations.length > 0 && !window.state.confirmModal && !window.state.checkoutConfirmModal) {
-        const res=window.state.pendingReservations[0];
+    if (
+        window.state.pendingReservations &&
+        window.state.pendingReservations.length > 0 &&
+        !window.state.confirmModal &&
+        !window.state.checkoutConfirmModal
+    ) {
+        const res = window.state.pendingReservations[0];
 
-        html+=` <div class="modal-overlay fade-in"><div class="bg-white w-full max-w-[900px] rounded-[5rem] p-16 border-[12px] border-amber-500 shadow-2xl flex flex-col gap-6"><div class="text-center"><h2 class="text-6xl font-black text-slate-800 mb-4 word-keep">📅 사전 예약 물품 도착</h2><p class="text-3xl text-slate-500 word-keep">미리 예약해두신 아래 물품들을 지금 수령하시겠습니까?</p></div><div class="bg-slate-50 p-8 rounded-[3rem] border-4 border-slate-200 mb-4 mt-6 max-h-[350px] overflow-y-auto custom-scroll">$ {
-            res.cart.map(c=> ` <div class="flex justify-between items-center border-b-2 border-slate-200 py-6 last:border-0" > <span class="text-3xl text-slate-700 font-bold" >$ {
+        html += ` <div class="modal-overlay fade-in"><div class="bg-white w-full max-w-[900px] rounded-[5rem] p-16 border-[12px] border-amber-500 shadow-2xl flex flex-col gap-6"><div class="text-center"><h2 class="text-6xl font-black text-slate-800 mb-4 word-keep">📅 사전 예약 물품 도착</h2><p class="text-3xl text-slate-500 word-keep">미리 예약해두신 아래 물품들을 지금 수령하시겠습니까?</p></div><div class="bg-slate-50 p-8 rounded-[3rem] border-4 border-slate-200 mb-4 mt-6 max-h-[350px] overflow-y-auto custom-scroll">${
+            res.cart.map(function(c) { return ` <div class="flex justify-between items-center border-b-2 border-slate-200 py-6 last:border-0" > <span class="text-3xl text-slate-700 font-bold" >${
                     c.itemName
                 }
 
-                </span> <span class="text-3xl text-blue-600 font-black" >$ {
+                </span> <span class="text-3xl text-blue-600 font-black" >${
                     c.amountStr
                 }
 
-                <span class="text-2xl text-slate-400" >(총 $ {
+                <span class="text-2xl text-slate-400" >(총 ${
                         c.amount
                     }
 
-                    $ {
+                    ${
                         c.unitBase
-                    })</span></span> </div> `).join('')
+                    })</span></span> </div> `; }).join('')
         }
 
         </div><div class="flex flex-col gap-4"><button onclick="window.confirmReserveReceipt('${res.id}')" class="w-full py-8 bg-blue-600 text-white rounded-full text-4xl shadow-xl tap-effect font-bold whitespace-nowrap">예약 물품 일괄 수령 확정</button><div class="flex gap-4"><button onclick="window.delayReserveReceipt()" class="flex-1 py-6 bg-slate-100 text-slate-600 rounded-full text-2xl tap-effect font-bold border-4 border-slate-200 whitespace-nowrap">나중에 수령</button><button onclick="window.cancelReservation('${res.id}')" class="flex-1 py-6 bg-red-50 text-red-600 rounded-full text-2xl tap-effect font-bold border-4 border-red-200 whitespace-nowrap hover:bg-red-100">예약 전체 강제 취소</button></div></div></div></div>`;
     }
 
     if (window.state.authModal) {
-        html+=` <div class="modal-overlay fade-in"><div class="bg-white w-full max-w-[600px] rounded-[4rem] p-16 border-8 border-slate-800 shadow-2xl flex flex-col gap-10"><div class="text-center gap-4 flex flex-col"><span class="text-6xl">🔒</span><h2 class="text-5xl font-black text-slate-800 word-keep">관리자 인증</h2></div><input id="adminPwdInput" type="password" class="input-standard text-center tracking-widest" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter') window.verifyAdminPwd()"><div class="flex gap-4"><button onclick="window.cancelAdminAuth()" class="flex-1 py-6 bg-slate-100 rounded-full text-2xl text-slate-600 tap-effect whitespace-nowrap">취소</button><button onclick="window.verifyAdminPwd()" class="flex-1 py-6 bg-slate-800 text-white rounded-full text-2xl tap-effect whitespace-nowrap">인증하기</button></div></div></div>`;
+        html += ` <div class="modal-overlay fade-in"><div class="bg-white w-full max-w-[600px] rounded-[4rem] p-16 border-8 border-slate-800 shadow-2xl flex flex-col gap-10"><div class="text-center gap-4 flex flex-col"><span class="text-6xl">🔒</span><h2 class="text-5xl font-black text-slate-800 word-keep">관리자 인증</h2></div><input id="adminPwdInput" type="password" class="input-standard text-center tracking-widest" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter') window.verifyAdminPwd()"><div class="flex gap-4"><button onclick="window.cancelAdminAuth()" class="flex-1 py-6 bg-slate-100 rounded-full text-2xl text-slate-600 tap-effect whitespace-nowrap">취소</button><button onclick="window.verifyAdminPwd()" class="flex-1 py-6 bg-slate-800 text-white rounded-full text-2xl tap-effect whitespace-nowrap">인증하기</button></div></div></div>`;
     }
 
     if (window.state.pwdChangeModal) {
-        html+=` <div class="modal-overlay fade-in"><div class="bg-white w-full max-w-[700px] rounded-[4rem] p-16 border-8 border-slate-700 shadow-2xl flex flex-col gap-10"><h2 class="text-5xl font-black text-slate-800 mb-4 border-b-4 border-slate-200 pb-4 word-keep">관리자 비밀번호 변경</h2><div class="flex flex-col gap-6"><div class="flex flex-col gap-2"><label class="text-2xl text-slate-500 ml-4 whitespace-nowrap">현재 비밀번호</label><input id="oldPwdInput" type="password" class="input-standard"></div><div class="flex flex-col gap-2"><label class="text-2xl text-blue-500 ml-4 whitespace-nowrap">새 비밀번호 (4자리 이상)</label><input id="newPwdInput" type="password" class="input-standard border-blue-300"></div></div><div class="flex gap-4 mt-6"><button onclick="window.state.pwdChangeModal=false; window.renderApp();" class="flex-1 py-8 bg-slate-100 rounded-full text-3xl text-slate-600 tap-effect whitespace-nowrap">취소</button><button onclick="window.changeAdminPwd()" class="flex-1 py-8 bg-blue-600 text-white rounded-full text-3xl tap-effect whitespace-nowrap">변경 저장</button></div></div></div>`;
+        html += ` <div class="modal-overlay fade-in"><div class="bg-white w-full max-w-[700px] rounded-[4rem] p-16 border-8 border-slate-700 shadow-2xl flex flex-col gap-10"><h2 class="text-5xl font-black text-slate-800 mb-4 border-b-4 border-slate-200 pb-4 word-keep">관리자 비밀번호 변경</h2><div class="flex flex-col gap-6"><div class="flex flex-col gap-2"><label class="text-2xl text-slate-500 ml-4 whitespace-nowrap">현재 비밀번호</label><input id="oldPwdInput" type="password" class="input-standard"></div><div class="flex flex-col gap-2"><label class="text-2xl text-blue-500 ml-4 whitespace-nowrap">새 비밀번호 (4자리 이상)</label><input id="newPwdInput" type="password" class="input-standard border-blue-300"></div></div><div class="flex gap-4 mt-6"><button onclick="window.state.pwdChangeModal=false; window.renderApp();" class="flex-1 py-8 bg-slate-100 rounded-full text-3xl text-slate-600 tap-effect whitespace-nowrap">취소</button><button onclick="window.changeAdminPwd()" class="flex-1 py-8 bg-blue-600 text-white rounded-full text-3xl tap-effect whitespace-nowrap">변경 저장</button></div></div></div>`;
     }
 
     if (window.state.editingStaffItem && !window.state.confirmModal && !window.state.checkoutConfirmModal) {
-        const s=window.state.editingStaffItem;
-        html+=` <div class="modal-overlay fade-in"><div class="bg-white w-full max-w-[800px] rounded-[4rem] p-16 border-8 border-blue-500 shadow-2xl flex flex-col gap-8"><h2 class="text-5xl font-black text-slate-800 mb-4 border-b-4 border-blue-100 pb-6 word-keep">직원 정보 수정</h2><div class="flex flex-col gap-6"><div class="flex flex-col gap-2"><label class="text-xl text-slate-500 ml-4 whitespace-nowrap">소속 브랜드</label><input id="editStaffBrand" value="${s.brand}" class="input-standard uppercase-input"></div><div class="flex flex-col gap-2"><label class="text-xl text-slate-500 ml-4 whitespace-nowrap">사번</label><input id="editStaffId" value="${s.id}" class="input-standard uppercase-input"></div><div class="flex flex-col gap-2"><label class="text-xl text-slate-500 ml-4 whitespace-nowrap">이름</label><input id="editStaffName" value="${s.name}" class="input-standard uppercase-input"></div><div class="flex flex-col gap-2"><label class="text-xl text-slate-500 ml-4 whitespace-nowrap">카드번호 (Tag ID)</label><input id="editStaffTag" value="${s.tagId}" class="input-standard uppercase-input"></div></div><div class="flex gap-4 mt-6 shrink-0"><button onclick="window.state.editingStaffItem=null; window.renderApp();" class="flex-1 py-8 bg-slate-100 rounded-full text-3xl text-slate-600 tap-effect whitespace-nowrap">취소</button><button onclick="window.saveStaffEdit()" class="flex-[2] py-8 bg-blue-600 text-white rounded-full text-3xl tap-effect whitespace-nowrap">정보 업데이트</button></div></div></div>`;
+        const s = window.state.editingStaffItem;
+        html += ` <div class="modal-overlay fade-in"><div class="bg-white w-full max-w-[800px] rounded-[4rem] p-16 border-8 border-blue-500 shadow-2xl flex flex-col gap-8"><h2 class="text-5xl font-black text-slate-800 mb-4 border-b-4 border-blue-100 pb-6 word-keep">직원 정보 수정</h2><div class="flex flex-col gap-6"><div class="flex flex-col gap-2"><label class="text-xl text-slate-500 ml-4 whitespace-nowrap">소속 브랜드</label><input id="editStaffBrand" value="${s.brand}" class="input-standard uppercase-input"></div><div class="flex flex-col gap-2"><label class="text-xl text-slate-500 ml-4 whitespace-nowrap">사번</label><input id="editStaffId" value="${s.id}" class="input-standard uppercase-input"></div><div class="flex flex-col gap-2"><label class="text-xl text-slate-500 ml-4 whitespace-nowrap">이름</label><input id="editStaffName" value="${s.name}" class="input-standard uppercase-input"></div><div class="flex flex-col gap-2"><label class="text-xl text-slate-500 ml-4 whitespace-nowrap">카드번호 (Tag ID)</label><input id="editStaffTag" value="${s.tagId}" class="input-standard uppercase-input"></div></div><div class="flex gap-4 mt-6 shrink-0"><button onclick="window.state.editingStaffItem=null; window.renderApp();" class="flex-1 py-8 bg-slate-100 rounded-full text-3xl text-slate-600 tap-effect whitespace-nowrap">취소</button><button onclick="window.saveStaffEdit()" class="flex-[2] py-8 bg-blue-600 text-white rounded-full text-3xl tap-effect whitespace-nowrap">정보 업데이트</button></div></div></div>`;
     }
 
     if (window.state.selectedItem && !window.state.confirmModal && !window.state.checkoutConfirmModal) {
-        const item=window.state.selectedItem;
-        const inCartItem=window.state.cart.find(c=> c.itemId===item.id);
-        const availableNow=(item.stocks.counter || 0) - (inCartItem ? inCartItem.amount : 0);
-        const isSoldOut=availableNow <=0;
+        const item = window.state.selectedItem;
+        const inCartItem = window.state.cart.find(function(c) { return c.itemId === item.id; });
+        const availableNow = (item.stocks.counter || 0) - (inCartItem ? inCartItem.amount : 0);
+        const isSoldOut = availableNow <= 0;
 
-        html+=` <div class="modal-overlay fade-in"><div class="bg-white w-full max-w-[1000px] rounded-[6rem] p-16 shadow-2xl border-[20px] border-blue-600 flex flex-col relative overflow-hidden"><div class="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-50 rounded-full opacity-50 blur-3xl" style="transform: translate(30%, -30%);"></div><div class="flex justify-between items-start mb-12 relative z-10 px-4"><div class="flex flex-col gap-4"><div class="inline-block bg-blue-600 text-white px-8 py-3 rounded-full text-2xl uppercase tracking-widest shadow-lg italic w-max whitespace-nowrap">$ {
-            window.state.reserveMode ? '사전 예약 진행 중': '수령 진행 중'
+        html += ` <div class="modal-overlay fade-in"><div class="bg-white w-full max-w-[1000px] rounded-[6rem] p-16 shadow-2xl border-[20px] border-blue-600 flex flex-col relative overflow-hidden"><div class="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-50 rounded-full opacity-50 blur-3xl" style="transform: translate(30%, -30%);"></div><div class="flex justify-between items-start mb-12 relative z-10 px-4"><div class="flex flex-col gap-4"><div class="inline-block bg-blue-600 text-white px-8 py-3 rounded-full text-2xl uppercase tracking-widest shadow-lg italic w-max whitespace-nowrap">${
+            window.state.reserveMode ? '사전 예약 진행 중' : '수령 진행 중'
         }
 
-        </div><h2 class="text-6xl italic tracking-tighter text-slate-800 word-keep">[$ {
+        </div><h2 class="text-6xl italic tracking-tighter text-slate-800 word-keep">[${
             item.name
         }
 
-        ]</h2></div><button onclick="window.closeItemModal()" class="text-slate-300 text-7xl tap-effect">✕</button></div><div class="flex flex-col gap-8 relative z-10 overflow-y-auto custom-scroll"><div class="bg-slate-50 p-10 rounded-[3rem] border-4 border-slate-200 shadow-inner"><div class="flex justify-between items-end mb-8 px-4 border-b-4 border-slate-200 pb-6"><div class="flex flex-col gap-1 w-[55%] pr-2"><span class="text-xl text-slate-400 uppercase tracking-widest italic whitespace-nowrap">단위 정보</span><span class="text-2xl italic text-blue-600 word-keep leading-snug font-bold">기본($ {
+        ]</h2></div><button onclick="window.closeItemModal()" class="text-slate-300 text-7xl tap-effect">✕</button></div><div class="flex flex-col gap-8 relative z-10 overflow-y-auto custom-scroll"><div class="bg-slate-50 p-10 rounded-[3rem] border-4 border-slate-200 shadow-inner"><div class="flex justify-between items-end mb-8 px-4 border-b-4 border-slate-200 pb-6"><div class="flex flex-col gap-1 w-[55%] pr-2"><span class="text-xl text-slate-400 uppercase tracking-widest italic whitespace-nowrap">단위 정보</span><span class="text-2xl italic text-blue-600 word-keep leading-snug font-bold">기본(${
                 item.unitBase
 
-            }) $ {
-            item.unitBulk ? `<br/><span class="text-slate-500 text-xl mt-1 inline-block">묶음($ {
+            }) ${
+            item.unitBulk ? `<br/><span class="text-slate-500 text-xl mt-1 inline-block">묶음(${
                     item.unitBulk
                 }
 
-                , 1$ {
+                , 1${
                     item.unitBulk
                 }
 
-                =$ {
+                =${
                     item.bulkRatio
                 })</span>` : ''
         }
 
-        </span></div><div class="flex flex-col gap-1 text-right w-[45%] items-end pl-2 border-l-2 border-slate-200"><span class="text-xl text-slate-400 uppercase tracking-widest italic whitespace-nowrap">현재 잔고</span><span class="text-3xl italic uppercase whitespace-nowrap ${isSoldOut?'text-red-500':'text-slate-700'} font-black">$ {
-            isSoldOut ? '품절': window.formatStock(availableNow, item.unitBase, item.unitBulk, item.bulkRatio)
+        </span></div><div class="flex flex-col gap-1 text-right w-[45%] items-end pl-2 border-l-2 border-slate-200"><span class="text-xl text-slate-400 uppercase tracking-widest italic whitespace-nowrap">현재 잔고</span><span class="text-3xl italic uppercase whitespace-nowrap ${isSoldOut ? 'text-red-500' : 'text-slate-700'} font-black">${
+            isSoldOut ? '품절' : window.formatStock(availableNow, item.unitBase, item.unitBulk, item.bulkRatio)
         }
 
-        </span></div></div><div class="flex flex-col gap-6 px-2"><div class="flex items-center gap-4"><select onchange="window.changeCartInputUnit(this.value)" class="bg-white border-4 border-slate-300 px-6 rounded-[2rem] text-3xl outline-none font-bold shadow-sm" style="height: 5.5rem;"><option value="base"$ {
-            window.state.cartInputUnit==='base' ?'selected': ''
+        </span></div></div><div class="flex flex-col gap-6 px-2"><div class="flex items-center gap-4"><select onchange="window.changeCartInputUnit(this.value)" class="bg-white border-4 border-slate-300 px-6 rounded-[2rem] text-3xl outline-none font-bold shadow-sm" style="height: 5.5rem;"><option value="base"${
+            window.state.cartInputUnit === 'base' ? 'selected' : ''
         }
 
-        >기본 ($ {
+        >기본 (${
                 item.unitBase
 
-            })</option>$ {
-            item.unitBulk && item.bulkRatio>1 ? `<option value="bulk"$ {
-                window.state.cartInputUnit==='bulk' ?'selected': ''
+            })</option>${
+            item.unitBulk && item.bulkRatio > 1 ? `<option value="bulk"${
+                window.state.cartInputUnit === 'bulk' ? 'selected' : ''
             }
 
-            >묶음 ($ {
+            >묶음 (${
                     item.unitBulk
                 })</option>` : ''
         }
 
-        </select><div class="flex items-center bg-white border-4 border-slate-300 rounded-[2rem] p-2 flex-1 shadow-sm" style="height: 5.5rem;"><button onclick="if(window.state.cartInputQty>1){window.changeCartInputQty(-1);}" class="w-14 h-14 bg-slate-100 rounded-2xl text-4xl tap-effect flex items-center justify-center text-slate-500 font-bold">-</button><input type="number" value="${window.state.cartInputQty}" onchange="window.setCartInputQty(this.value)" class="text-4xl tabular-nums text-center bg-transparent outline-none font-black text-slate-800 flex-1 w-full" style="border:none; box-shadow:none;" /><button onclick="window.changeCartInputQty(1)" class="w-14 h-14 bg-slate-100 rounded-2xl text-4xl tap-effect flex items-center justify-center text-slate-500 font-bold">+</button></div></div><button onclick="window.confirmAddToCart()" class="bg-blue-600 text-white py-6 rounded-[3rem] text-4xl tap-effect shadow-xl font-bold tracking-widest flex flex-col items-center justify-center gap-2 ${isSoldOut?'grayscale':''}"$ {
-            isSoldOut?'disabled': ''
+        </select><div class="flex items-center bg-white border-4 border-slate-300 rounded-[2rem] p-2 flex-1 shadow-sm" style="height: 5.5rem;"><button onclick="if(window.state.cartInputQty>1){window.changeCartInputQty(-1);}" class="w-14 h-14 bg-slate-100 rounded-2xl text-4xl tap-effect flex items-center justify-center text-slate-500 font-bold">-</button><input type="number" value="${window.state.cartInputQty}" onchange="window.setCartInputQty(this.value)" class="text-4xl tabular-nums text-center bg-transparent outline-none font-black text-slate-800 flex-1 w-full" style="border:none; box-shadow:none;" /><button onclick="window.changeCartInputQty(1)" class="w-14 h-14 bg-slate-100 rounded-2xl text-4xl tap-effect flex items-center justify-center text-slate-500 font-bold">+</button></div></div><button onclick="window.confirmAddToCart()" class="bg-blue-600 text-white py-6 rounded-[3rem] text-4xl tap-effect shadow-xl font-bold tracking-widest flex flex-col items-center justify-center gap-2 ${isSoldOut ? 'grayscale' : ''}"${
+            isSoldOut ? 'disabled' : ''
         }
 
-        ><span>$ {
-            window.state.reserveMode ? '예약 바구니 담기': '장바구니 담기'
+        ><span>${
+            window.state.reserveMode ? '예약 바구니 담기' : '장바구니 담기'
         }
 
-        </span><span class="text-xl text-blue-200 font-normal tracking-normal truncate w-full px-4 text-center">담길 총량: $ {
-            window.state.cartInputUnit==='bulk' ? (window.state.cartInputQty * (item.bulkRatio || 1)): window.state.cartInputQty
+        </span><span class="text-xl text-blue-200 font-normal tracking-normal truncate w-full px-4 text-center">담길 총량: ${
+            window.state.cartInputUnit === 'bulk' ? (window.state.cartInputQty * (item.bulkRatio || 1)) : window.state.cartInputQty
         }
 
-        $ {
+        ${
             item.unitBase
         }
 
-        $ {
-            item.unitBulk && item.bulkRatio>1 ? `($ {
-                    window.formatStock(window.state.cartInputUnit==='bulk' ? (window.state.cartInputQty * (item.bulkRatio || 1)) : window.state.cartInputQty, item.unitBase, item.unitBulk, item.bulkRatio, true)
+        ${
+            item.unitBulk && item.bulkRatio > 1 ? `(${
+                    window.formatStock(
+                        window.state.cartInputUnit === 'bulk' ? (window.state.cartInputQty * (item.bulkRatio || 1)) : window.state.cartInputQty, 
+                        item.unitBase, 
+                        item.unitBulk, 
+                        item.bulkRatio, 
+                        true
+                    )
                 })` : ''
         }
 
@@ -4278,83 +4279,113 @@ function renderModals() {
     }
 
     if (window.state.categoryModal && !window.state.confirmModal) {
-        html+=` <div class="modal-overlay fade-in"><div class="bg-white w-full max-w-[800px] rounded-[5rem] p-16 border-8 border-blue-500 shadow-2xl flex flex-col"><h2 class="text-6xl mb-12 italic border-b-8 border-blue-100 pb-8 text-slate-800 word-keep">[$ {
-            window.state.categoryModal.mode==='add' ?'분류 신규 추가': '분류 명칭 수정'
+        html += ` <div class="modal-overlay fade-in"><div class="bg-white w-full max-w-[800px] rounded-[5rem] p-16 border-8 border-blue-500 shadow-2xl flex flex-col"><h2 class="text-6xl mb-12 italic border-b-8 border-blue-100 pb-8 text-slate-800 word-keep">[${
+            window.state.categoryModal.mode === 'add' ? '분류 신규 추가' : '분류 명칭 수정'
         }
 
         ]</h2><div class="flex flex-col gap-12 overflow-y-auto custom-scroll"><div class="flex flex-col gap-4"><label class="text-3xl text-slate-500 ml-6 italic whitespace-nowrap">분류 이름</label><input id="catInput" class="input-standard" value="${window.state.categoryInputValue}" placeholder="분류명을 입력하세요"></div><div class="flex gap-6 mt-8 shrink-0"><button onclick="window.state.categoryModal=null; window.renderApp();" class="flex-1 py-10 bg-slate-100 rounded-full text-4xl text-slate-600 border-4 border-slate-200 tap-effect whitespace-nowrap">취소</button><button onclick="window.saveCategory()" class="flex-[2] py-10 bg-blue-600 text-white rounded-full text-4xl shadow-2xl tap-effect whitespace-nowrap">저장하기</button></div></div></div></div>`;
     }
 
     if (window.state.editingItem && !window.state.confirmModal) {
-        html+=` <div class="modal-overlay fade-in"><div class="bg-white w-full max-w-[900px] rounded-[5rem] p-16 border-8 border-amber-500 shadow-2xl flex flex-col max-h-[90vh]"><h2 class="text-6xl mb-12 italic border-b-8 border-amber-100 pb-8 text-slate-800 shrink-0 word-keep">[$ {
-            window.state.isAddingNew?'품목 신규 등록': '품목 정보 수정'
+        html += ` <div class="modal-overlay fade-in"><div class="bg-white w-full max-w-[900px] rounded-[5rem] p-16 border-8 border-amber-500 shadow-2xl flex flex-col max-h-[90vh]"><h2 class="text-6xl mb-12 italic border-b-8 border-amber-100 pb-8 text-slate-800 shrink-0 word-keep">[${
+            window.state.isAddingNew ? '품목 신규 등록' : '품목 정보 수정'
         }
 
         ]</h2><div class="flex flex-col gap-8 overflow-y-auto custom-scroll pr-4 mb-8"><div class="flex flex-col gap-2"><label class="text-2xl text-slate-500 ml-4 font-bold">품목 정식 명칭</label><input id="editName" class="input-standard" value="${window.state.editingItem.name}" placeholder="품목 명칭 입력"></div><div class="grid grid-cols-2 gap-6"><div class="flex flex-col gap-2"><label class="text-2xl text-slate-500 ml-4 font-bold">기본 단위(낱개) <span class="text-red-500">*</span></label><input id="editUnitBase" class="input-standard" value="${window.state.editingItem.unitBase}" placeholder="예: 개, 장, 부"></div><div class="flex flex-col gap-2"><label class="text-2xl text-slate-500 ml-4 font-bold">묶음 단위(박스) (선택)</label><input id="editUnitBulk" class="input-standard" value="${window.state.editingItem.unitBulk}" placeholder="예: 박스, 묶음"></div></div><div class="flex flex-col gap-2"><label class="text-2xl text-slate-500 ml-4 font-bold">1묶음당 기본 수량 비율 (비묶음품목은 1)</label><input type="number" id="editBulkRatio" class="input-standard uppercase-input" value="${window.state.editingItem.bulkRatio}" placeholder="예: 50"></div><div class="grid grid-cols-2 gap-6 mt-4 p-6 bg-slate-50 rounded-[2rem] border-4 border-slate-200"><div class="flex flex-col gap-2"><label class="text-2xl text-slate-500 ml-4 font-bold">1인당 예약 한도 (기본단위)</label><input type="number" id="editMaxReserveQty" class="input-standard uppercase-input bg-white" value="${window.state.editingItem.maxReserveQty ?? 100}"></div><div class="flex flex-col gap-2"><label class="text-2xl text-slate-500 ml-4 font-bold">발주 알림 수량 (총재고 기준)</label><input type="number" id="editAlertQty" class="input-standard uppercase-input bg-white" value="${window.state.editingItem.alertQty ?? 10}"></div></div></div><div class="flex gap-6 shrink-0 mt-auto"><button onclick="window.closeEditItem()" class="flex-1 py-10 bg-slate-100 rounded-full text-4xl text-slate-600 border-4 border-slate-200 tap-effect whitespace-nowrap">취소</button><button onclick="window.saveItem()" class="flex-[2] py-10 bg-amber-500 text-white rounded-full text-4xl shadow-2xl tap-effect whitespace-nowrap">저장하기</button></div></div></div>`;
     }
 
     if (window.state.transferModal && !window.state.confirmModal) {
-        const item=window.state.inventory.find(i=>i.id==window.state.transferModal.itemId);
+        const item = window.state.inventory.find(function(i) { return i.id == window.state.transferModal.itemId; });
 
         if (item) {
-            html+=` <div class="modal-overlay fade-in"><div class="bg-white w-full max-w-[900px] rounded-[5rem] p-16 border-8 border-blue-500 shadow-2xl flex flex-col max-h-[90vh]"><h2 class="text-6xl mb-12 italic border-b-8 border-blue-100 pb-8 text-slate-800 word-keep shrink-0">[$ {
+            html += ` <div class="modal-overlay fade-in"><div class="bg-white w-full max-w-[900px] rounded-[5rem] p-16 border-8 border-blue-500 shadow-2xl flex flex-col max-h-[90vh]"><h2 class="text-6xl mb-12 italic border-b-8 border-blue-100 pb-8 text-slate-800 word-keep shrink-0">[${
                 item.name
             }
 
-            ] 재고 이동</h2><div class="flex flex-col gap-12 overflow-y-auto custom-scroll mb-8"><div class="grid grid-cols-2 gap-8"><div class="flex flex-col gap-4"><label class="text-3xl text-slate-500 ml-6 whitespace-nowrap">출발 창고</label><select id="transFrom" onchange="window.state.transferFrom=this.value" class="input-standard appearance-none">$ {
-                Object.entries(window.state.warehouses).map(([k, v])=>`<option value="${k}"$ {
-                        window.state.transferFrom===k?'selected':''
+            ] 재고 이동</h2><div class="flex flex-col gap-12 overflow-y-auto custom-scroll mb-8"><div class="grid grid-cols-2 gap-8"><div class="flex flex-col gap-4"><label class="text-3xl text-slate-500 ml-6 whitespace-nowrap">출발 창고</label><select id="transFrom" onchange="window.state.transferFrom=this.value" class="input-standard appearance-none">${
+                Object.entries(window.state.warehouses).map(function(arr) {
+                    var k = arr[0], v = arr[1];
+                    return `<option value="${k}"${
+                        window.state.transferFrom === k ? 'selected' : ''
                     }
 
-                    >$ {
+                    >${
                         v
                     }
 
-                    </option>`).join('')
+                    </option>`;
+                }).join('')
             }
 
-            </select></div><div class="flex flex-col gap-4"><label class="text-3xl text-slate-500 ml-6 whitespace-nowrap">도착 창고</label><select id="transTo" onchange="window.state.transferTo=this.value" class="input-standard appearance-none">$ {
-                Object.entries(window.state.warehouses).map(([k, v])=>`<option value="${k}"$ {
-                        window.state.transferTo===k?'selected':''
+            </select></div><div class="flex flex-col gap-4"><label class="text-3xl text-slate-500 ml-6 whitespace-nowrap">도착 창고</label><select id="transTo" onchange="window.state.transferTo=this.value" class="input-standard appearance-none">${
+                Object.entries(window.state.warehouses).map(function(arr) {
+                    var k = arr[0], v = arr[1];
+                    return `<option value="${k}"${
+                        window.state.transferTo === k ? 'selected' : ''
                     }
 
-                    >$ {
+                    >${
                         v
                     }
 
-                    </option>`).join('')
+                    </option>`;
+                }).join('')
             }
 
-            </select></div></div><div class="flex flex-col gap-4"><div class="flex justify-between items-center"><label class="text-3xl text-slate-500 ml-6 whitespace-nowrap">이동 단위 및 수량</label><select onchange="window.state.transferModal.unitType=this.value" class="bg-slate-100 p-4 rounded-2xl text-2xl outline-none font-bold border-4 border-slate-200"><option value="base"$ {
-                window.state.transferModal.unitType==='base' ?'selected': ''
+            </select></div></div><div class="flex flex-col gap-4"><div class="flex justify-between items-center"><label class="text-3xl text-slate-500 ml-6 whitespace-nowrap">이동 단위 및 수량</label><select onchange="window.state.transferModal.unitType=this.value" class="bg-slate-100 p-4 rounded-2xl text-2xl outline-none font-bold border-4 border-slate-200"><option value="base"${
+                window.state.transferModal.unitType === 'base' ? 'selected' : ''
             }
 
-            >기본 단위 ($ {
+            >기본 단위 (${
                     item.unitBase
 
-                })</option>$ {
-                item.unitBulk && item.bulkRatio>1 ? `<option value="bulk"$ {
-                    window.state.transferModal.unitType==='bulk' ?'selected': ''
+                })</option>${
+                item.unitBulk && item.bulkRatio > 1 ? `<option value="bulk"${
+                    window.state.transferModal.unitType === 'bulk' ? 'selected' : ''
                 }
 
-                >묶음 단위 ($ {
+                >묶음 단위 (${
                         item.unitBulk
                     })</option>` : ''
             }
-
-            </select></div><div class="flex items-center gap-6"><input type="number" id="transQty" value="${window.state.transferQty}" onchange="window.state.transferQty=parseInt(this.value)||1" class="input-standard flex-1"><div class="flex gap-4">$ {
-
-                [1,
-                10,
-                50,
-                100].map(n=>`<button onclick="window.state.transferQty+=${n}; document.getElementById('transQty').value=window.state.transferQty;" class="bg-slate-100 px-8 py-6 rounded-3xl text-3xl tap-effect text-slate-600 whitespace-nowrap" >+$ {
-                        n
+            </select>
+            </div>
+            <div class="flex items-center gap-6">
+                <input 
+                    type="number"
+                    id="transQty"
+                    value="${window.state.transferQty}"
+                    onchange="window.state.transferQty=parseInt(this.value)||1"
+                    class="input-standard flex-1"
+                >
+                <div class="flex gap-4">
+                    ${
+                        [1, 10, 50, 100].map(function(n) {
+                            return `
+                                <button
+                                    onclick="window.state.transferQty+=${n}; document.getElementById('transQty').value=window.state.transferQty;"
+                                    class="bg-slate-100 px-8 py-6 rounded-3xl text-3xl tap-effect text-slate-600 whitespace-nowrap"
+                                >+${n}</button>
+                            `;
+                        }).join('')
                     }
-
-                    </button>`).join('')
-            }
-
-            </div></div></div></div><div class="flex gap-6 shrink-0 mt-auto"><button onclick="window.state.transferModal=null; window.renderApp();" class="flex-1 py-10 bg-slate-100 rounded-full text-4xl text-slate-600 border-4 border-slate-200 tap-effect whitespace-nowrap">취소</button><button onclick="window.execTransfer()" class="flex-[2] py-10 bg-blue-600 text-white rounded-full text-4xl shadow-2xl tap-effect whitespace-nowrap">이동 실행</button></div></div></div>`;
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flex gap-6 shrink-0 mt-auto">
+        <button
+            onclick="window.state.transferModal=null; window.renderApp();"
+            class="flex-1 py-10 bg-slate-100 rounded-full text-4xl text-slate-600 border-4 border-slate-200 tap-effect whitespace-nowrap"
+        >취소</button>
+        <button
+            onclick="window.execTransfer()"
+            class="flex-[2] py-10 bg-blue-600 text-white rounded-full text-4xl shadow-2xl tap-effect whitespace-nowrap"
+        >이동 실행</button>
+    </div>
+</div>
+</div>
+`;
         }
     }
 
