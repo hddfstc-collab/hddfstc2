@@ -231,11 +231,35 @@
             
             /* [개선] 장바구니 아이템 강제 1줄 배치 유지, 높이 50% 확대 (min-height 150px), 너비 조정 */
             .cart-grid { grid-template-rows: 1fr !important; gap: 0.8rem !important; padding: 0.8rem !important; grid-auto-columns: 150px !important; }
-            .explorer-cart-item { width: 150px !important; min-height: 150px !important; padding: 0.8rem !important; border-radius: 1rem; justify-content: space-between; }
+            
+            /* ✅ 미니 상태 */
+            .explorer-cart-zone:not(.expanded) .explorer-cart-item {
+            min-height: 64px !important;
+            justify-content: center;
+            }
+
             .cart-item-title { font-size: 1.2rem; }
             .cart-item-unit-detail { font-size: 0.9rem; margin-top: 0.2rem; }
-            .cart-main-qty { font-size: 1.3rem; }
-            .cart-sub-qty { font-size: 0.9rem; }
+            
+            /* ✅ 기본(확장 상태) */
+            .cart-main-qty {
+            font-size: 1.3rem;
+            line-height: 1.2;
+            }
+
+            /* ✅ 미니(접힌 상태) */
+            .explorer-cart-zone:not(.expanded) .cart-main-qty {
+            font-size: 1.6rem;
+            line-height: 1;
+            white-space: nowrap;
+            }
+
+            
+            /* ✅ 미니 상태에서는 상세 설명 숨김 */
+            .explorer-cart-zone:not(.expanded) .cart-sub-qty {
+            display: none;
+            }
+
             .cart-qty-btn { width: 2.5rem; height: 2.5rem; font-size: 1.4rem; }
             
             /* [개선] 하단 푸터 버튼 및 글씨 크기를 50% 축소하여 여백 추가 확보 */
