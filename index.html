@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>현대면세 소모품관리</title>
+    <title>현대면세 소모품 창고관리</title>
     <style>
         :root {
             --slate-50: #f8fafc; --slate-100: #f1f5f9; --slate-200: #e2e8f0; --slate-300: #cbd5e1;
@@ -134,179 +134,186 @@
         .cart-checkout-zone { padding: 2rem; }
         .cart-checkout-btn { padding: 1.5rem; font-size: 2.5rem; border-radius: 9999px; width: 100%; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
 
+        /* ─────────────────────────────────────────
+           태블릿 (≤800px)
+        ───────────────────────────────────────── */
         @media screen and (max-width: 800px) {
-            html { font-size: 12px; } 
-            
-            .footer-icon { font-size: 3rem; }
-            .footer-text { font-size: 1rem; }
-            .footer-divider { width: 3px; height: 50px; }
+            html { font-size: 11px; }
 
-            .explorer-cat-bar { height: 60px; }
-            .explorer-list-zone { height: 360px; padding: 1.5rem; }
-            .explorer-item-card { height: 140px; padding: 1.2rem; border-width: 2px; border-radius: 1.5rem; } 
-            .item-title { font-size: 1.4rem; } 
-            .item-stock-text { font-size: 1.1rem; padding: 0.4rem 1rem; }
-            .item-soldout-badge { font-size: 1rem; padding: 0.3rem 1rem; margin-top: 0.5rem; }
-            
-            .explorer-cart-zone { min-height: 250px; box-shadow: 0 -10px 30px rgba(0,0,0,0.3); } 
-            .cart-grid { gap: 1rem; padding: 1rem; }
-            .explorer-cart-item { width: 190px; min-height: 140px; padding: 1rem; border-radius: 1.5rem; }
-            .cart-item-title { font-size: 1.2rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; white-space: normal !important; word-break: keep-all; }
-            .cart-item-unit-detail { font-size: 0.9rem; margin-top: 0.2rem; }
-            .cart-item-del { width: 2rem; height: 2rem; font-size: 1rem; }
-            
-            .cart-main-qty { font-size: 1.15rem; letter-spacing: -0.05em; }
-            .cart-sub-qty { font-size: 0.9rem; }
-            
-            .cart-qty-btn { width: 2.5rem; height: 2.5rem; font-size: 1.5rem; border-radius: 0.8rem; }
-            .cart-checkout-zone { padding: 1rem; }
-            .cart-checkout-btn { padding: 1rem; font-size: 1.8rem; }
+            .app-header { height: 52px !important; padding: 0 1.2rem !important; }
+            .app-header .text-2xl { font-size: 1.2rem !important; }
+            .app-header .text-xl  { font-size: 1rem !important; }
+            .app-header .text-sm  { font-size: 0.85rem !important; }
+            .app-header .w-10, .app-header .h-10 { width: 2rem !important; height: 2rem !important; }
+            .app-header .px-6 { padding-left: 0.6rem !important; padding-right: 0.6rem !important; }
+            .app-header .py-2 { padding-top: 0.3rem !important; padding-bottom: 0.3rem !important; }
 
-            .p-10 { padding: 1.5rem; } .p-12 { padding: 1.5rem; } .p-16 { padding: 2rem; }
-            .gap-10 { gap: 1rem; } .gap-8 { gap: 1rem; }
-            .px-10 { padding-left: 1rem; padding-right: 1rem; } .px-12 { padding-left: 1.5rem; padding-right: 1.5rem; }
-            th { font-size: 1.2rem; padding: 1rem 0.5rem; } td { font-size: 1.4rem; padding: 1rem 0.5rem; }
-            .input-standard { padding: 1rem 1.5rem; font-size: 1.5rem; }
-            .grid-cols-3 { grid-template-columns: 1fr 1fr; }
-            .text-8xl { font-size: 5rem; }
-            div[style*="width:350px"] { width: 250px !important; height: 250px !important; }
-            div[style*="width:280px"] { width: 200px !important; height: 200px !important; }
-            .modal-content { max-width: 95% !important; padding: 2rem !important;}
-        }
+            .footer-icon { font-size: 2rem !important; }
+            .footer-text { font-size: 0.85rem !important; }
+            .footer-divider { width: 2px; height: 36px; }
+            .mobile-footer { padding-top: 0.4rem !important; padding-bottom: 0.4rem !important; }
 
-        /* =========================================================
-           480px (iPhone SE 등 초소형 모바일) 완벽 최적화 레이아웃
-           ========================================================= */
-        @media screen and (max-width: 480px) {
-            html { font-size: 10px; } 
-            
-            .grid-cols-2, .grid-cols-3, .grid-cols-4 { grid-template-columns: 1fr !important; }
-            
-            /* [개선] 상단 세부 품목 리스트가 남는 공간을 모두 차지하도록 flex 설정 */
-            .explorer-list-zone { flex: 1 !important; min-height: 0 !important; height: auto !important; padding: 0.5rem !important; }
-            .explorer-list-zone .grid { gap: 0.5rem; padding-bottom: 1rem; }
-            .explorer-item-card {
-                height: auto;
-                min-height: unset;
-                padding: 0.6rem 0.8rem;
-                flex-direction: row;
-                align-items: center;
-                justify-content: space-between;
+            .explorer-cat-bar { height: 52px; }
+            .explorer-list-zone { height: 320px; padding: 0.8rem; }
+            .explorer-item-card { height: 120px; padding: 0.8rem 1rem; border-width: 2px; border-radius: 1rem; }
+            .item-title { font-size: 1.2rem; }
+            .item-stock-text { font-size: 0.95rem; padding: 0.3rem 0.7rem; }
+            .item-soldout-badge { font-size: 0.85rem; padding: 0.2rem 0.7rem; margin-top: 0.3rem; }
 
-                border-radius: 0.8rem;
-                border: 1px solid var(--slate-200);
-                box-shadow: none;
-            }
-            .explorer-item-card > div:first-child { margin-bottom: 0; flex: 1; }
-            .explorer-item-card > div:last-child { flex: none; margin-left: 1rem; }
-            
-            .item-title {
-            font-size: 1.2rem;
-            line-height: 1.3;
-            }
-
-            .item-stock-text {
-            font-size: 0.9rem;
-            padding: 0.2rem 0.5rem;
-            }
-
-            
-            /* [개선] 장바구니 높이를 늘려 품목 아이템 세로 크기 증가 수용 (280px) */
-            
-            .explorer-cart-zone {
-            height: 72px !important;
-            min-height: 72px !important;
-            border-top-left-radius: 1.5rem;
-            border-top-right-radius: 1.5rem;
-            transition: height 0.25s ease;
-            }
-
-            .explorer-cart-zone.expanded {
-            height: 65vh !important;
-            }
-           
-            .explorer-cart-zone > div:first-child { padding: 0.6rem 1rem !important; }
-            .explorer-cart-zone > div:first-child h3 { font-size: 1.3rem !important; }
-            .explorer-cart-zone > div:first-child span.text-5xl { font-size: 1.8rem !important; }
-            
-            /* [개선] 장바구니 아이템 너비 확대 및 2줄 배치 유지 */
-            .cart-grid { grid-template-rows: 1fr !important; gap: 0.8rem !important; padding: 0.8rem !important; grid-auto-columns: 180px !important; }
-            
-            /* ✅ 미니 상태 */
-            .explorer-cart-zone:not(.expanded) .explorer-cart-item {
-            min-height: 72px !important;
-            justify-content: center;
-            }
-
+            .explorer-cart-zone { min-height: 200px; box-shadow: 0 -10px 30px rgba(0,0,0,0.3); }
+            .cart-grid { gap: 0.8rem; padding: 0.8rem; }
+            .explorer-cart-item { width: 190px; min-height: 130px; padding: 0.8rem; border-radius: 1.2rem; }
             .cart-item-title { font-size: 1.1rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; white-space: normal !important; word-break: keep-all; }
             .cart-item-unit-detail { font-size: 0.85rem; margin-top: 0.2rem; }
-            
-            /* ✅ 기본(확장 상태) */
-            .cart-main-qty {
-            font-size: 1.3rem;
-            line-height: 1.2;
-            }
+            .cart-item-del { width: 1.8rem; height: 1.8rem; font-size: 0.9rem; }
+            .cart-main-qty { font-size: 1rem; }
+            .cart-sub-qty { font-size: 0.85rem; }
+            .cart-qty-btn { width: 2.2rem; height: 2.2rem; font-size: 1.3rem; border-radius: 0.6rem; }
+            .cart-checkout-zone { padding: 0.8rem; }
+            .cart-checkout-btn { padding: 0.8rem; font-size: 1.5rem; }
 
-            /* ✅ 미니(접힌 상태) */
-            .explorer-cart-zone:not(.expanded) .cart-main-qty {
-            font-size: 1.6rem;
-            line-height: 1;
-            white-space: nowrap;
-            }
-
-            
-            /* ✅ 미니 상태에서는 상세 설명 숨김 */
-            .explorer-cart-zone:not(.expanded) .cart-sub-qty {
-            display: none;
-            }
-
-            .cart-qty-btn { width: 2.5rem; height: 2.5rem; font-size: 1.4rem; }
-            
-            /* [개선] 하단 푸터 버튼 및 글씨 크기를 50% 축소하여 여백 추가 확보 */
-            .footer-icon { font-size: 1.8rem !important; margin-bottom: 0.2rem; }
-            
-            .footer-text {
-            display: none;
-            }
-
-            .mobile-footer {
-            padding-top: 0.3rem !important;
-            padding-bottom: 0.3rem !important;
-            }
-
-            .footer-divider { width: 2px !important; height: 30px !important; }
-            .mobile-footer { padding-top: 0.4rem !important; padding-bottom: 0.4rem !important; border-top-width: 4px !important; }
-
-            .p-10 { padding: 1rem; } .p-12 { padding: 1rem; } .p-16 { padding: 1.5rem; }
-            .gap-10 { gap: 1rem; } .gap-8 { gap: 0.8rem; }
-            .px-10 { padding-left: 0.8rem; padding-right: 0.8rem; } .px-12 { padding-left: 1rem; padding-right: 1rem; }
-            
-            div[style*="width:350px"] { width: 180px !important; height: 180px !important; }
-            div[style*="width:280px"] { width: 140px !important; height: 140px !important; }
+            .p-10 { padding: 1.2rem; } .p-12 { padding: 1.2rem; } .p-16 { padding: 1.5rem; }
+            .gap-10 { gap: 0.8rem; } .gap-8 { gap: 0.8rem; }
+            .px-10 { padding-left: 0.8rem; padding-right: 0.8rem; }
+            .px-12 { padding-left: 1rem; padding-right: 1rem; }
+            th { font-size: 1rem; padding: 0.7rem 0.4rem; }
+            td { font-size: 1.1rem; padding: 0.7rem 0.4rem; }
+            .input-standard { padding: 0.7rem 1rem; font-size: 1.3rem; }
+            .grid-cols-3 { grid-template-columns: 1fr 1fr; }
             .text-8xl { font-size: 4rem; }
-            
-            .cart-checkout-zone { padding: 0.8rem !important; }
-            .cart-checkout-btn { padding: 0.8rem; font-size: 1.6rem; }
-            
-            .modal-overlay .py-10 { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
-            .modal-overlay .py-8 { padding-top: 1rem !important; padding-bottom: 1rem !important; }
-            .modal-overlay .py-6 { padding-top: 0.8rem !important; padding-bottom: 0.8rem !important; }
-            .modal-overlay .text-xl { font-size: 1.2rem !important; }
-            .modal-overlay .text-2xl { font-size: 1.4rem !important; }
-            .modal-overlay .text-3xl { font-size: 1.6rem !important; }
-            .modal-overlay .text-4xl { font-size: 1.8rem !important; }
-            .modal-overlay .text-5xl { font-size: 2rem !important; }
-            .modal-overlay .text-6xl { font-size: 2.2rem !important; }
-            .modal-overlay .text-7xl { font-size: 2.5rem !important; }
-            .modal-overlay .p-16 { padding: 1.5rem !important; }
-            .modal-overlay .p-12 { padding: 1.2rem !important; }
-            .modal-overlay .p-10 { padding: 1rem !important; }
-            
-            input[type="number"].text-4xl { font-size: 2rem !important; width: 80px !important; }
-            .w-14 { width: 3rem !important; } .h-14 { height: 3rem !important; }
-            .px-6 { padding-left: 1rem !important; padding-right: 1rem !important; }
-            .px-10 { padding-left: 1.5rem !important; padding-right: 1.5rem !important; }
-            .py-4 { padding-top: 0.8rem !important; padding-bottom: 0.8rem !important; }
+            div[style*="width:350px"] { width: 220px !important; height: 220px !important; }
+            div[style*="width:280px"] { width: 180px !important; height: 180px !important; }
+        }
+
+        /* ─────────────────────────────────────────
+           모바일 (≤480px) — 핵심 최적화
+        ───────────────────────────────────────── */
+        @media screen and (max-width: 480px) {
+            html { font-size: 9px; }
+
+            /* 헤더 — 딱 44px 한 줄 */
+            .app-header { height: 44px !important; padding: 0 0.8rem !important; }
+            .app-header .text-2xl { font-size: 1.1rem !important; }
+            .app-header .text-xl  { font-size: 0.9rem !important; }
+            .app-header .text-sm  { font-size: 0.8rem !important; display: none; }
+            .app-header .gap-6    { gap: 0.4rem !important; }
+            .app-header .gap-4    { gap: 0.4rem !important; }
+            .app-header .w-10, .app-header .h-10 { width: 1.8rem !important; height: 1.8rem !important; font-size: 0.9rem !important; }
+            /* 로그아웃/비번변경 버튼 축소 */
+            .app-header button { padding: 0.2rem 0.6rem !important; font-size: 0.85rem !important; border-radius: 0.5rem !important; }
+
+            /* 푸터 — 딱 44px */
+            .mobile-footer { padding-top: 0.3rem !important; padding-bottom: 0.3rem !important; border-top-width: 3px !important; height: 44px; }
+            .footer-icon { font-size: 1.5rem !important; margin: 0 !important; }
+            .footer-text { display: none !important; }
+            .footer-divider { width: 2px !important; height: 24px !important; margin: 0 0.4rem !important; }
+
+            /* 카테고리 바 */
+            .explorer-cat-bar { height: 40px; }
+            .explorer-cat-bar button { font-size: 1.15rem !important; padding: 0 0.8rem !important; }
+            .category-tab-active { border-bottom-width: 4px !important; }
+
+            /* 품목 리스트 */
+            .explorer-list-zone { flex: 1 !important; min-height: 0 !important; height: auto !important; padding: 0.4rem !important; }
+            .explorer-list-zone .grid { gap: 0.4rem; grid-template-columns: 1fr 1fr !important; padding-bottom: 0.5rem; }
+            .explorer-item-card {
+                height: auto; min-height: unset;
+                padding: 0.6rem 0.7rem;
+                border-radius: 0.8rem;
+                border: 1px solid var(--slate-200);
+                box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+                flex-direction: column;
+            }
+            .item-title { font-size: 1.1rem; line-height: 1.3; white-space: normal; word-break: keep-all; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+            .item-stock-text { font-size: 0.85rem; padding: 0.15rem 0.4rem; margin-top: 0.3rem; }
+            .item-soldout-badge { font-size: 0.8rem; padding: 0.15rem 0.5rem; margin-top: 0.3rem; }
+
+            /* 장바구니 */
+            .explorer-cart-zone {
+                height: 52px !important; min-height: 52px !important;
+                border-top-left-radius: 1.2rem; border-top-right-radius: 1.2rem;
+                transition: height 0.25s ease;
+            }
+            .explorer-cart-zone.expanded { height: 60vh !important; }
+            .explorer-cart-zone > div:first-child { padding: 0 0.8rem !important; height: 52px; align-items: center; }
+            .explorer-cart-zone > div:first-child h3 { font-size: 1.15rem !important; }
+            .explorer-cart-zone > div:first-child span.text-5xl { font-size: 1.4rem !important; }
+            .explorer-cart-zone > div:first-child .text-2xl { font-size: 0.85rem !important; padding: 0.2rem 0.5rem !important; border-radius: 0.5rem !important; }
+            .explorer-cart-zone > div:first-child .text-xl { font-size: 0.8rem !important; }
+
+            .cart-grid { grid-template-rows: 1fr !important; gap: 0.5rem !important; padding: 0.5rem !important; grid-auto-columns: 155px !important; }
+            .explorer-cart-item { min-height: unset; padding: 0.6rem; border-radius: 1rem; }
+            .explorer-cart-zone:not(.expanded) .explorer-cart-item { min-height: 52px !important; justify-content: center; padding: 0.3rem 0.6rem; }
+
+            .cart-item-title { font-size: 1rem !important; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; white-space: normal !important; word-break: keep-all; }
+            .cart-item-unit-detail { font-size: 0.8rem; margin-top: 0.15rem; }
+            .cart-item-del { width: 1.6rem !important; height: 1.6rem !important; font-size: 0.8rem; }
+
+            .cart-main-qty { font-size: 1.1rem; }
+            .cart-sub-qty { font-size: 0.8rem; }
+            .explorer-cart-zone:not(.expanded) .cart-main-qty { font-size: 1.2rem; }
+            .explorer-cart-zone:not(.expanded) .cart-sub-qty { display: none; }
+            .explorer-cart-zone:not(.expanded) .cart-item-unit-detail { display: none; }
+
+            .cart-qty-btn { width: 2rem !important; height: 2rem !important; font-size: 1.2rem; border-radius: 0.5rem; }
+            .cart-checkout-zone { padding: 0.5rem !important; }
+            .cart-checkout-btn { padding: 0.6rem; font-size: 1.3rem; border-radius: 9999px; }
+
+            /* 간격·패딩 전반 축소 */
+            .p-10 { padding: 0.8rem !important; } .p-12 { padding: 0.8rem !important; } .p-16 { padding: 1rem !important; }
+            .py-10 { padding-top: 0.8rem !important; padding-bottom: 0.8rem !important; }
+            .py-8  { padding-top: 0.6rem !important; padding-bottom: 0.6rem !important; }
+            .gap-10 { gap: 0.6rem !important; } .gap-8 { gap: 0.6rem !important; }
+            .px-10 { padding-left: 0.6rem !important; padding-right: 0.6rem !important; }
+            .px-12 { padding-left: 0.8rem !important; padding-right: 0.8rem !important; }
+            .px-6  { padding-left: 0.6rem !important; padding-right: 0.6rem !important; }
+            .py-4  { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
+
+            /* 텍스트 전반 축소 */
+            .text-8xl { font-size: 3.5rem !important; }
+            .text-7xl { font-size: 3rem !important; }
+            .text-6xl { font-size: 2.5rem !important; }
+            .text-5xl { font-size: 2rem !important; }
+            .text-4xl { font-size: 1.6rem !important; }
+            .text-3xl { font-size: 1.35rem !important; }
+            .text-2xl { font-size: 1.15rem !important; }
+            .text-xl  { font-size: 1rem !important; }
+
+            /* 스캔 대기 화면 원형 아이콘 */
+            div[style*="width:350px"] { width: 150px !important; height: 150px !important; }
+            div[style*="width:280px"] { width: 120px !important; height: 120px !important; }
+
+            /* 입력 필드 */
+            .input-standard { padding: 0.6rem 0.8rem; font-size: 1.2rem; border-radius: 2rem; border-width: 2px; }
+            input[type="number"].text-4xl { font-size: 1.6rem !important; width: 60px !important; }
+            .w-14 { width: 2.5rem !important; } .h-14 { height: 2.5rem !important; }
+
+            /* 테이블 */
+            th { font-size: 0.9rem; padding: 0.5rem 0.3rem; }
+            td { font-size: 0.95rem; padding: 0.5rem 0.3rem; }
+
+            /* 그리드 */
+            .grid-cols-2, .grid-cols-3, .grid-cols-4 { grid-template-columns: 1fr !important; }
+
+            /* 모달 */
+            .modal-overlay { padding: 0.8rem; }
+            .modal-overlay .text-7xl { font-size: 2rem !important; }
+            .modal-overlay .text-6xl { font-size: 1.8rem !important; }
+            .modal-overlay .text-5xl { font-size: 1.6rem !important; }
+            .modal-overlay .text-4xl { font-size: 1.4rem !important; }
+            .modal-overlay .text-3xl { font-size: 1.25rem !important; }
+            .modal-overlay .text-2xl { font-size: 1.1rem !important; }
+            .modal-overlay .p-16 { padding: 1.2rem !important; }
+            .modal-overlay .p-12 { padding: 1rem !important; }
+            .modal-overlay .p-10 { padding: 0.8rem !important; }
+            .modal-overlay .py-10 { padding-top: 1rem !important; padding-bottom: 1rem !important; }
+            .modal-overlay .py-8  { padding-top: 0.8rem !important; padding-bottom: 0.8rem !important; }
+            .modal-overlay .rounded-\[5rem\] { border-radius: 1.5rem !important; }
+            .modal-overlay .rounded-\[4rem\] { border-radius: 1.2rem !important; }
+            .modal-overlay .rounded-full { border-radius: 9999px !important; }
+            .modal-overlay .border-8 { border-width: 3px !important; }
+            .modal-overlay .border-\[12px\] { border-width: 4px !important; }
+            .modal-overlay .mb-12 { margin-bottom: 0.8rem !important; }
         }
     </style>
 </head>
@@ -1404,7 +1411,7 @@
         // ==========================================
         function renderHeader() {
             return `
-            <div class="h-20 bg-slate-900 flex items-center justify-between px-10 shrink-0 border-b border-slate-800 p-8 z-10">
+            <div class="bg-slate-900 flex items-center justify-between shrink-0 border-b border-slate-800 z-10 app-header" style="padding: 0 2rem;">
                 <div class="flex items-center gap-4 text-white">
                     <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-xl shadow-lg p-2">W</div>
                     <span class="text-2xl tracking-tighter uppercase italic">Warehouse v26.9</span>
@@ -1424,7 +1431,7 @@
         function renderFooter() {
             return `
             <div class="flex flex-col shrink-0 z-[100] relative">
-                <div class="bg-slate-100 flex items-center justify-around px-10 border-t-8 border-slate-200 shadow-[0_-15px_40px_rgba(0,0,0,0.15)] py-4 mobile-footer">
+                <div class="bg-slate-100 flex items-center justify-around px-6 border-t-4 border-slate-200 shadow-[0_-8px_20px_rgba(0,0,0,0.1)] mobile-footer" style="padding-top:0.5rem;padding-bottom:0.5rem;">
                     <button onclick="window.changeView('scan')" class="flex flex-col items-center gap-1 tap-effect flex-1 ${window.state.view!=='admin'?'text-blue-600':'text-slate-400'}">
                         <span class="footer-icon drop-shadow-sm">🏠</span><span class="footer-text uppercase tracking-widest whitespace-nowrap">홈 화면</span>
                     </button>
