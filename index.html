@@ -143,18 +143,75 @@
             align-items: stretch;
         }
 
-        .explorer-cart-item { width: 320px; min-height: 180px; padding: 1.5rem; border-radius: 2.5rem; display: flex; flex-direction: column; }
-        .cart-item-title { font-size: 1.75rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; white-space: normal; word-break: keep-all; line-height: 1.3; }
-        .cart-item-unit-detail { font-size: 1.2rem; } 
-        .cart-item-del { width: 2.5rem; height: 2.5rem; font-size: 1.2rem; }
-        
-        .cart-main-qty { font-size: 1.5rem; letter-spacing: -0.05em; color: var(--amber-400); font-weight: 900; line-height: 1.2; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .cart-sub-qty { font-size: 1.1rem; color: var(--slate-400); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 0.2rem; }
-        
-        .cart-qty-btn { width: 3.5rem; height: 3.5rem; font-size: 2rem; border-radius: 1rem; }
-        .cart-checkout-zone { padding: 2rem; }
-        .cart-checkout-btn { padding: 1.5rem; font-size: 2.5rem; border-radius: 9999px; width: 100%; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        /* [수정된 장바구니 품목 디자인] */
+        .explorer-cart-item { 
+            width: 240px; /* 320px에서 축소 */
+            min-height: 130px; /* 180px에서 축소 */
+            padding: 1.2rem; 
+            border-radius: 2rem; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between;
+        }
 
+        .cart-item-title { 
+            font-size: 1.4rem; /* 1.75rem에서 축소 */
+            display: -webkit-box; 
+            -webkit-line-clamp: 2; 
+            -webkit-box-orient: vertical; 
+            overflow: hidden; 
+            white-space: normal; 
+            word-break: keep-all; 
+            line-height: 1.3; 
+        }
+
+        .cart-item-unit-detail { font-size: 1rem; } /* 1.2rem에서 축소 */
+
+        .cart-item-del { 
+            width: 2.2rem; 
+            height: 2.2rem; 
+            font-size: 1rem; 
+        }
+
+        .cart-main-qty { 
+            font-size: 1.3rem; /* 1.5rem에서 축소 */
+            letter-spacing: -0.05em; 
+            color: var(--amber-400); 
+            font-weight: 900; 
+            line-height: 1.2; 
+            text-align: center; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+        }
+
+        .cart-sub-qty { 
+            font-size: 1rem; 
+            color: var(--slate-400); 
+            text-align: center; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            margin-top: 0.1rem; 
+        }
+
+        .cart-qty-btn { 
+            width: 3rem; 
+            height: 3rem; 
+            font-size: 1.8rem; 
+            border-radius: 0.8rem; 
+        }
+
+        .cart-checkout-zone { padding: 1.5rem; }
+
+        .cart-checkout-btn { 
+            padding: 1.2rem; 
+            font-size: 2rem; /* 2.5rem에서 축소 */
+            border-radius: 9999px; 
+            width: 100%; 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); 
+            font-weight: 900;
+        }
         @media screen and (max-width: 800px) {
             html { font-size: 12px; } 
             
@@ -253,8 +310,9 @@
             .item-stock-text { font-size: 0.9rem; }
 
             /* 장바구니 그리드 설정 */
-            .cart-grid { grid-template-rows: 1fr !important; gap: 0.8rem !important; padding: 0.8rem !important; grid-auto-columns: 180px !important; }
-            .cart-item-title { font-size: 1.1rem; }
+            .explorer-cart-item { width: 160px; min-height: 100px !important; padding: 0.8rem !important; }
+            .cart-grid { grid-auto-columns: 160px !important; gap: 0.8rem !important; }
+             
             
             /* 푸터 다이어트 (공간 확보) */
             .footer-icon { font-size: 1.8rem !important; }
@@ -2104,54 +2162,50 @@
                 
                 html += `
                 <div class="modal-overlay fade-in">
-                    <div class="bg-white w-full max-w-[600px] max-h-[90vh] rounded-[2rem] lg:rounded-[6rem] p-6 lg:p-16 shadow-2xl border-4 lg:border-[20px] border-blue-600 flex flex-col relative overflow-hidden mx-4">
+                    <div class="bg-white w-full max-w-[800px] rounded-[3rem] lg:rounded-[6rem] p-6 lg:p-16 shadow-2xl border-4 lg:border-[20px] border-blue-600 flex flex-col relative overflow-hidden mx-4 max-h-[95vh]">
                         
                         <div class="flex justify-between items-start mb-6 lg:mb-12 relative z-10">
                             <div class="flex flex-col gap-2">
-                                <div class="inline-block bg-blue-600 text-white px-4 py-1 rounded-full text-sm lg:text-2xl uppercase tracking-widest italic w-max whitespace-nowrap">${window.state.reserveMode ? '사전 예약 진행' : '수령 진행 중'}</div>
+                                <div class="inline-block bg-blue-600 text-white px-4 py-1 lg:px-8 lg:py-3 rounded-full text-sm lg:text-2xl uppercase tracking-widest italic w-max whitespace-nowrap">${window.state.reserveMode ? '사전 예약' : '수령 진행'}</div>
                                 <h2 class="text-3xl lg:text-6xl italic tracking-tighter text-slate-800 word-keep">[${item.name}]</h2>
                             </div>
                             <button onclick="window.closeItemModal()" class="text-slate-300 text-4xl lg:text-7xl tap-effect">✕</button>
                         </div>
 
                         <div class="flex-1 overflow-y-auto custom-scroll pr-2 relative z-10">
-                            <div class="bg-slate-50 p-6 lg:p-10 rounded-[2rem] lg:rounded-[3rem] border-2 border-slate-200 shadow-inner">
-                                <div class="flex flex-wrap justify-between items-end mb-6 lg:mb-8 border-b-2 border-slate-200 pb-4 gap-4">
-                                    <div class="flex flex-col gap-1 min-w-[120px]">
-                                        <span class="text-sm lg:text-xl text-slate-400 uppercase italic">단위 정보</span>
-                                        <span class="text-lg lg:text-2xl italic text-blue-600 font-bold">
-                                            기본(${item.unitBase})
-                                            ${item.unitBulk ? `<br/><span class="text-slate-500 text-sm lg:text-xl mt-1 inline-block">묶음(${item.unitBulk}, 1${item.unitBulk}=${item.bulkRatio})</span>` : ''}
-                                        </span>
+                            <div class="bg-slate-50 p-6 lg:p-10 rounded-[2rem] lg:rounded-[3rem] border-2 border-slate-200">
+                                <div class="flex flex-wrap justify-between items-end mb-6 border-b-2 border-slate-200 pb-6 gap-4">
+                                    <div class="flex flex-col gap-1 min-w-[100px]">
+                                        <span class="text-xs lg:text-xl text-slate-400 uppercase italic">단위</span>
+                                        <span class="text-base lg:text-2xl italic text-blue-600 font-bold">기본(${item.unitBase})</span>
                                     </div>
-                                    <div class="flex flex-col gap-1 text-right min-w-[120px]">
-                                        <span class="text-sm lg:text-xl text-slate-400 uppercase italic">현재 잔고</span>
-                                        <span class="text-xl lg:text-3xl italic uppercase whitespace-nowrap ${isSoldOut?'text-red-500':'text-slate-700'} font-black">${isSoldOut ? '품절' : window.formatStock(availableNow, item.unitBase, item.unitBulk, item.bulkRatio)}</span>
+                                    <div class="flex flex-col gap-1 text-right items-end min-w-[100px]">
+                                        <span class="text-xs lg:text-xl text-slate-400 uppercase italic">잔고</span>
+                                        <span class="text-lg lg:text-3xl italic ${isSoldOut?'text-red-500':'text-slate-700'} font-black whitespace-nowrap">${isSoldOut ? '품절' : window.formatStock(availableNow, item.unitBase, item.unitBulk, item.bulkRatio)}</span>
                                     </div>
                                 </div>
 
                                 <div class="flex flex-col gap-4">
                                     <div class="flex flex-col lg:flex-row gap-3">
-                                        <select onchange="window.changeCartInputUnit(this.value)" class="bg-white border-2 lg:border-4 border-slate-300 px-4 rounded-[1.5rem] text-xl lg:text-3xl outline-none font-bold h-12 lg:h-20">
-                                            <option value="base" ${window.state.cartInputUnit==='base'?'selected':''}>기본 (${item.unitBase})</option>
-                                            ${item.unitBulk && item.bulkRatio > 1 ? `<option value="bulk" ${window.state.cartInputUnit==='bulk'?'selected':''}>묶음 (${item.unitBulk})</option>` : ''}
+                                        <select onchange="window.changeCartInputUnit(this.value)" class="bg-white border-2 border-slate-300 px-4 rounded-2xl text-lg lg:text-3xl outline-none font-bold h-12 lg:h-20">
+                                            <option value="base">기본(${item.unitBase})</option>
+                                            ${item.unitBulk ? `<option value="bulk">묶음(${item.unitBulk})</option>` : ''}
                                         </select>
-                                        <div class="flex items-center bg-white border-2 lg:border-4 border-slate-300 rounded-[1.5rem] p-1 flex-1 h-12 lg:h-20">
-                                            <button onclick="if(window.state.cartInputQty>1){window.changeCartInputQty(-1);}" class="w-10 h-10 lg:w-14 lg:h-14 bg-slate-100 rounded-xl text-2xl lg:text-4xl tap-effect flex items-center justify-center text-slate-500">-</button>
-                                            <input type="number" value="${window.state.cartInputQty}" onchange="window.setCartInputQty(this.value)" class="text-xl lg:text-4xl tabular-nums text-center bg-transparent outline-none font-black text-slate-800 flex-1 w-full" style="border:none; box-shadow:none;" />
-                                            <button onclick="window.changeCartInputQty(1)" class="w-10 h-10 lg:w-14 lg:h-14 bg-slate-100 rounded-xl text-2xl lg:text-4xl tap-effect flex items-center justify-center text-slate-500">+</button>
+                                        <div class="flex items-center bg-white border-2 border-slate-300 rounded-2xl p-1 flex-1 h-12 lg:h-20">
+                                            <button onclick="window.changeCartInputQty(-1)" class="w-10 h-10 lg:w-14 lg:h-14 bg-slate-100 rounded-xl text-2xl font-bold">-</button>
+                                            <input type="number" value="${window.state.cartInputQty}" class="text-xl lg:text-4xl text-center flex-1 font-black" readonly />
+                                            <button onclick="window.changeCartInputQty(1)" class="w-10 h-10 lg:w-14 lg:h-14 bg-slate-100 rounded-xl text-2xl font-bold">+</button>
                                         </div>
                                     </div>
 
-                                    <button onclick="window.confirmAddToCart()" class="bg-blue-600 text-white py-4 lg:py-6 rounded-[2rem] text-2xl lg:text-4xl tap-effect shadow-xl font-bold tracking-widest flex flex-col items-center justify-center gap-1 ${isSoldOut?'grayscale':''}" ${isSoldOut?'disabled':''}>
-                                        <span>${window.state.reserveMode ? '예약 바구니 담기' : '장바구니 담기'}</span>
-                                        <span class="text-xs lg:text-xl text-blue-200 font-normal">총량: ${window.state.cartInputUnit === 'bulk' ? (window.state.cartInputQty * (item.bulkRatio || 1)) : window.state.cartInputQty}${item.unitBase}</span>
+                                    <button onclick="window.confirmAddToCart()" class="bg-blue-600 text-white py-4 lg:py-8 rounded-3xl text-xl lg:text-4xl tap-effect shadow-xl font-bold ${isSoldOut?'grayscale':''}" ${isSoldOut?'disabled':''}>
+                                        ${window.state.reserveMode ? '예약 바구니 담기' : '장바구니 담기'}
                                     </button>
                                 </div>
                             </div>
                         </div>
                         
-                        <button onclick="window.closeItemModal()" class="mt-4 shrink-0 w-full py-4 lg:py-8 text-slate-500 border-2 lg:border-4 border-dashed border-slate-300 rounded-[2rem] lg:rounded-[4rem] text-xl lg:text-3xl uppercase tracking-widest tap-effect bg-slate-50">취소하고 돌아가기</button>
+                        <button onclick="window.closeItemModal()" class="mt-4 py-4 lg:py-8 text-slate-500 border-2 border-dashed border-slate-300 rounded-3xl text-lg lg:text-3xl tap-effect bg-slate-50">취소</button>
                     </div>
                 </div>`;
             }
