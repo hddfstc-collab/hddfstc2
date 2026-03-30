@@ -1424,19 +1424,21 @@
         // ==========================================
         function renderHeader() {
             return `
-            <div class="h-20 bg-slate-900 flex items-center justify-between px-10 shrink-0 border-b border-slate-800 p-8 z-10">
-                <div class="flex items-center gap-4 text-white">
-                    <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-xl shadow-lg p-2">W</div>
-                    <span class="text-2xl tracking-tighter uppercase italic">Warehouse v26.9</span>
+            <div class="min-h-[5rem] h-auto bg-slate-900 flex flex-wrap items-center justify-between px-4 lg:px-10 shrink-0 border-b border-slate-800 py-4 z-10 gap-4">
+                <div class="flex items-center gap-3 text-white">
+                    <div class="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center text-lg shadow-lg p-2">W</div>
+                    <span class="text-xl lg:text-2xl tracking-tighter uppercase italic font-black">Warehouse</span>
                 </div>
-                <div class="flex items-center gap-6 text-right">
+                <div class="flex items-center flex-wrap gap-3 lg:gap-6 justify-end ml-auto">
                     ${window.state.user.name ? `
-                    <div>
-                        <span class="text-blue-400 text-sm block mb-1 uppercase tracking-widest whitespace-nowrap">${window.state.user.brand} | ${window.state.user.id}</span>
-                        <span class="text-white text-xl leading-none whitespace-nowrap">${window.state.user.name} 님 로그인 중 ${window.state.reserveMode ? '<span class="ml-2 text-amber-400 text-base border border-amber-400 px-2 rounded-full font-bold">예약 모드</span>' : ''}</span>
+                    <div class="text-right leading-tight">
+                        <span class="hidden md:block text-blue-400 text-[10px] lg:text-xs uppercase tracking-widest whitespace-nowrap">${window.state.user.brand} | ${window.state.user.id}</span>
+                        <span class="text-white text-sm lg:text-xl whitespace-nowrap font-bold">${window.state.user.name} 님</span>
                     </div>` : ''}
-                    ${window.state.isAdminAuthenticated ? `<button onclick="window.state.pwdChangeModal=true; window.renderApp();" class="bg-amber-600 text-white px-6 py-2 rounded-xl text-lg tap-effect shadow-md font-bold whitespace-nowrap">비밀번호 변경</button>` : ''}
-                    ${window.state.user.name ? `<button onclick="window.logout()" class="bg-slate-800 text-slate-400 px-6 py-2 rounded-xl text-lg tap-effect border border-slate-700 whitespace-nowrap">로그아웃</button>` : ''}
+                    <div class="flex gap-2">
+                        ${window.state.isAdminAuthenticated ? `<button onclick="window.state.pwdChangeModal=true; window.renderApp();" class="bg-amber-600 text-white px-3 py-2 rounded-lg text-xs lg:text-lg tap-effect shadow-md font-bold whitespace-nowrap">비번변경</button>` : ''}
+                        ${window.state.user.name ? `<button onclick="window.logout()" class="bg-slate-800 text-slate-400 px-3 py-2 rounded-lg text-xs lg:text-lg tap-effect border border-slate-700 whitespace-nowrap">로그아웃</button>` : ''}
+                    </div>
                 </div>
             </div>`;
         }
@@ -1527,8 +1529,7 @@
                 const items = window.state.inventory.filter(i => i.cat === window.state.activeCat);
                 return `
                 <div class="flex-1 flex flex-col overflow-hidden">
-        
-                    <div class="bg-white border-b flex overflow-x-auto custom-scroll shrink-0 px-8 items-center gap-4 explorer-cat-bar">
+                    <div class="bg-white border-b flex overflow-x-auto custom-scroll shrink-0 px-8 items-center gap-4 explorer-cat-bar" style="min-height: 80px;">
                         ${window.state.categories.map(cat => `
                             <button onclick="window.setCategory('${cat}')" 
                                     class="px-10 h-full shrink-0 text-2xl lg:text-3xl transition-all whitespace-nowrap ${window.state.activeCat === cat ? "category-tab-active" : "text-slate-400 font-bold"}">
@@ -1536,7 +1537,8 @@
                             </button>
                         `).join('')}
                     </div>
-                    <div class="explorer-list-zone custom-scroll">
+
+                    <div class="explorer-list-zone custom-scroll flex-1">
                         <div class="grid grid-cols-2 gap-8 pb-10">
                             ${items.map(item => {
                                 const totalStock = item.stocks.counter || 0;
@@ -1554,51 +1556,32 @@
                             }).join('')}
                         </div>
                     </div>
+
                     <div class="bg-slate-900 flex flex-col shrink-0 text-white rounded-t-[4rem] border-t-2 border-slate-800 explorer-cart-zone">
-                        
-                        <div onclick="window.toggleCart()" 
-                            class="px-8 py-4 border-b border-slate-800 flex justify-between items-center shrink-0 cursor-pointer bg-slate-800">
-                            
+                        <div onclick="window.toggleCart()" class="px-8 py-4 border-b border-slate-800 flex justify-between items-center shrink-0 cursor-pointer bg-slate-800">
                             <div class="flex items-center gap-3">
                                 <span class="text-3xl">🛒</span>
                                 <div class="flex flex-col">
-                                    <h3 class="text-xl font-bold text-blue-400">
-                                        ${window.state.reserveMode ? '예약 바구니' : '장바구니'} 
-                                        <span class="text-white ml-2">${window.state.cart.length}개</span>
-                                    </h3>
+                                    <h3 class="text-xl font-bold text-blue-400">${window.state.reserveMode ? '예약 바구니' : '장바구니'} <span class="text-white ml-2">${window.state.cart.length}개</span></h3>
                                     <span class="text-slate-400 text-sm">클릭하여 전체 보기/닫기</span>
                                 </div>
                             </div>
-                            
-                            <div class="text-2xl text-slate-400">
-                                ${document.querySelector('.explorer-cart-zone')?.classList.contains('expanded') ? '▼' : '▲'}
-                            </div>
+                            <div class="text-2xl text-slate-400">${document.querySelector('.explorer-cart-zone')?.classList.contains('expanded') ? '▼' : '▲'}</div>
                         </div>
                         <div class="flex-1 overflow-x-auto custom-scroll ${window.state.cart.length === 0 ? 'flex items-center justify-center p-8' : 'cart-grid'}">
-                            ${window.state.cart.length===0 ? `<div class="w-full text-center text-slate-500 italic text-4xl word-keep">${window.state.reserveMode ? '예약하실 물품을 선택해 주세요' : '수령하실 물품을 선택해 주세요'}</div>` : ''}
+                            ${window.state.cart.length===0 ? `<div class="w-full text-center text-slate-500 italic text-4xl">물품을 선택해 주세요</div>` : ''}
                             ${window.state.cart.map(c => `
                             <div class="bg-slate-800 flex flex-col justify-between border-2 border-slate-700 shadow-2xl shrink-0 explorer-cart-item">
-                                <div class="flex flex-col flex-1 overflow-hidden">
-                                    <div class="flex justify-between items-start gap-2">
-                                        <div class="flex flex-col flex-1 overflow-hidden pr-2">
-                                            <p class="leading-tight text-white font-bold word-keep cart-item-title">${c.itemName}</p>
-                                            <span class="text-slate-400 cart-item-unit-detail word-keep mt-1 block truncate">단위: ${c.unitBase}${c.unitBulk ? ` (1${c.unitBulk}=${c.bulkRatio})` : ''}</span>
-                                        </div>
-                                        <button onclick="window.removeFromCart(${c.itemId})" class="bg-red-900 text-red-400 hover:text-red-300 flex items-center justify-center shrink-0 rounded-full cart-item-del tap-effect">✕</button>
-                                    </div>
-                                </div>
+                                <div class="flex flex-col flex-1 overflow-hidden pr-2"><p class="leading-tight text-white font-bold word-keep cart-item-title">${c.itemName}</p></div>
                                 <div class="flex items-center justify-between bg-slate-900 p-2 border border-slate-700 shrink-0" style="border-radius: 1.2rem;">
-                                    <button onclick="window.updateCartQty(${c.itemId}, -1)" class="bg-slate-800 tap-effect flex items-center justify-center text-slate-400 cart-qty-btn shrink-0">-</button>
-                                    <div class="flex flex-col items-center justify-center flex-1 overflow-hidden px-1">
-                                        <span class="cart-main-qty w-full">${window.formatStock(c.amount, c.unitBase, c.unitBulk, c.bulkRatio, true)}</span>
-                                        <span class="cart-sub-qty w-full">(총 ${c.amount}${c.unitBase})</span>
-                                    </div>
-                                    <button onclick="window.updateCartQty(${c.itemId}, 1)" class="bg-slate-800 tap-effect flex items-center justify-center text-slate-400 cart-qty-btn shrink-0">+</button>
+                                    <button onclick="window.updateCartQty(${c.itemId}, -1)" class="bg-slate-800 text-slate-400 cart-qty-btn">-</button>
+                                    <span class="cart-main-qty">${window.formatStock(c.amount, c.unitBase, c.unitBulk, c.bulkRatio, true)}</span>
+                                    <button onclick="window.updateCartQty(${c.itemId}, 1)" class="bg-slate-800 text-slate-400 cart-qty-btn">+</button>
                                 </div>
                             </div>`).join('')}
                         </div>
                         <div class="bg-slate-900 border-t border-slate-800 text-center cart-checkout-zone shrink-0">
-                            <button onclick="window.openCheckoutConfirm()" class="bg-blue-600 tap-effect shadow-xl italic tracking-widest whitespace-nowrap cart-checkout-btn ${window.state.cart.length===0?'grayscale':''}" ${window.state.cart.length===0?'disabled':''}>${window.state.reserveMode ? '사전 예약 확정' : '수령 최종 확정'}</button>
+                            <button onclick="window.openCheckoutConfirm()" class="bg-blue-600 tap-effect shadow-xl italic cart-checkout-btn ${window.state.cart.length===0?'grayscale':''}" ${window.state.cart.length===0?'disabled':''}>${window.state.reserveMode ? '사전 예약 확정' : '수령 최종 확정'}</button>
                         </div>
                     </div>
                 </div>`;
