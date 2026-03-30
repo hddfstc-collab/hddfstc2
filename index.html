@@ -112,14 +112,27 @@
         .footer-divider { width: 4px; height: 60px; }
 
         .explorer-cat-bar { height: 90px; }
-        .explorer-list-zone { flex: none; height: 540px; padding: 2.5rem; overflow-y: auto; }
+        .explorer-list-zone { 
+            flex: 1 !important; 
+            height: auto !important; 
+            padding: 2.5rem; 
+            overflow-y: auto; 
+        }
         .explorer-item-card { height: 200px; padding: 2rem; border-radius: 2rem; } 
         .item-title { font-size: 2rem; font-weight: 900; } 
         .item-stock-text { font-size: 1.5rem; padding: 0.75rem 1.5rem; }
         .item-soldout-badge { font-size: 1.25rem; padding: 0.5rem 1.5rem; }
         
-        .explorer-cart-zone { flex: 1; display: flex; flex-direction: column; min-height: 300px; box-shadow: 0 -20px 50px rgba(0,0,0,0.4); } 
-        
+        /* 장바구니 구역: 상자 자체의 높이가 변함 */
+        .explorer-cart-zone { 
+            flex: none !important;
+            height: 72px !important; /* 기본(닫힌) 높이 */
+            display: flex; 
+            flex-direction: column; 
+            box-shadow: 0 -20px 50px rgba(0,0,0,0.4); 
+            transition: height 0.3s ease-in-out; /* 부드럽게 슥~ */
+            overflow: hidden;
+        }
         .cart-grid {
             display: grid;
             grid-template-rows: repeat(2, 1fr);
@@ -145,188 +158,114 @@
         @media screen and (max-width: 800px) {
             html { font-size: 12px; } 
             
-            .footer-icon { font-size: 3rem; }
-            .footer-text { font-size: 1rem; }
-            .footer-divider { width: 3px; height: 50px; }
+            /* 리스트 구역: 고정 높이(360px)를 지우고 남는 공간을 다 채우도록 설정 */
+            .explorer-list-zone { 
+                flex: 1 !important; 
+                height: auto !important; 
+                padding: 1.5rem; 
+                min-height: 0;
+            }
 
-            .explorer-cat-bar { height: 60px; }
-            .explorer-list-zone { height: 360px; padding: 1.5rem; }
+            /* 장바구니 구역: 서랍장 기능 적용 */
+            .explorer-cart-zone { 
+                flex: none !important;
+                height: 80px !important; /* 닫혔을 때 높이 */
+                min-height: 80px !important;
+                transition: height 0.3s ease-in-out;
+                box-shadow: 0 -10px 30px rgba(0,0,0,0.3); 
+                overflow: hidden;
+            }
+
+            /* 장바구니가 열렸을 때 높이 */
+            .explorer-cart-zone.expanded { 
+                height: 40vh !important; 
+            }
+
+            /* 닫혀있을 때 안쪽 내용물 숨기기 */
+            .explorer-cart-zone:not(.expanded) .cart-grid, 
+            .explorer-cart-zone:not(.expanded) .cart-checkout-zone {
+                display: none !important;
+            }
+
+            /* 기존 디자인 요소들 유지 */
+            .footer-icon { font-size: 3.2rem; }
+            .footer-text { font-size: 1.1rem; }
+            .explorer-cat-bar { height: 70px; }
             .explorer-item-card { height: 140px; padding: 1.2rem; border-width: 2px; border-radius: 1.5rem; } 
-            .item-title { font-size: 1.4rem; } 
-            .item-stock-text { font-size: 1.1rem; padding: 0.4rem 1rem; }
-            .item-soldout-badge { font-size: 1rem; padding: 0.3rem 1rem; margin-top: 0.5rem; }
+            .item-title { font-size: 1.5rem; } 
+            .cart-grid { gap: 1rem; padding: 1.2rem; }
+            .explorer-cart-item { width: 220px; min-height: 150px; padding: 1.2rem; }
+            .cart-checkout-btn { padding: 1.2rem; font-size: 2rem; }
             
-            .explorer-cart-zone { min-height: 250px; box-shadow: 0 -10px 30px rgba(0,0,0,0.3); } 
-            .cart-grid { gap: 1rem; padding: 1rem; }
-            .explorer-cart-item { width: 190px; min-height: 140px; padding: 1rem; border-radius: 1.5rem; }
-            .cart-item-title { font-size: 1.2rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; white-space: normal !important; word-break: keep-all; }
-            .cart-item-unit-detail { font-size: 0.9rem; margin-top: 0.2rem; }
-            .cart-item-del { width: 2rem; height: 2rem; font-size: 1rem; }
-            
-            .cart-main-qty { font-size: 1.15rem; letter-spacing: -0.05em; }
-            .cart-sub-qty { font-size: 0.9rem; }
-            
-            .cart-qty-btn { width: 2.5rem; height: 2.5rem; font-size: 1.5rem; border-radius: 0.8rem; }
-            .cart-checkout-zone { padding: 1rem; }
-            .cart-checkout-btn { padding: 1rem; font-size: 1.8rem; }
-
-            .p-10 { padding: 1.5rem; } .p-12 { padding: 1.5rem; } .p-16 { padding: 2rem; }
-            .gap-10 { gap: 1rem; } .gap-8 { gap: 1rem; }
-            .px-10 { padding-left: 1rem; padding-right: 1rem; } .px-12 { padding-left: 1.5rem; padding-right: 1.5rem; }
-            th { font-size: 1.2rem; padding: 1rem 0.5rem; } td { font-size: 1.4rem; padding: 1rem 0.5rem; }
-            .input-standard { padding: 1rem 1.5rem; font-size: 1.5rem; }
+            /* 기타 수치 조정 */
             .grid-cols-3 { grid-template-columns: 1fr 1fr; }
-            .text-8xl { font-size: 5rem; }
             div[style*="width:350px"] { width: 250px !important; height: 250px !important; }
             div[style*="width:280px"] { width: 200px !important; height: 200px !important; }
-            .modal-content { max-width: 95% !important; padding: 2rem !important;}
         }
 
         /* =========================================================
            480px (iPhone SE 등 초소형 모바일) 완벽 최적화 레이아웃
            ========================================================= */
+        /* =========================================================
+   480px (모바일) 통합 최적화 레이아웃 (중복 제거 완료)
+   ========================================================= */
         @media screen and (max-width: 480px) {
             html { font-size: 10px; } 
             
+            /* 리스트를 1줄로 고정 */
             .grid-cols-2, .grid-cols-3, .grid-cols-4 { grid-template-columns: 1fr !important; }
             
-            /* [개선] 상단 세부 품목 리스트가 남는 공간을 모두 차지하도록 flex 설정 */
-            .explorer-list-zone { flex: 1 !important; min-height: 0 !important; height: auto !important; padding: 0.5rem !important; }
-            .explorer-list-zone .grid { gap: 0.5rem; padding-bottom: 1rem; }
-            .explorer-item-card {
-                height: auto;
-                min-height: unset;
-                padding: 0.6rem 0.8rem;
-                flex-direction: row;
-                align-items: center;
-                justify-content: space-between;
-
-                border-radius: 0.8rem;
-                border: 1px solid var(--slate-200);
-                box-shadow: none;
+            /* [리스트] 장바구니가 닫히면 남는 공간을 다 채움 */
+            .explorer-list-zone { 
+                flex: 1 !important; 
+                min-height: 0 !important; 
+                height: auto !important; 
+                padding: 0.5rem !important; 
             }
-            .explorer-item-card > div:first-child { margin-bottom: 0; flex: 1; }
-            .explorer-item-card > div:last-child { flex: none; margin-left: 1rem; }
             
-            .item-title {
-            font-size: 1.2rem;
-            line-height: 1.3;
-            }
-
-            .item-stock-text {
-            font-size: 0.9rem;
-            padding: 0.2rem 0.5rem;
-            }
-
-            
-            /* [개선] 장바구니 높이를 늘려 품목 아이템 세로 크기 증가 수용 (280px) */
-            
+            /* [장바구니 상자] 서랍장 방식 설정 */
             .explorer-cart-zone {
-                height: 70px !important; /* 평소에는 제목만 보임 */
+                flex: none !important;
+                height: 70px !important; /* 닫혔을 때 */
                 min-height: 70px !important;
-                transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* 부드러운 움직임 */
-                background-color: #1e293b !important; /* 진한 남색 배경 */
+                background-color: #1e293b !important;
+                transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 z-index: 100;
+                border-top-left-radius: 1.5rem;
+                border-top-right-radius: 1.5rem;
+                overflow: hidden;
             }
 
-            /* 서랍이 열렸을 때 (전체 화면의 70%까지 올라옴) */
+            /* [장바구니 상자] 열렸을 때 (70% 높이) */
             .explorer-cart-zone.expanded {
                 height: 70vh !important;
             }
 
-            /* 서랍이 닫혀있을 때는 안쪽 내용(목록, 결제버튼)을 숨김 */
+            /* 닫혀있을 때 안쪽 내용물 숨기기 (핵심!) */
             .explorer-cart-zone:not(.expanded) .cart-grid, 
             .explorer-cart-zone:not(.expanded) .cart-checkout-zone {
                 display: none !important;
             }
-               
-
-            .explorer-cart-zone.expanded {
-            height: 65vh !important;
-            }
-           
-            .explorer-cart-zone > div:first-child { padding: 0.6rem 1rem !important; }
-            .explorer-cart-zone > div:first-child h3 { font-size: 1.3rem !important; }
-            .explorer-cart-zone > div:first-child span.text-5xl { font-size: 1.8rem !important; }
             
-            /* [개선] 장바구니 아이템 너비 확대 및 2줄 배치 유지 */
+            /* 아이템 카드 사이즈 축소 */
+            .explorer-item-card { height: auto; padding: 0.8rem; flex-direction: row; align-items: center; border-radius: 0.8rem; }
+            .item-title { font-size: 1.2rem; }
+            .item-stock-text { font-size: 0.9rem; }
+
+            /* 장바구니 그리드 설정 */
             .cart-grid { grid-template-rows: 1fr !important; gap: 0.8rem !important; padding: 0.8rem !important; grid-auto-columns: 180px !important; }
+            .cart-item-title { font-size: 1.1rem; }
             
-            /* ✅ 미니 상태 */
-            .explorer-cart-zone:not(.expanded) .explorer-cart-item {
-            min-height: 72px !important;
-            justify-content: center;
-            }
+            /* 푸터 다이어트 (공간 확보) */
+            .footer-icon { font-size: 1.8rem !important; }
+            .footer-text { display: none !important; }
+            .mobile-footer { padding-top: 0.4rem !important; padding-bottom: 0.4rem !important; height: auto !important; }
+            .footer-divider { width: 2px !important; height: 25px !important; }
 
-            .cart-item-title { font-size: 1.1rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; white-space: normal !important; word-break: keep-all; }
-            .cart-item-unit-detail { font-size: 0.85rem; margin-top: 0.2rem; }
-            
-            /* ✅ 기본(확장 상태) */
-            .cart-main-qty {
-            font-size: 1.3rem;
-            line-height: 1.2;
-            }
-
-            /* ✅ 미니(접힌 상태) */
-            .explorer-cart-zone:not(.expanded) .cart-main-qty {
-            font-size: 1.6rem;
-            line-height: 1;
-            white-space: nowrap;
-            }
-
-            
-            /* ✅ 미니 상태에서는 상세 설명 숨김 */
-            .explorer-cart-zone:not(.expanded) .cart-sub-qty {
-            display: none;
-            }
-
-            .cart-qty-btn { width: 2.5rem; height: 2.5rem; font-size: 1.4rem; }
-            
-            /* [개선] 하단 푸터 버튼 및 글씨 크기를 50% 축소하여 여백 추가 확보 */
-            .footer-icon { font-size: 1.8rem !important; margin-bottom: 0.2rem; }
-            
-            .footer-text {
-            display: none;
-            }
-
-            .mobile-footer {
-            padding-top: 0.3rem !important;
-            padding-bottom: 0.3rem !important;
-            }
-
-            .footer-divider { width: 2px !important; height: 30px !important; }
-            .mobile-footer { padding-top: 0.4rem !important; padding-bottom: 0.4rem !important; border-top-width: 4px !important; }
-
-            .p-10 { padding: 1rem; } .p-12 { padding: 1rem; } .p-16 { padding: 1.5rem; }
-            .gap-10 { gap: 1rem; } .gap-8 { gap: 0.8rem; }
-            .px-10 { padding-left: 0.8rem; padding-right: 0.8rem; } .px-12 { padding-left: 1rem; padding-right: 1rem; }
-            
+            /* 기타 UI 축소 */
             div[style*="width:350px"] { width: 180px !important; height: 180px !important; }
             div[style*="width:280px"] { width: 140px !important; height: 140px !important; }
-            .text-8xl { font-size: 4rem; }
-            
-            .cart-checkout-zone { padding: 0.8rem !important; }
             .cart-checkout-btn { padding: 0.8rem; font-size: 1.6rem; }
-            
-            .modal-overlay .py-10 { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
-            .modal-overlay .py-8 { padding-top: 1rem !important; padding-bottom: 1rem !important; }
-            .modal-overlay .py-6 { padding-top: 0.8rem !important; padding-bottom: 0.8rem !important; }
-            .modal-overlay .text-xl { font-size: 1.2rem !important; }
-            .modal-overlay .text-2xl { font-size: 1.4rem !important; }
-            .modal-overlay .text-3xl { font-size: 1.6rem !important; }
-            .modal-overlay .text-4xl { font-size: 1.8rem !important; }
-            .modal-overlay .text-5xl { font-size: 2rem !important; }
-            .modal-overlay .text-6xl { font-size: 2.2rem !important; }
-            .modal-overlay .text-7xl { font-size: 2.5rem !important; }
-            .modal-overlay .p-16 { padding: 1.5rem !important; }
-            .modal-overlay .p-12 { padding: 1.2rem !important; }
-            .modal-overlay .p-10 { padding: 1rem !important; }
-            
-            input[type="number"].text-4xl { font-size: 2rem !important; width: 80px !important; }
-            .w-14 { width: 3rem !important; } .h-14 { height: 3rem !important; }
-            .px-6 { padding-left: 1rem !important; padding-right: 1rem !important; }
-            .px-10 { padding-left: 1.5rem !important; padding-right: 1.5rem !important; }
-            .py-4 { padding-top: 0.8rem !important; padding-bottom: 0.8rem !important; }
         }
     </style>
 </head>
