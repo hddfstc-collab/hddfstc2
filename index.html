@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>창고 관리 시스템 v26.9 (푸터 및 장바구니 미니멀 최적화)</title>
+    <title>현대면세 소모품관리리</title>
     <style>
         :root {
             --slate-50: #f8fafc; --slate-100: #f1f5f9; --slate-200: #e2e8f0; --slate-300: #cbd5e1;
@@ -123,7 +123,7 @@
         }
 
         .explorer-cart-item { width: 320px; min-height: 180px; padding: 1.5rem; border-radius: 2.5rem; display: flex; flex-direction: column; }
-        .cart-item-title { font-size: 1.75rem; }
+        .cart-item-title { font-size: 1.75rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; white-space: normal; word-break: keep-all; line-height: 1.3; }
         .cart-item-unit-detail { font-size: 1.2rem; } 
         .cart-item-del { width: 2.5rem; height: 2.5rem; font-size: 1.2rem; }
         
@@ -151,7 +151,7 @@
             .explorer-cart-zone { min-height: 250px; box-shadow: 0 -10px 30px rgba(0,0,0,0.3); } 
             .cart-grid { gap: 1rem; padding: 1rem; }
             .explorer-cart-item { width: 190px; min-height: 140px; padding: 1rem; border-radius: 1.5rem; }
-            .cart-item-title { font-size: 1.2rem; }
+            .cart-item-title { font-size: 1.2rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; white-space: normal !important; word-break: keep-all; }
             .cart-item-unit-detail { font-size: 0.9rem; margin-top: 0.2rem; }
             .cart-item-del { width: 2rem; height: 2rem; font-size: 1rem; }
             
@@ -214,8 +214,8 @@
             /* [개선] 장바구니 높이를 늘려 품목 아이템 세로 크기 증가 수용 (280px) */
             
             .explorer-cart-zone {
-            height: 64px !important;
-            min-height: 64px !important;
+            height: 72px !important;
+            min-height: 72px !important;
             border-top-left-radius: 1.5rem;
             border-top-right-radius: 1.5rem;
             transition: height 0.25s ease;
@@ -225,21 +225,21 @@
             height: 65vh !important;
             }
            
-            .explorer-cart-zone > div:first-child { padding: 0.8rem 1rem !important; }
-            .explorer-cart-zone > div:first-child h3 { font-size: 1.4rem !important; }
-            .explorer-cart-zone > div:first-child span.text-5xl { font-size: 2rem !important; }
+            .explorer-cart-zone > div:first-child { padding: 0.6rem 1rem !important; }
+            .explorer-cart-zone > div:first-child h3 { font-size: 1.3rem !important; }
+            .explorer-cart-zone > div:first-child span.text-5xl { font-size: 1.8rem !important; }
             
-            /* [개선] 장바구니 아이템 강제 1줄 배치 유지, 높이 50% 확대 (min-height 150px), 너비 조정 */
-            .cart-grid { grid-template-rows: 1fr !important; gap: 0.8rem !important; padding: 0.8rem !important; grid-auto-columns: 150px !important; }
+            /* [개선] 장바구니 아이템 너비 확대 및 2줄 배치 유지 */
+            .cart-grid { grid-template-rows: 1fr !important; gap: 0.8rem !important; padding: 0.8rem !important; grid-auto-columns: 180px !important; }
             
             /* ✅ 미니 상태 */
             .explorer-cart-zone:not(.expanded) .explorer-cart-item {
-            min-height: 64px !important;
+            min-height: 72px !important;
             justify-content: center;
             }
 
-            .cart-item-title { font-size: 1.2rem; }
-            .cart-item-unit-detail { font-size: 0.9rem; margin-top: 0.2rem; }
+            .cart-item-title { font-size: 1.1rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; white-space: normal !important; word-break: keep-all; }
+            .cart-item-unit-detail { font-size: 0.85rem; margin-top: 0.2rem; }
             
             /* ✅ 기본(확장 상태) */
             .cart-main-qty {
@@ -273,7 +273,6 @@
             padding-top: 0.3rem !important;
             padding-bottom: 0.3rem !important;
             }
-            ``
 
             .footer-divider { width: 2px !important; height: 30px !important; }
             .mobile-footer { padding-top: 0.4rem !important; padding-bottom: 0.4rem !important; border-top-width: 4px !important; }
@@ -319,10 +318,11 @@
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         function toggleCart() {
-        document
-          .querySelector('.explorer-cart-zone')
-          ?.classList.toggle('expanded');
+            document
+              .querySelector('.explorer-cart-zone')
+              ?.classList.toggle('expanded');
         }
+        window.toggleCart = toggleCart;
         // ==========================================
         // 0. 파이어베이스(Firebase) 온라인 연동 설정
         // ==========================================
@@ -1537,8 +1537,8 @@
                         <div onclick="toggleCart()"
                             class="px-12 py-8 border-b border-slate-800 flex justify-between items-center shrink-0 cursor-pointer">
 
-                            <div class="flex items-center gap-4"><span class="text-5xl">🛒</span><h3 class="text-4xl italic tracking-tighter text-blue-400 uppercase whitespace-nowrap">${window.state.reserveMode ? '예약 바구니' : '장바구니'}</h3></div>
-                            <div class="flex items-center gap-6"><span class="text-2xl bg-slate-800 px-6 py-3 rounded-2xl border border-slate-700 whitespace-nowrap">${window.state.cart.length}개 담김</span><button onclick="window.state.cart=[]; window.renderApp();" class="text-xl text-slate-400 underline whitespace-nowrap">전체 비우기</button></div>
+                            <div class="flex items-center gap-4 overflow-hidden"><span class="text-5xl shrink-0">🛒</span><div class="flex flex-col overflow-hidden"><h3 class="text-4xl italic tracking-tighter text-blue-400 uppercase whitespace-nowrap">${window.state.reserveMode ? '예약 바구니' : '장바구니'}</h3>${window.state.cart.length > 0 ? `<span class="text-slate-400 text-xl mt-1 truncate">${window.state.cart.map(c=>c.itemName).join(' · ')}</span>` : ''}</div></div>
+                            <div class="flex items-center gap-6 shrink-0"><span class="text-2xl bg-slate-800 px-6 py-3 rounded-2xl border border-slate-700 whitespace-nowrap">${window.state.cart.length}개 담김</span><button onclick="event.stopPropagation(); window.state.cart=[]; window.renderApp();" class="text-xl text-slate-400 underline whitespace-nowrap">전체 비우기</button></div>
                         </div>
                         <div class="flex-1 overflow-x-auto custom-scroll ${window.state.cart.length === 0 ? 'flex items-center justify-center p-8' : 'cart-grid'}">
                             ${window.state.cart.length===0 ? `<div class="w-full text-center text-slate-500 italic text-4xl word-keep">${window.state.reserveMode ? '예약하실 물품을 선택해 주세요' : '수령하실 물품을 선택해 주세요'}</div>` : ''}
@@ -1547,7 +1547,7 @@
                                 <div class="flex flex-col flex-1 overflow-hidden">
                                     <div class="flex justify-between items-start gap-2">
                                         <div class="flex flex-col flex-1 overflow-hidden pr-2">
-                                            <p class="leading-tight text-white font-bold word-keep cart-item-title truncate">${c.itemName}</p>
+                                            <p class="leading-tight text-white font-bold word-keep cart-item-title">${c.itemName}</p>
                                             <span class="text-slate-400 cart-item-unit-detail word-keep mt-1 block truncate">단위: ${c.unitBase}${c.unitBulk ? ` (1${c.unitBulk}=${c.bulkRatio})` : ''}</span>
                                         </div>
                                         <button onclick="window.removeFromCart(${c.itemId})" class="bg-red-900 text-red-400 hover:text-red-300 flex items-center justify-center shrink-0 rounded-full cart-item-del tap-effect">✕</button>
