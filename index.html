@@ -222,12 +222,24 @@
             /* [개선] 장바구니 높이를 늘려 품목 아이템 세로 크기 증가 수용 (280px) */
             
             .explorer-cart-zone {
-            height: 72px !important;
-            min-height: 72px !important;
-            border-top-left-radius: 1.5rem;
-            border-top-right-radius: 1.5rem;
-            transition: height 0.25s ease;
+                height: 70px !important; /* 평소에는 제목만 보임 */
+                min-height: 70px !important;
+                transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* 부드러운 움직임 */
+                background-color: #1e293b !important; /* 진한 남색 배경 */
+                z-index: 100;
             }
+
+            /* 서랍이 열렸을 때 (전체 화면의 70%까지 올라옴) */
+            .explorer-cart-zone.expanded {
+                height: 70vh !important;
+            }
+
+            /* 서랍이 닫혀있을 때는 안쪽 내용(목록, 결제버튼)을 숨김 */
+            .explorer-cart-zone:not(.expanded) .cart-grid, 
+            .explorer-cart-zone:not(.expanded) .cart-checkout-zone {
+                display: none !important;
+            }
+               
 
             .explorer-cart-zone.expanded {
             height: 65vh !important;
@@ -1515,6 +1527,15 @@
                 const items = window.state.inventory.filter(i => i.cat === window.state.activeCat);
                 return `
                 <div class="flex-1 flex flex-col overflow-hidden">
+        
+                    <div class="bg-white border-b flex overflow-x-auto custom-scroll shrink-0 px-8 items-center gap-4 explorer-cat-bar">
+                        ${window.state.categories.map(cat => `
+                            <button onclick="window.setCategory('${cat}')" 
+                                    class="px-10 h-full shrink-0 text-2xl lg:text-3xl transition-all whitespace-nowrap ${window.state.activeCat === cat ? "category-tab-active" : "text-slate-400 font-bold"}">
+                                ${cat}
+                            </button>
+                        `).join('')}
+                    </div>
                     <div class="explorer-list-zone custom-scroll">
                         <div class="grid grid-cols-2 gap-8 pb-10">
                             ${items.map(item => {
@@ -1535,11 +1556,23 @@
                     </div>
                     <div class="bg-slate-900 flex flex-col shrink-0 text-white rounded-t-[4rem] border-t-2 border-slate-800 explorer-cart-zone">
                         
-                        <div onclick="toggleCart()"
-                            class="px-12 py-8 border-b border-slate-800 flex justify-between items-center shrink-0 cursor-pointer">
-
-                            <div class="flex items-center gap-4 overflow-hidden"><span class="text-5xl shrink-0">🛒</span><div class="flex flex-col overflow-hidden"><h3 class="text-4xl italic tracking-tighter text-blue-400 uppercase whitespace-nowrap">${window.state.reserveMode ? '예약 바구니' : '장바구니'}</h3>${window.state.cart.length > 0 ? `<span class="text-slate-400 text-xl mt-1 truncate">${window.state.cart.map(c=>c.itemName).join(' · ')}</span>` : ''}</div></div>
-                            <div class="flex items-center gap-6 shrink-0"><span class="text-2xl bg-slate-800 px-6 py-3 rounded-2xl border border-slate-700 whitespace-nowrap">${window.state.cart.length}개 담김</span><button onclick="event.stopPropagation(); window.state.cart=[]; window.renderApp();" class="text-xl text-slate-400 underline whitespace-nowrap">전체 비우기</button></div>
+                        <div onclick="window.toggleCart()" 
+                            class="px-8 py-4 border-b border-slate-800 flex justify-between items-center shrink-0 cursor-pointer bg-slate-800">
+                            
+                            <div class="flex items-center gap-3">
+                                <span class="text-3xl">🛒</span>
+                                <div class="flex flex-col">
+                                    <h3 class="text-xl font-bold text-blue-400">
+                                        ${window.state.reserveMode ? '예약 바구니' : '장바구니'} 
+                                        <span class="text-white ml-2">${window.state.cart.length}개</span>
+                                    </h3>
+                                    <span class="text-slate-400 text-sm">클릭하여 전체 보기/닫기</span>
+                                </div>
+                            </div>
+                            
+                            <div class="text-2xl text-slate-400">
+                                ${document.querySelector('.explorer-cart-zone')?.classList.contains('expanded') ? '▼' : '▲'}
+                            </div>
                         </div>
                         <div class="flex-1 overflow-x-auto custom-scroll ${window.state.cart.length === 0 ? 'flex items-center justify-center p-8' : 'cart-grid'}">
                             ${window.state.cart.length===0 ? `<div class="w-full text-center text-slate-500 italic text-4xl word-keep">${window.state.reserveMode ? '예약하실 물품을 선택해 주세요' : '수령하실 물품을 선택해 주세요'}</div>` : ''}
