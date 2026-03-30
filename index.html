@@ -2104,50 +2104,54 @@
                 
                 html += `
                 <div class="modal-overlay fade-in">
-                    <div class="bg-white w-full max-w-[1000px] rounded-[6rem] p-16 shadow-2xl border-[20px] border-blue-600 flex flex-col relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-50 rounded-full opacity-50 blur-3xl" style="transform: translate(30%, -30%);"></div>
-                        <div class="flex justify-between items-start mb-12 relative z-10 px-4">
-                            <div class="flex flex-col gap-4">
-                                <div class="inline-block bg-blue-600 text-white px-8 py-3 rounded-full text-2xl uppercase tracking-widest shadow-lg italic w-max whitespace-nowrap">${window.state.reserveMode ? '사전 예약 진행 중' : '수령 진행 중'}</div>
-                                <h2 class="text-6xl italic tracking-tighter text-slate-800 word-keep">[${item.name}]</h2>
+                    <div class="bg-white w-full max-w-[600px] max-h-[90vh] rounded-[2rem] lg:rounded-[6rem] p-6 lg:p-16 shadow-2xl border-4 lg:border-[20px] border-blue-600 flex flex-col relative overflow-hidden mx-4">
+                        
+                        <div class="flex justify-between items-start mb-6 lg:mb-12 relative z-10">
+                            <div class="flex flex-col gap-2">
+                                <div class="inline-block bg-blue-600 text-white px-4 py-1 rounded-full text-sm lg:text-2xl uppercase tracking-widest italic w-max whitespace-nowrap">${window.state.reserveMode ? '사전 예약 진행' : '수령 진행 중'}</div>
+                                <h2 class="text-3xl lg:text-6xl italic tracking-tighter text-slate-800 word-keep">[${item.name}]</h2>
                             </div>
-                            <button onclick="window.closeItemModal()" class="text-slate-300 text-7xl tap-effect">✕</button>
+                            <button onclick="window.closeItemModal()" class="text-slate-300 text-4xl lg:text-7xl tap-effect">✕</button>
                         </div>
-                        <div class="flex flex-col gap-8 relative z-10 overflow-y-auto custom-scroll">
-                            <div class="bg-slate-50 p-10 rounded-[3rem] border-4 border-slate-200 shadow-inner">
-                                <div class="flex justify-between items-end mb-8 px-4 border-b-4 border-slate-200 pb-6">
-                                    <div class="flex flex-col gap-1 w-[55%] pr-2">
-                                        <span class="text-xl text-slate-400 uppercase tracking-widest italic whitespace-nowrap">단위 정보</span>
-                                        <span class="text-2xl italic text-blue-600 word-keep leading-snug font-bold">
+
+                        <div class="flex-1 overflow-y-auto custom-scroll pr-2 relative z-10">
+                            <div class="bg-slate-50 p-6 lg:p-10 rounded-[2rem] lg:rounded-[3rem] border-2 border-slate-200 shadow-inner">
+                                <div class="flex flex-wrap justify-between items-end mb-6 lg:mb-8 border-b-2 border-slate-200 pb-4 gap-4">
+                                    <div class="flex flex-col gap-1 min-w-[120px]">
+                                        <span class="text-sm lg:text-xl text-slate-400 uppercase italic">단위 정보</span>
+                                        <span class="text-lg lg:text-2xl italic text-blue-600 font-bold">
                                             기본(${item.unitBase})
-                                            ${item.unitBulk ? `<br/><span class="text-slate-500 text-xl mt-1 inline-block">묶음(${item.unitBulk}, 1${item.unitBulk}=${item.bulkRatio})</span>` : ''}
+                                            ${item.unitBulk ? `<br/><span class="text-slate-500 text-sm lg:text-xl mt-1 inline-block">묶음(${item.unitBulk}, 1${item.unitBulk}=${item.bulkRatio})</span>` : ''}
                                         </span>
                                     </div>
-                                    <div class="flex flex-col gap-1 text-right w-[45%] items-end pl-2 border-l-2 border-slate-200">
-                                        <span class="text-xl text-slate-400 uppercase tracking-widest italic whitespace-nowrap">현재 잔고</span>
-                                        <span class="text-3xl italic uppercase whitespace-nowrap ${isSoldOut?'text-red-500':'text-slate-700'} font-black">${isSoldOut ? '품절' : window.formatStock(availableNow, item.unitBase, item.unitBulk, item.bulkRatio)}</span>
+                                    <div class="flex flex-col gap-1 text-right min-w-[120px]">
+                                        <span class="text-sm lg:text-xl text-slate-400 uppercase italic">현재 잔고</span>
+                                        <span class="text-xl lg:text-3xl italic uppercase whitespace-nowrap ${isSoldOut?'text-red-500':'text-slate-700'} font-black">${isSoldOut ? '품절' : window.formatStock(availableNow, item.unitBase, item.unitBulk, item.bulkRatio)}</span>
                                     </div>
                                 </div>
-                                <div class="flex flex-col gap-6 px-2">
-                                    <div class="flex items-center gap-4">
-                                        <select onchange="window.changeCartInputUnit(this.value)" class="bg-white border-4 border-slate-300 px-6 rounded-[2rem] text-3xl outline-none font-bold shadow-sm" style="height: 5.5rem;">
+
+                                <div class="flex flex-col gap-4">
+                                    <div class="flex flex-col lg:flex-row gap-3">
+                                        <select onchange="window.changeCartInputUnit(this.value)" class="bg-white border-2 lg:border-4 border-slate-300 px-4 rounded-[1.5rem] text-xl lg:text-3xl outline-none font-bold h-12 lg:h-20">
                                             <option value="base" ${window.state.cartInputUnit==='base'?'selected':''}>기본 (${item.unitBase})</option>
                                             ${item.unitBulk && item.bulkRatio > 1 ? `<option value="bulk" ${window.state.cartInputUnit==='bulk'?'selected':''}>묶음 (${item.unitBulk})</option>` : ''}
                                         </select>
-                                        <div class="flex items-center bg-white border-4 border-slate-300 rounded-[2rem] p-2 flex-1 shadow-sm" style="height: 5.5rem;">
-                                            <button onclick="if(window.state.cartInputQty>1){window.changeCartInputQty(-1);}" class="w-14 h-14 bg-slate-100 rounded-2xl text-4xl tap-effect flex items-center justify-center text-slate-500 font-bold">-</button>
-                                            <input type="number" value="${window.state.cartInputQty}" onchange="window.setCartInputQty(this.value)" class="text-4xl tabular-nums text-center bg-transparent outline-none font-black text-slate-800 flex-1 w-full" style="border:none; box-shadow:none;" />
-                                            <button onclick="window.changeCartInputQty(1)" class="w-14 h-14 bg-slate-100 rounded-2xl text-4xl tap-effect flex items-center justify-center text-slate-500 font-bold">+</button>
+                                        <div class="flex items-center bg-white border-2 lg:border-4 border-slate-300 rounded-[1.5rem] p-1 flex-1 h-12 lg:h-20">
+                                            <button onclick="if(window.state.cartInputQty>1){window.changeCartInputQty(-1);}" class="w-10 h-10 lg:w-14 lg:h-14 bg-slate-100 rounded-xl text-2xl lg:text-4xl tap-effect flex items-center justify-center text-slate-500">-</button>
+                                            <input type="number" value="${window.state.cartInputQty}" onchange="window.setCartInputQty(this.value)" class="text-xl lg:text-4xl tabular-nums text-center bg-transparent outline-none font-black text-slate-800 flex-1 w-full" style="border:none; box-shadow:none;" />
+                                            <button onclick="window.changeCartInputQty(1)" class="w-10 h-10 lg:w-14 lg:h-14 bg-slate-100 rounded-xl text-2xl lg:text-4xl tap-effect flex items-center justify-center text-slate-500">+</button>
                                         </div>
                                     </div>
-                                    <button onclick="window.confirmAddToCart()" class="bg-blue-600 text-white py-6 rounded-[3rem] text-4xl tap-effect shadow-xl font-bold tracking-widest flex flex-col items-center justify-center gap-2 ${isSoldOut?'grayscale':''}" ${isSoldOut?'disabled':''}>
+
+                                    <button onclick="window.confirmAddToCart()" class="bg-blue-600 text-white py-4 lg:py-6 rounded-[2rem] text-2xl lg:text-4xl tap-effect shadow-xl font-bold tracking-widest flex flex-col items-center justify-center gap-1 ${isSoldOut?'grayscale':''}" ${isSoldOut?'disabled':''}>
                                         <span>${window.state.reserveMode ? '예약 바구니 담기' : '장바구니 담기'}</span>
-                                        <span class="text-xl text-blue-200 font-normal tracking-normal truncate w-full px-4 text-center">담길 총량: ${window.state.cartInputUnit === 'bulk' ? (window.state.cartInputQty * (item.bulkRatio || 1)) : window.state.cartInputQty}${item.unitBase} ${item.unitBulk && item.bulkRatio > 1 ? `(${window.formatStock(window.state.cartInputUnit === 'bulk' ? (window.state.cartInputQty * (item.bulkRatio || 1)) : window.state.cartInputQty, item.unitBase, item.unitBulk, item.bulkRatio, true)})` : ''}</span>
+                                        <span class="text-xs lg:text-xl text-blue-200 font-normal">총량: ${window.state.cartInputUnit === 'bulk' ? (window.state.cartInputQty * (item.bulkRatio || 1)) : window.state.cartInputQty}${item.unitBase}</span>
                                     </button>
                                 </div>
                             </div>
                         </div>
-                        <button onclick="window.closeItemModal()" class="mt-8 shrink-0 w-full py-12 text-slate-500 border-8 border-dashed border-slate-300 rounded-[5rem] text-4xl uppercase tracking-widest tap-effect bg-slate-50 relative z-10 whitespace-nowrap">취소하고 돌아가기</button>
+                        
+                        <button onclick="window.closeItemModal()" class="mt-4 shrink-0 w-full py-4 lg:py-8 text-slate-500 border-2 lg:border-4 border-dashed border-slate-300 rounded-[2rem] lg:rounded-[4rem] text-xl lg:text-3xl uppercase tracking-widest tap-effect bg-slate-50">취소하고 돌아가기</button>
                     </div>
                 </div>`;
             }
