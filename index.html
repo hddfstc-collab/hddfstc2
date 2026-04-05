@@ -1,138 +1,1002 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>현대면세 소모품관리</title>
     <style>
         :root {
-            --slate-50: #f8fafc; --slate-100: #f1f5f9; --slate-200: #e2e8f0; --slate-300: #cbd5e1;
-            --slate-400: #94a3b8; --slate-500: #64748b; --slate-600: #475569; --slate-700: #334155;
-            --slate-800: #1e293b; --slate-900: #0f172a;
-            --blue-50: #eff6ff; --blue-100: #dbeafe; --blue-200: #bfdbfe; --blue-300: #93c5fd; --blue-400: #60a5fa; --blue-500: #3b82f6; --blue-600: #2563eb; --blue-800: #1e40af;
-            --red-50: #fef2f2; --red-100: #fee2e2; --red-200: #fecaca; --red-300: #fca5a5; --red-500: #ef4444; --red-600: #dc2626; --red-700: #b91c1c; --red-800: #991b1b;
-            --amber-50: #fffbeb; --amber-100: #fef3c7; --amber-400: #fbbf24; --amber-500: #f59e0b; --amber-600: #d97706; --amber-900: #78350f;
-            --green-500: #22c55e; --green-600: #16a34a;
+            --slate-50: #f8fafc;
+            --slate-100: #f1f5f9;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+            --slate-400: #94a3b8;
+            --slate-500: #64748b;
+            --slate-600: #475569;
+            --slate-700: #334155;
+            --slate-800: #1e293b;
+            --slate-900: #0f172a;
+            --blue-50: #eff6ff;
+            --blue-100: #dbeafe;
+            --blue-200: #bfdbfe;
+            --blue-300: #93c5fd;
+            --blue-400: #60a5fa;
+            --blue-500: #3b82f6;
+            --blue-600: #2563eb;
+            --blue-800: #1e40af;
+            --red-50: #fef2f2;
+            --red-100: #fee2e2;
+            --red-200: #fecaca;
+            --red-300: #fca5a5;
+            --red-500: #ef4444;
+            --red-600: #dc2626;
+            --red-700: #b91c1c;
+            --red-800: #991b1b;
+            --amber-50: #fffbeb;
+            --amber-100: #fef3c7;
+            --amber-400: #fbbf24;
+            --amber-500: #f59e0b;
+            --amber-600: #d97706;
+            --amber-900: #78350f;
+            --green-500: #22c55e;
+            --green-600: #16a34a;
         }
-        * { box-sizing: border-box; font-family: 'Malgun Gothic', '맑은 고딕', sans-serif; font-weight: 900; }
-        body { margin: 0; padding: 0; background-color: var(--slate-50); color: var(--slate-800); overflow: hidden; user-select: none; word-break: keep-all; overflow-wrap: break-word; }
-        
-        .h-screen { height: 100vh; height: 100dvh; } .w-full { width: 100%; } .flex-1 { flex: 1; min-height: 0; }
-        .flex { display: flex; } .flex-col { flex-direction: column; } .flex-wrap { flex-wrap: wrap; }
-        .items-center { align-items: center; } .items-start { align-items: flex-start; } .items-end { align-items: flex-end; }
-        .justify-between { justify-content: space-between; } .justify-center { justify-content: center; } .justify-end { justify-content: flex-end; }
-        .grid { display: grid; } .grid-cols-2 { grid-template-columns: 1fr 1fr; } .grid-cols-3 { grid-template-columns: 1fr 1fr 1fr; } .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
-        
-        .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; } .gap-8 { gap: 2rem; } .gap-10 { gap: 2.5rem; }
-        .p-2 { padding: 0.5rem; } .p-4 { padding: 1rem; } .p-6 { padding: 1.5rem; } .p-8 { padding: 2rem; } .p-10 { padding: 2.5rem; } .p-12 { padding: 3rem; } .p-16 { padding: 4rem; }
-        .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; } .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; } .py-4 { padding-top: 1rem; padding-bottom: 1rem; } .py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; } .py-8 { padding-top: 2rem; padding-bottom: 2rem; } .py-10 { padding-top: 2.5rem; padding-bottom: 2.5rem; } .py-12 { padding-top: 3rem; padding-bottom: 3rem; }
-        .px-4 { padding-left: 1rem; padding-right: 1rem; } .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; } .px-8 { padding-left: 2rem; padding-right: 2rem; } .px-10 { padding-left: 2.5rem; padding-right: 2.5rem; } .px-12 { padding-left: 3rem; padding-right: 3rem; }
-        .mb-2 { margin-bottom: 0.5rem; } .mb-4 { margin-bottom: 1rem; } .mb-6 { margin-bottom: 1.5rem; } .mb-8 { margin-bottom: 2rem; } .mb-10 { margin-bottom: 2.5rem; } .mb-12 { margin-bottom: 3rem; } .mb-16 { margin-bottom: 4rem; }
-        .pb-32 { padding-bottom: 8rem; }
-        .mt-2 { margin-top: 0.5rem; } .mt-4 { margin-top: 1rem; } .mt-8 { margin-top: 2rem; } .mt-10 { margin-top: 2.5rem; } .mt-16 { margin-top: 4rem; }
-        .ml-2 { margin-left: 0.5rem; } .ml-4 { margin-left: 1rem; } .ml-6 { margin-left: 1.5rem; } .ml-8 { margin-left: 2rem; }
-        
-        .text-center { text-align: center; } .text-right { text-align: right; } .text-left { text-align: left; }
-        .text-sm { font-size: 0.875rem; } .text-base { font-size: 1rem; } .text-lg { font-size: 1.125rem; } .text-xl { font-size: 1.25rem; } .text-2xl { font-size: 1.5rem; } .text-3xl { font-size: 1.875rem; } .text-4xl { font-size: 2.25rem; } .text-5xl { font-size: 3rem; } .text-6xl { font-size: 3.75rem; } .text-7xl { font-size: 4.5rem; } .text-8xl { font-size: 6rem; }
-        .italic { font-style: italic; } .uppercase { text-transform: uppercase; } .underline { text-decoration: underline; } .tracking-widest { letter-spacing: 0.1em; } .tracking-tighter { letter-spacing: -0.05em; } .leading-none { line-height: 1; } .leading-tight { line-height: 1.2; } .font-bold { font-weight: bold; } .font-black { font-weight: 900; }
-        
-        .text-white { color: #fff; } .text-slate-300 { color: var(--slate-300); } .text-slate-400 { color: var(--slate-400); } .text-slate-500 { color: var(--slate-500); } .text-slate-600 { color: var(--slate-600); } .text-slate-700 { color: var(--slate-700); } .text-slate-800 { color: var(--slate-800); }
-        .text-blue-400 { color: var(--blue-400); } .text-blue-500 { color: var(--blue-500); } .text-blue-600 { color: var(--blue-600); } .text-blue-800 { color: var(--blue-800); } 
-        .text-red-500 { color: var(--red-500); } .text-red-600 { color: var(--red-600); } .text-red-800 { color: var(--red-800); }
-        .text-amber-400 { color: var(--amber-400); } .text-amber-900 { color: var(--amber-900); } .text-green-600 { color: var(--green-600); }
-        
-        .bg-white { background-color: #fff; } .bg-slate-50 { background-color: var(--slate-50); } .bg-slate-100 { background-color: var(--slate-100); } .bg-slate-200 { background-color: var(--slate-200); } .bg-slate-700 { background-color: var(--slate-700); } .bg-slate-800 { background-color: var(--slate-800); } .bg-slate-900 { background-color: var(--slate-900); }
-        .bg-blue-50 { background-color: var(--blue-50); } .bg-blue-100 { background-color: var(--blue-100); } .bg-blue-600 { background-color: var(--blue-600); } 
-        .bg-red-50 { background-color: var(--red-50); } .bg-red-100 { background-color: var(--red-100); } .bg-red-600 { background-color: var(--red-600); } 
-        .bg-amber-50 { background-color: var(--amber-50); } .bg-amber-500 { background-color: var(--amber-500); } .bg-amber-600 { background-color: var(--amber-600); }
-        
-        .border { border: 1px solid var(--slate-200); } .border-2 { border: 2px solid var(--slate-200); } .border-4 { border: 4px solid var(--slate-200); } .border-8 { border: 8px solid var(--slate-200); }
-        .border-b { border-bottom: 1px solid var(--slate-200); } .border-b-2 { border-bottom: 2px solid var(--slate-200); } .border-b-4 { border-bottom: 4px solid var(--slate-200); } .border-b-8 { border-bottom: 8px solid var(--slate-200); }
-        .border-l-\[10px\] { border-left: 10px solid var(--slate-200); } 
-        .border-l-\[15px\] { border-left: 15px solid var(--slate-200); }
-        .border-slate-100 { border-color: var(--slate-100); } .border-slate-200 { border-color: var(--slate-200); } .border-slate-300 { border-color: var(--slate-300); } .border-slate-700 { border-color: var(--slate-700); } .border-slate-800 { border-color: var(--slate-800); }
-        .border-blue-100 { border-color: var(--blue-100); } .border-blue-200 { border-color: var(--blue-200); } .border-blue-300 { border-color: var(--blue-300); } .border-blue-500 { border-color: var(--blue-500); } .border-blue-600 { border-color: var(--blue-600); }
-        .border-red-100 { border-color: var(--red-100); } .border-red-200 { border-color: var(--red-200); } .border-red-300 { border-color: var(--red-300); } .border-red-500 { border-color: var(--red-500); } 
-        .border-amber-100 { border-color: var(--amber-100); } .border-amber-500 { border-color: var(--amber-500); } .border-transparent { border-color: transparent; } .border-green-500 { border-color: var(--green-500); }
-        
-        .rounded-\[2rem\] { border-radius: 2rem; } 
-        .rounded-\[3rem\] { border-radius: 3rem; } 
-        .rounded-\[3.5rem\] { border-radius: 3.5rem; } 
-        .rounded-\[4rem\] { border-radius: 4rem; } 
-        .rounded-\[5rem\] { border-radius: 5rem; } 
-        .rounded-\[6rem\] { border-radius: 6rem; } 
-        .rounded-\[7rem\] { border-radius: 7rem; }
 
-        .rounded-t-\[4rem\] { border-top-left-radius: 4rem; border-top-right-radius: 4rem; }
-        
-        .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); } .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); } .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); } .shadow-xl { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); } .shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); } .shadow-inner { box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06); }
-        
-        button, input, select, textarea { outline: none; border: none; background: transparent; font-family: inherit; font-weight: inherit; color: inherit; }
-        button { cursor: pointer; }
-        .tap-effect { transition: transform 0.1s, opacity 0.1s, background-color 0.2s; } .tap-effect:active { transform: scale(0.95); opacity: 0.8; }
-        .custom-scroll { overflow-y: auto; } .custom-scroll::-webkit-scrollbar { width: 10px; height: 10px; } .custom-scroll::-webkit-scrollbar-thumb { background: var(--slate-300); border-radius: 20px; }
-        .category-tab-active { border-bottom: 8px solid var(--blue-600); color: var(--blue-600) !important; }
-        
-        .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .text-truncate-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; word-break: keep-all; }
-        
-        .input-standard { background-color: var(--slate-50); border: 4px solid var(--slate-200); border-radius: 3rem; padding: 1.5rem 2rem; font-size: 1.875rem; width: 100%; transition: border-color 0.2s; }
-        .input-standard:focus { border-color: var(--blue-500); }
-        
-        input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        input[type="number"] { -moz-appearance: textfield; border-bottom: 4px solid var(--slate-300); transition: border-color 0.2s; padding: 0.5rem; }
-        input[type="number"]:focus { border-bottom-color: var(--blue-500); background-color: white; border-radius: 1rem; }
-        
-        .uppercase-input { text-transform: uppercase; }
-        .whitespace-nowrap { white-space: nowrap !important; }
-        .word-keep { word-break: keep-all; overflow-wrap: break-word; }
-        
-        .modal-overlay { position: fixed; inset: 0; background: rgba(2, 6, 23, 0.96); backdrop-filter: blur(15px); display: flex; align-items: center; justify-content: center; padding: 2rem; z-index: 6000; }
-        .fade-in { animation: fadeIn 0.3s ease-out; } @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-        
-        table { width: 100%; border-collapse: collapse; }
-        th { padding: 1.5rem 1rem; border-bottom: 6px solid var(--slate-200); color: var(--slate-500); font-size: 1.5rem; text-transform: uppercase; font-style: italic; text-align: center; white-space: nowrap; }
-        td { padding: 1.5rem 1rem; border-bottom: 2px solid var(--slate-200); font-size: 1.75rem; color: var(--slate-800); text-align: center; white-space: nowrap; }
-        .excel-table th { background-color: var(--slate-100); border: 2px solid var(--slate-300); color: var(--slate-600); font-weight: 900; }
-        .excel-table td { border: 2px solid var(--slate-200); }
-        .excel-table tr:hover td { background-color: var(--blue-50); }
-        
-        .relative { position: relative; } .absolute { position: absolute; } .inset-0 { top:0; bottom:0; left:0; right:0; }
-        .overflow-hidden { overflow: hidden; } .overflow-x-auto { overflow-x: auto; } .shrink-0 { flex-shrink: 0; }
-        .grayscale { filter: grayscale(1); opacity: 0.4; pointer-events: none; }
-        .decoration-blue-200 { text-decoration-color: var(--blue-200); } .decoration-amber-500 { text-decoration-color: var(--amber-500); } .underline-offset-10 { text-underline-offset: 10px; }
-        .appearance-none { -webkit-appearance: none; appearance: none; }
-        .hover\:bg-red-100:hover { background-color: var(--red-100); } .hover\:bg-red-700:hover { background-color: var(--red-700); }
-        
-        .w-14 { width: 3.5rem; } .h-14 { height: 3.5rem; }
-
-        /* [푸터 공통 CSS 개선] */
-        .footer-icon { font-size: 3.75rem; }
-        .footer-text { font-size: 1.25rem; font-weight: bold; }
-        .footer-divider { width: 4px; height: 60px; }
-
-        .explorer-cat-bar { height: 90px; }
-        .explorer-list-zone { 
-            flex: 1 !important; 
-            height: auto !important; 
-            padding: 2.5rem; 
-            overflow-y: auto; 
+        * {
+            box-sizing: border-box;
+            font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+            font-weight: 900;
         }
-        .explorer-item-card { height: 200px; padding: 2rem; border-radius: 2rem; } 
-        .item-title { font-size: 2rem; font-weight: 900; } 
-        .item-stock-text { font-size: 1.5rem; padding: 0.75rem 1.5rem; }
-        .item-soldout-badge { font-size: 1.25rem; padding: 0.5rem 1.5rem; }
-        
-        /* 장바구니 구역: 상자 자체의 높이가 변함 */
-        .explorer-cart-zone { 
-            flex: none !important;
-            height: 72px !important; /* 기본(닫힌) 높이 */
-            display: flex; 
-            flex-direction: column; 
-            box-shadow: 0 -20px 50px rgba(0,0,0,0.4); 
-            transition: height 0.3s ease-in-out; /* 부드럽게 슥~ */
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--slate-50);
+            color: var(--slate-800);
+            overflow: hidden;
+            user-select: none;
+            word-break: keep-all;
+            overflow-wrap: break-word;
+        }
+
+        .h-screen {
+            height: 100vh;
+            height: 100dvh;
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        .flex-1 {
+            flex: 1;
+            min-height: 0;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .flex-col {
+            flex-direction: column;
+        }
+
+        .flex-wrap {
+            flex-wrap: wrap;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .items-start {
+            align-items: flex-start;
+        }
+
+        .items-end {
+            align-items: flex-end;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .justify-center {
+            justify-content: center;
+        }
+
+        .justify-end {
+            justify-content: flex-end;
+        }
+
+        .grid {
+            display: grid;
+        }
+
+        .grid-cols-2 {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .grid-cols-3 {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .grid-cols-4 {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .gap-2 {
+            gap: 0.5rem;
+        }
+
+        .gap-3 {
+            gap: 0.75rem;
+        }
+
+        .gap-4 {
+            gap: 1rem;
+        }
+
+        .gap-6 {
+            gap: 1.5rem;
+        }
+
+        .gap-8 {
+            gap: 2rem;
+        }
+
+        .gap-10 {
+            gap: 2.5rem;
+        }
+
+        .p-2 {
+            padding: 0.5rem;
+        }
+
+        .p-4 {
+            padding: 1rem;
+        }
+
+        .p-6 {
+            padding: 1.5rem;
+        }
+
+        .p-8 {
+            padding: 2rem;
+        }
+
+        .p-10 {
+            padding: 2.5rem;
+        }
+
+        .p-12 {
+            padding: 3rem;
+        }
+
+        .p-16 {
+            padding: 4rem;
+        }
+
+        .py-2 {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .py-3 {
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+        }
+
+        .py-4 {
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+
+        .py-6 {
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+        }
+
+        .py-8 {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+
+        .py-10 {
+            padding-top: 2.5rem;
+            padding-bottom: 2.5rem;
+        }
+
+        .py-12 {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+        }
+
+        .px-4 {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        .px-6 {
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+
+        .px-8 {
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+
+        .px-10 {
+            padding-left: 2.5rem;
+            padding-right: 2.5rem;
+        }
+
+        .px-12 {
+            padding-left: 3rem;
+            padding-right: 3rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+
+        .mb-6 {
+            margin-bottom: 1.5rem;
+        }
+
+        .mb-8 {
+            margin-bottom: 2rem;
+        }
+
+        .mb-10 {
+            margin-bottom: 2.5rem;
+        }
+
+        .mb-12 {
+            margin-bottom: 3rem;
+        }
+
+        .mb-16 {
+            margin-bottom: 4rem;
+        }
+
+        .pb-32 {
+            padding-bottom: 8rem;
+        }
+
+        .mt-2 {
+            margin-top: 0.5rem;
+        }
+
+        .mt-4 {
+            margin-top: 1rem;
+        }
+
+        .mt-8 {
+            margin-top: 2rem;
+        }
+
+        .mt-10 {
+            margin-top: 2.5rem;
+        }
+
+        .mt-16 {
+            margin-top: 4rem;
+        }
+
+        .ml-2 {
+            margin-left: 0.5rem;
+        }
+
+        .ml-4 {
+            margin-left: 1rem;
+        }
+
+        .ml-6 {
+            margin-left: 1.5rem;
+        }
+
+        .ml-8 {
+            margin-left: 2rem;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-left {
+            text-align: left;
+        }
+
+        .text-sm {
+            font-size: 0.875rem;
+        }
+
+        .text-base {
+            font-size: 1rem;
+        }
+
+        .text-lg {
+            font-size: 1.125rem;
+        }
+
+        .text-xl {
+            font-size: 1.25rem;
+        }
+
+        .text-2xl {
+            font-size: 1.5rem;
+        }
+
+        .text-3xl {
+            font-size: 1.875rem;
+        }
+
+        .text-4xl {
+            font-size: 2.25rem;
+        }
+
+        .text-5xl {
+            font-size: 3rem;
+        }
+
+        .text-6xl {
+            font-size: 3.75rem;
+        }
+
+        .text-7xl {
+            font-size: 4.5rem;
+        }
+
+        .text-8xl {
+            font-size: 6rem;
+        }
+
+        .italic {
+            font-style: italic;
+        }
+
+        .uppercase {
+            text-transform: uppercase;
+        }
+
+        .underline {
+            text-decoration: underline;
+        }
+
+        .tracking-widest {
+            letter-spacing: 0.1em;
+        }
+
+        .tracking-tighter {
+            letter-spacing: -0.05em;
+        }
+
+        .leading-none {
+            line-height: 1;
+        }
+
+        .leading-tight {
+            line-height: 1.2;
+        }
+
+        .font-bold {
+            font-weight: bold;
+        }
+
+        .font-black {
+            font-weight: 900;
+        }
+
+        .text-white {
+            color: #fff;
+        }
+
+        .text-slate-300 {
+            color: var(--slate-300);
+        }
+
+        .text-slate-400 {
+            color: var(--slate-400);
+        }
+
+        .text-slate-500 {
+            color: var(--slate-500);
+        }
+
+        .text-slate-600 {
+            color: var(--slate-600);
+        }
+
+        .text-slate-700 {
+            color: var(--slate-700);
+        }
+
+        .text-slate-800 {
+            color: var(--slate-800);
+        }
+
+        .text-blue-400 {
+            color: var(--blue-400);
+        }
+
+        .text-blue-500 {
+            color: var(--blue-500);
+        }
+
+        .text-blue-600 {
+            color: var(--blue-600);
+        }
+
+        .text-blue-800 {
+            color: var(--blue-800);
+        }
+
+        .text-red-500 {
+            color: var(--red-500);
+        }
+
+        .text-red-600 {
+            color: var(--red-600);
+        }
+
+        .text-red-800 {
+            color: var(--red-800);
+        }
+
+        .text-amber-400 {
+            color: var(--amber-400);
+        }
+
+        .text-amber-900 {
+            color: var(--amber-900);
+        }
+
+        .text-green-600 {
+            color: var(--green-600);
+        }
+
+        .bg-white {
+            background-color: #fff;
+        }
+
+        .bg-slate-50 {
+            background-color: var(--slate-50);
+        }
+
+        .bg-slate-100 {
+            background-color: var(--slate-100);
+        }
+
+        .bg-slate-200 {
+            background-color: var(--slate-200);
+        }
+
+        .bg-slate-700 {
+            background-color: var(--slate-700);
+        }
+
+        .bg-slate-800 {
+            background-color: var(--slate-800);
+        }
+
+        .bg-slate-900 {
+            background-color: var(--slate-900);
+        }
+
+        .bg-blue-50 {
+            background-color: var(--blue-50);
+        }
+
+        .bg-blue-100 {
+            background-color: var(--blue-100);
+        }
+
+        .bg-blue-600 {
+            background-color: var(--blue-600);
+        }
+
+        .bg-red-50 {
+            background-color: var(--red-50);
+        }
+
+        .bg-red-100 {
+            background-color: var(--red-100);
+        }
+
+        .bg-red-600 {
+            background-color: var(--red-600);
+        }
+
+        .bg-amber-50 {
+            background-color: var(--amber-50);
+        }
+
+        .bg-amber-500 {
+            background-color: var(--amber-500);
+        }
+
+        .bg-amber-600 {
+            background-color: var(--amber-600);
+        }
+
+        .border {
+            border: 1px solid var(--slate-200);
+        }
+
+        .border-2 {
+            border: 2px solid var(--slate-200);
+        }
+
+        .border-4 {
+            border: 4px solid var(--slate-200);
+        }
+
+        .border-8 {
+            border: 8px solid var(--slate-200);
+        }
+
+        .border-b {
+            border-bottom: 1px solid var(--slate-200);
+        }
+
+        .border-b-2 {
+            border-bottom: 2px solid var(--slate-200);
+        }
+
+        .border-b-4 {
+            border-bottom: 4px solid var(--slate-200);
+        }
+
+        .border-b-8 {
+            border-bottom: 8px solid var(--slate-200);
+        }
+
+        .border-l-\[10px\] {
+            border-left: 10px solid var(--slate-200);
+        }
+
+        .border-l-\[15px\] {
+            border-left: 15px solid var(--slate-200);
+        }
+
+        .border-slate-100 {
+            border-color: var(--slate-100);
+        }
+
+        .border-slate-200 {
+            border-color: var(--slate-200);
+        }
+
+        .border-slate-300 {
+            border-color: var(--slate-300);
+        }
+
+        .border-slate-700 {
+            border-color: var(--slate-700);
+        }
+
+        .border-slate-800 {
+            border-color: var(--slate-800);
+        }
+
+        .border-blue-100 {
+            border-color: var(--blue-100);
+        }
+
+        .border-blue-200 {
+            border-color: var(--blue-200);
+        }
+
+        .border-blue-300 {
+            border-color: var(--blue-300);
+        }
+
+        .border-blue-500 {
+            border-color: var(--blue-500);
+        }
+
+        .border-blue-600 {
+            border-color: var(--blue-600);
+        }
+
+        .border-red-100 {
+            border-color: var(--red-100);
+        }
+
+        .border-red-200 {
+            border-color: var(--red-200);
+        }
+
+        .border-red-300 {
+            border-color: var(--red-300);
+        }
+
+        .border-red-500 {
+            border-color: var(--red-500);
+        }
+
+        .border-amber-100 {
+            border-color: var(--amber-100);
+        }
+
+        .border-amber-500 {
+            border-color: var(--amber-500);
+        }
+
+        .border-transparent {
+            border-color: transparent;
+        }
+
+        .border-green-500 {
+            border-color: var(--green-500);
+        }
+
+        .rounded-\[2rem\] {
+            border-radius: 2rem;
+        }
+
+        .rounded-\[3rem\] {
+            border-radius: 3rem;
+        }
+
+        .rounded-\[3.5rem\] {
+            border-radius: 3.5rem;
+        }
+
+        .rounded-\[4rem\] {
+            border-radius: 4rem;
+        }
+
+        .rounded-\[5rem\] {
+            border-radius: 5rem;
+        }
+
+        .rounded-\[6rem\] {
+            border-radius: 6rem;
+        }
+
+        .rounded-\[7rem\] {
+            border-radius: 7rem;
+        }
+
+        .rounded-t-\[4rem\] {
+            border-top-left-radius: 4rem;
+            border-top-right-radius: 4rem;
+        }
+
+        .shadow-sm {
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .shadow-md {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .shadow-lg {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .shadow-xl {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .shadow-2xl {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .shadow-inner {
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            outline: none;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            font-weight: inherit;
+            color: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .tap-effect {
+            transition: transform 0.1s, opacity 0.1s, background-color 0.2s;
+        }
+
+        .tap-effect:active {
+            transform: scale(0.95);
+            opacity: 0.8;
+        }
+
+        .custom-scroll {
+            overflow-y: auto;
+        }
+
+        .custom-scroll::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: var(--slate-300);
+            border-radius: 20px;
+        }
+
+        .category-tab-active {
+            border-bottom: 8px solid var(--blue-600);
+            color: var(--blue-600) !important;
+        }
+
+        .truncate {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .text-truncate-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            word-break: keep-all;
+        }
+
+        .input-standard {
+            background-color: var(--slate-50);
+            border: 4px solid var(--slate-200);
+            border-radius: 3rem;
+            padding: 1.5rem 2rem;
+            font-size: 1.875rem;
+            width: 100%;
+            transition: border-color 0.2s;
+        }
+
+        .input-standard:focus {
+            border-color: var(--blue-500);
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+            border-bottom: 4px solid var(--slate-300);
+            transition: border-color 0.2s;
+            padding: 0.5rem;
+        }
+
+        input[type="number"]:focus {
+            border-bottom-color: var(--blue-500);
+            background-color: white;
+            border-radius: 1rem;
+        }
+
+        .uppercase-input {
+            text-transform: uppercase;
+        }
+
+        .whitespace-nowrap {
+            white-space: nowrap !important;
+        }
+
+        .word-keep {
+            word-break: keep-all;
+            overflow-wrap: break-word;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.96);
+            backdrop-filter: blur(15px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            z-index: 6000;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            padding: 1.5rem 1rem;
+            border-bottom: 6px solid var(--slate-200);
+            color: var(--slate-500);
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            font-style: italic;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 1.5rem 1rem;
+            border-bottom: 2px solid var(--slate-200);
+            font-size: 1.75rem;
+            color: var(--slate-800);
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .excel-table th {
+            background-color: var(--slate-100);
+            border: 2px solid var(--slate-300);
+            color: var(--slate-600);
+            font-weight: 900;
+        }
+
+        .excel-table td {
+            border: 2px solid var(--slate-200);
+        }
+
+        .excel-table tr:hover td {
+            background-color: var(--blue-50);
+        }
+
+        .relative {
+            position: relative;
+        }
+
+        .absolute {
+            position: absolute;
+        }
+
+        .inset-0 {
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        .overflow-hidden {
             overflow: hidden;
         }
+
+        .overflow-x-auto {
+            overflow-x: auto;
+        }
+
+        .shrink-0 {
+            flex-shrink: 0;
+        }
+
+        .grayscale {
+            filter: grayscale(1);
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .decoration-blue-200 {
+            text-decoration-color: var(--blue-200);
+        }
+
+        .decoration-amber-500 {
+            text-decoration-color: var(--amber-500);
+        }
+
+        .underline-offset-10 {
+            text-underline-offset: 10px;
+        }
+
+        .appearance-none {
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .hover\:bg-red-100:hover {
+            background-color: var(--red-100);
+        }
+
+        .hover\:bg-red-700:hover {
+            background-color: var(--red-700);
+        }
+
+        .w-14 {
+            width: 3.5rem;
+        }
+
+        .h-14 {
+            height: 3.5rem;
+        }
+
+        /* [푸터 공통 CSS 개선] */
+        .footer-icon {
+            font-size: 3.75rem;
+        }
+
+        .footer-text {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .footer-divider {
+            width: 4px;
+            height: 60px;
+        }
+
+        .explorer-cat-bar {
+            height: 90px;
+        }
+
+        .explorer-list-zone {
+            flex: 1 !important;
+            height: auto !important;
+            padding: 2.5rem;
+            overflow-y: auto;
+        }
+
+        .explorer-item-card {
+            height: 200px;
+            padding: 2rem;
+            border-radius: 2rem;
+        }
+
+        .item-title {
+            font-size: 2rem;
+            font-weight: 900;
+        }
+
+        .item-stock-text {
+            font-size: 1.5rem;
+            padding: 0.75rem 1.5rem;
+        }
+
+        .item-soldout-badge {
+            font-size: 1.25rem;
+            padding: 0.5rem 1.5rem;
+        }
+
+        /* 장바구니 구역: 상자 자체의 높이가 변함 */
+        .explorer-cart-zone {
+            flex: none !important;
+            height: 72px !important;
+            /* 기본(닫힌) 높이 */
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.4);
+            transition: height 0.3s ease-in-out;
+            /* 부드럽게 슥~ */
+            overflow: hidden;
+        }
+
         .cart-grid {
             display: grid;
             grid-template-rows: repeat(2, 1fr);
@@ -144,120 +1008,175 @@
         }
 
         /* [수정된 장바구니 품목 디자인] */
-        .explorer-cart-item { 
-            width: 240px; /* 320px에서 축소 */
-            min-height: 130px; /* 180px에서 축소 */
-            padding: 1.2rem; 
-            border-radius: 2rem; 
-            display: flex; 
-            flex-direction: column; 
+        .explorer-cart-item {
+            width: 240px;
+            /* 320px에서 축소 */
+            min-height: 130px;
+            /* 180px에서 축소 */
+            padding: 1.2rem;
+            border-radius: 2rem;
+            display: flex;
+            flex-direction: column;
             justify-content: space-between;
         }
 
-        .cart-item-title { 
-            font-size: 1.4rem; /* 1.75rem에서 축소 */
-            display: -webkit-box; 
-            -webkit-line-clamp: 2; 
-            -webkit-box-orient: vertical; 
-            overflow: hidden; 
-            white-space: normal; 
-            word-break: keep-all; 
-            line-height: 1.3; 
+        .cart-item-title {
+            font-size: 1.4rem;
+            /* 1.75rem에서 축소 */
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            white-space: normal;
+            word-break: keep-all;
+            line-height: 1.3;
         }
 
-        .cart-item-unit-detail { font-size: 1rem; } /* 1.2rem에서 축소 */
-
-        .cart-item-del { 
-            width: 2.2rem; 
-            height: 2.2rem; 
-            font-size: 1rem; 
+        .cart-item-unit-detail {
+            font-size: 1rem;
         }
 
-        .cart-main-qty { 
-            font-size: 1.3rem; /* 1.5rem에서 축소 */
-            letter-spacing: -0.05em; 
-            color: var(--amber-400); 
-            font-weight: 900; 
-            line-height: 1.2; 
-            text-align: center; 
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis; 
+        /* 1.2rem에서 축소 */
+
+        .cart-item-del {
+            width: 2.2rem;
+            height: 2.2rem;
+            font-size: 1rem;
         }
 
-        .cart-sub-qty { 
-            font-size: 1rem; 
-            color: var(--slate-400); 
-            text-align: center; 
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis; 
-            margin-top: 0.1rem; 
+        .cart-main-qty {
+            font-size: 1.3rem;
+            /* 1.5rem에서 축소 */
+            letter-spacing: -0.05em;
+            color: var(--amber-400);
+            font-weight: 900;
+            line-height: 1.2;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .cart-qty-btn { 
-            width: 3rem; 
-            height: 3rem; 
-            font-size: 1.8rem; 
-            border-radius: 0.8rem; 
+        .cart-sub-qty {
+            font-size: 1rem;
+            color: var(--slate-400);
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top: 0.1rem;
         }
 
-        .cart-checkout-zone { padding: 1.5rem; }
+        .cart-qty-btn {
+            width: 3rem;
+            height: 3rem;
+            font-size: 1.8rem;
+            border-radius: 0.8rem;
+        }
 
-        .cart-checkout-btn { 
-            padding: 1.2rem; 
-            font-size: 2rem; /* 2.5rem에서 축소 */
-            border-radius: 9999px; 
-            width: 100%; 
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); 
+        .cart-checkout-zone {
+            padding: 1.5rem;
+        }
+
+        .cart-checkout-btn {
+            padding: 1.2rem;
+            font-size: 2rem;
+            /* 2.5rem에서 축소 */
+            border-radius: 9999px;
+            width: 100%;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             font-weight: 900;
         }
+
         @media screen and (max-width: 800px) {
-            html { font-size: 12px; } 
-            
+            html {
+                font-size: 12px;
+            }
+
             /* 리스트 구역: 고정 높이(360px)를 지우고 남는 공간을 다 채우도록 설정 */
-            .explorer-list-zone { 
-                flex: 1 !important; 
-                height: auto !important; 
-                padding: 1.5rem; 
+            .explorer-list-zone {
+                flex: 1 !important;
+                height: auto !important;
+                padding: 1.5rem;
                 min-height: 0;
             }
 
             /* 장바구니 구역: 서랍장 기능 적용 */
-            .explorer-cart-zone { 
+            .explorer-cart-zone {
                 flex: none !important;
-                height: 80px !important; /* 닫혔을 때 높이 */
+                height: 80px !important;
+                /* 닫혔을 때 높이 */
                 min-height: 80px !important;
                 transition: height 0.3s ease-in-out;
-                box-shadow: 0 -10px 30px rgba(0,0,0,0.3); 
+                box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3);
                 overflow: hidden;
             }
 
             /* 장바구니가 열렸을 때 높이 */
-            .explorer-cart-zone.expanded { 
-                height: 40vh !important; 
+            .explorer-cart-zone.expanded {
+                height: 40vh !important;
             }
 
             /* 닫혀있을 때 안쪽 내용물 숨기기 */
-            .explorer-cart-zone:not(.expanded) .cart-grid, 
+            .explorer-cart-zone:not(.expanded) .cart-grid,
             .explorer-cart-zone:not(.expanded) .cart-checkout-zone {
                 display: none !important;
             }
 
             /* 기존 디자인 요소들 유지 */
-            .footer-icon { font-size: 3.2rem; }
-            .footer-text { font-size: 1.1rem; }
-            .explorer-cat-bar { height: 70px; }
-            .explorer-item-card { height: 140px; padding: 1.2rem; border-width: 2px; border-radius: 1.5rem; } 
-            .item-title { font-size: 1.5rem; } 
-            .cart-grid { gap: 1rem; padding: 1.2rem; }
-            .explorer-cart-item { width: 220px; min-height: 150px; padding: 1.2rem; }
-            .cart-checkout-btn { padding: 1.2rem; font-size: 2rem; }
-            
+            .footer-icon {
+                font-size: 3.2rem;
+            }
+
+            .footer-text {
+                font-size: 1.1rem;
+            }
+
+            .explorer-cat-bar {
+                height: 70px;
+            }
+
+            .explorer-item-card {
+                height: 140px;
+                padding: 1.2rem;
+                border-width: 2px;
+                border-radius: 1.5rem;
+            }
+
+            .item-title {
+                font-size: 1.5rem;
+            }
+
+            .cart-grid {
+                gap: 1rem;
+                padding: 1.2rem;
+            }
+
+            .explorer-cart-item {
+                width: 220px;
+                min-height: 150px;
+                padding: 1.2rem;
+            }
+
+            .cart-checkout-btn {
+                padding: 1.2rem;
+                font-size: 2rem;
+            }
+
             /* 기타 수치 조정 */
-            .grid-cols-3 { grid-template-columns: 1fr 1fr; }
-            div[style*="width:350px"] { width: 250px !important; height: 250px !important; }
-            div[style*="width:280px"] { width: 200px !important; height: 200px !important; }
+            .grid-cols-3 {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            div[style*="width:350px"] {
+                width: 250px !important;
+                height: 250px !important;
+            }
+
+            div[style*="width:280px"] {
+                width: 200px !important;
+                height: 200px !important;
+            }
         }
 
         /* =========================================================
@@ -267,23 +1186,30 @@
    480px (모바일) 통합 최적화 레이아웃 (중복 제거 완료)
    ========================================================= */
         @media screen and (max-width: 480px) {
-            html { font-size: 10px; } 
-            
-            /* 리스트를 1줄로 고정 */
-            .grid-cols-2, .grid-cols-3, .grid-cols-4 { grid-template-columns: 1fr !important; }
-            
-            /* [리스트] 장바구니가 닫히면 남는 공간을 다 채움 */
-            .explorer-list-zone { 
-                flex: 1 !important; 
-                min-height: 0 !important; 
-                height: auto !important; 
-                padding: 0.5rem !important; 
+            html {
+                font-size: 10px;
             }
-            
+
+            /* 리스트를 1줄로 고정 */
+            .grid-cols-2,
+            .grid-cols-3,
+            .grid-cols-4 {
+                grid-template-columns: 1fr !important;
+            }
+
+            /* [리스트] 장바구니가 닫히면 남는 공간을 다 채움 */
+            .explorer-list-zone {
+                flex: 1 !important;
+                min-height: 0 !important;
+                height: auto !important;
+                padding: 0.5rem !important;
+            }
+
             /* [장바구니 상자] 서랍장 방식 설정 */
             .explorer-cart-zone {
                 flex: none !important;
-                height: 70px !important; /* 닫혔을 때 */
+                height: 70px !important;
+                /* 닫혔을 때 */
                 min-height: 70px !important;
                 background-color: #1e293b !important;
                 transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -299,34 +1225,80 @@
             }
 
             /* 닫혀있을 때 안쪽 내용물 숨기기 (핵심!) */
-            .explorer-cart-zone:not(.expanded) .cart-grid, 
+            .explorer-cart-zone:not(.expanded) .cart-grid,
             .explorer-cart-zone:not(.expanded) .cart-checkout-zone {
                 display: none !important;
             }
-            
+
             /* 아이템 카드 사이즈 축소 */
-            .explorer-item-card { height: auto; padding: 0.8rem; flex-direction: row; align-items: center; border-radius: 0.8rem; }
-            .item-title { font-size: 1.2rem; }
-            .item-stock-text { font-size: 0.9rem; }
+            .explorer-item-card {
+                height: auto;
+                padding: 0.8rem;
+                flex-direction: row;
+                align-items: center;
+                border-radius: 0.8rem;
+            }
+
+            .item-title {
+                font-size: 1.2rem;
+            }
+
+            .item-stock-text {
+                font-size: 0.9rem;
+            }
 
             /* 장바구니 그리드 설정 */
-            .explorer-cart-item { width: 160px; min-height: 100px !important; padding: 0.8rem !important; }
-            .cart-grid { grid-auto-columns: 160px !important; gap: 0.8rem !important; }
-             
-            
+            .explorer-cart-item {
+                width: 160px;
+                min-height: 100px !important;
+                padding: 0.8rem !important;
+            }
+
+            .cart-grid {
+                grid-auto-columns: 160px !important;
+                gap: 0.8rem !important;
+            }
+
+
             /* 푸터 다이어트 (공간 확보) */
-            .footer-icon { font-size: 1.8rem !important; }
-            .footer-text { display: none !important; }
-            .mobile-footer { padding-top: 0.4rem !important; padding-bottom: 0.4rem !important; height: auto !important; }
-            .footer-divider { width: 2px !important; height: 25px !important; }
+            .footer-icon {
+                font-size: 1.8rem !important;
+            }
+
+            .footer-text {
+                display: none !important;
+            }
+
+            .mobile-footer {
+                padding-top: 0.4rem !important;
+                padding-bottom: 0.4rem !important;
+                height: auto !important;
+            }
+
+            .footer-divider {
+                width: 2px !important;
+                height: 25px !important;
+            }
 
             /* 기타 UI 축소 */
-            div[style*="width:350px"] { width: 180px !important; height: 180px !important; }
-            div[style*="width:280px"] { width: 140px !important; height: 140px !important; }
-            .cart-checkout-btn { padding: 0.8rem; font-size: 1.6rem; }
+            div[style*="width:350px"] {
+                width: 180px !important;
+                height: 180px !important;
+            }
+
+            div[style*="width:280px"] {
+                width: 140px !important;
+                height: 140px !important;
+            }
+
+            .cart-checkout-btn {
+                padding: 0.8rem;
+                font-size: 1.6rem;
+            }
         }
     </style>
 </head>
+
 <body>
     <div id="app" class="h-screen flex flex-col bg-slate-50 overflow-hidden relative"></div>
 
@@ -336,13 +1308,14 @@
         import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         function toggleCart() {
             document
-              .querySelector('.explorer-cart-zone')
-              ?.classList.toggle('expanded');
+                .querySelector('.explorer-cart-zone')
+                ?.classList.toggle('expanded');
         }
         window.toggleCart = toggleCart;
         // ==========================================
         // 0. 파이어베이스(Firebase) 온라인 연동 설정
         // ==========================================
+        // 다시 이 주소로 복구하세요!
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
             apiKey: "AIzaSyCDW2TzDtMDfAVmSRHM7a-IZDhsBlkRMEQ",
             authDomain: "ware-house-b36d7.firebaseapp.com",
@@ -393,31 +1366,31 @@
             cart: [],
             message: null,
             selectedItem: null,
-            categoryModal: null, 
-            editingItem: null,   
-            transferModal: null, 
+            categoryModal: null,
+            editingItem: null,
+            transferModal: null,
             selectedAdminItemId: null,
             confirmModal: null,
-            checkoutConfirmModal: false, 
+            checkoutConfirmModal: false,
             stockAlertModal: null,
             categoryInputValue: '',
             isAddingNew: false,
             transferFrom: 'wh1',
             transferTo: 'counter',
             transferQty: 1,
-            cartInputQty: 1,      
+            cartInputQty: 1,
             cartInputUnit: 'base',
             staffSearchQuery: '',
             editingStaffItem: null,
-            startDate: '', 
+            startDate: '',
             endDate: new Date().toISOString().split('T')[0],
             filterItem: '전체',
-            reserveMode: false, 
-            pendingReservations: null, 
+            reserveMode: false,
+            pendingReservations: null,
             reserveFilterStatus: '전체',
             settings: { alertEmail: '' }
         };
-        
+
         // 전역 객체 바인딩 (인라인 클릭 이벤트 대응)
         window.state = state;
 
@@ -510,9 +1483,9 @@
                 settings: state.settings,
                 lastUpdated: new Date().toISOString()
             };
-            
+
             localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
-            
+
             if (isFirebaseActive && docRef && authUser) {
                 setDoc(docRef, dataToSave).catch(e => {
                     console.error("클라우드 동기화 실패:", e);
@@ -547,24 +1520,24 @@
 
         function sendMorningReport() {
             if (!state.settings?.alertEmail) return window.showMsg("시스템 설정에서 수신 이메일을 먼저 등록해주세요.");
-            
+
             let body = "📅 [창고관리시스템] 현재 전체 재고 및 발주 필요 목록 현황\n\n";
             let lowStockItems = [];
-            
+
             state.inventory.forEach(item => {
                 const totalStock = Object.values(item.stocks).reduce((sum, v) => sum + (parseInt(v) || 0), 0);
                 const formatStr = window.formatStock(totalStock, item.unitBase, item.unitBulk, item.bulkRatio, true).replace(/<[^>]*>?/gm, '');
                 body += `- ${item.name}: ${formatStr}\n`;
-                
+
                 if (totalStock <= (item.alertQty || 0)) {
                     lowStockItems.push(`${item.name} (잔여: ${formatStr}, 발주기준: ${item.alertQty}${item.unitBase} 이하)`);
                 }
             });
-            
+
             if (lowStockItems.length > 0) {
                 body = "⚠️ [발주 요망 품목]\n" + lowStockItems.map(i => `- ${i}`).join('\n') + "\n\n====================\n\n" + body;
             }
-            
+
             const subject = encodeURIComponent(`[일일보고/발주알림] 창고 재고 현황 (${new Date().toISOString().split('T')[0]})`);
             window.location.href = `mailto:${state.settings.alertEmail}?subject=${subject}&body=${encodeURIComponent(body)}`;
             window.showMsg("이메일 작성 앱이 실행되었습니다.");
@@ -592,7 +1565,7 @@
             const newScrollEls = document.querySelectorAll('.custom-scroll, .overflow-y-auto, .overflow-x-auto, #app > div');
             newScrollEls.forEach((el, i) => {
                 let id = el.id || el.className;
-                if(scrollMap.has(id + i)) {
+                if (scrollMap.has(id + i)) {
                     const pos = scrollMap.get(id + i);
                     el.scrollTop = pos.top;
                     el.scrollLeft = pos.left;
@@ -622,11 +1595,11 @@
         function executeConfirmAction() {
             if (!state.confirmModal) return;
             const { actionType, payload } = state.confirmModal;
-            state.confirmModal = null; 
+            state.confirmModal = null;
 
             if (actionType === 'deleteLog') {
                 const idx = state.logs.findIndex(l => l.id == payload);
-                if(idx > -1) {
+                if (idx > -1) {
                     const log = state.logs[idx];
                     const item = state.inventory.find(i => i.name === log.itemName);
                     if (item) {
@@ -637,15 +1610,15 @@
                 }
             } else if (actionType === 'cancelReservation') {
                 const res = state.reservations.find(r => r.id == payload);
-                if(res) {
+                if (res) {
                     res.cart.forEach(c => {
                         const item = state.inventory.find(i => i.id == c.itemId);
-                        if(item && item.stocks.counter !== undefined) { item.stocks.counter += c.amount; }
+                        if (item && item.stocks.counter !== undefined) { item.stocks.counter += c.amount; }
                     });
                     res.status = 'cancelled';
-                    if(state.pendingReservations) {
+                    if (state.pendingReservations) {
                         state.pendingReservations = state.pendingReservations.filter(p => p.id != payload);
-                        if(state.pendingReservations.length === 0) state.pendingReservations = null;
+                        if (state.pendingReservations.length === 0) state.pendingReservations = null;
                     }
                     window.saveDataToStorage(); window.showMsg("예약이 취소되고 재고가 정상 복구되었습니다.");
                 }
@@ -672,14 +1645,14 @@
         window.executeConfirmAction = executeConfirmAction;
 
         function tryEnterAdmin() {
-            if (state.isAdminAuthenticated) { 
-                state.user = { id: '', name: '', brand: '', tagId: '' }; 
-                state.cart = []; 
+            if (state.isAdminAuthenticated) {
+                state.user = { id: '', name: '', brand: '', tagId: '' };
+                state.cart = [];
                 state.reserveMode = false;
-                window.changeView('admin'); 
-            } 
-            else { 
-                state.authModal = true; window.renderApp(); 
+                window.changeView('admin');
+            }
+            else {
+                state.authModal = true; window.renderApp();
             }
         }
         window.tryEnterAdmin = tryEnterAdmin;
@@ -693,12 +1666,12 @@
         function verifyAdminPwd() {
             const input = document.getElementById('adminPwdInput').value;
             if (input === state.adminPassword) {
-                state.isAdminAuthenticated = true; 
+                state.isAdminAuthenticated = true;
                 state.authModal = false;
-                state.user = { id: '', name: '', brand: '', tagId: '' }; 
+                state.user = { id: '', name: '', brand: '', tagId: '' };
                 state.cart = [];
                 state.reserveMode = false;
-                window.changeView('admin'); 
+                window.changeView('admin');
                 window.showMsg("관리자 인증에 성공했습니다.");
             } else { window.showMsg("비밀번호가 일치하지 않습니다."); }
         }
@@ -714,713 +1687,738 @@
         }
         window.changeAdminPwd = changeAdminPwd;
 
-        function changeView(view) { 
-            state.view = view; 
+        function changeView(view) {
+            state.view = view;
             if (view !== 'admin') state.isAdminAuthenticated = false;
-            if(view === 'admin' && state.adminSubView === 'inventory') {
+            if (view === 'admin' && state.adminSubView === 'inventory') {
                 const firstItem = state.inventory.find(i => i.cat === state.activeCat);
                 state.selectedAdminItemId = firstItem ? firstItem.id : null;
             }
-            window.renderApp(); 
+            window.renderApp();
         }
         window.changeView = changeView;
-        
-        function changeAdminSubView(sub) { 
-            state.adminSubView = sub; 
-            if(sub === 'inventory') {
+
+        function changeAdminSubView(sub) {
+            state.adminSubView = sub;
+            if (sub === 'inventory') {
                 const firstItem = state.inventory.find(i => i.cat === state.activeCat);
                 state.selectedAdminItemId = firstItem ? firstItem.id : null;
             }
-            window.renderApp(); 
+            window.renderApp();
         }
         window.changeAdminSubView = changeAdminSubView;
 
-        function setCategory(cat) { 
-            state.activeCat = cat; 
+        function setCategory(cat) {
+            state.activeCat = cat;
             if (state.view === 'admin' && state.adminSubView === 'inventory') {
                 const firstItem = state.inventory.find(i => i.cat === cat);
                 state.selectedAdminItemId = firstItem ? firstItem.id : null;
             }
-            window.renderApp(); 
+            window.renderApp();
         }
         window.setCategory = setCategory;
-        
-        function logout() { 
-            state.user = { id:'', name:'', brand:'', tagId:'' }; state.cart = []; state.reserveMode = false;
-            state.isAdminAuthenticated = false; window.changeView('scan'); window.showMsg("로그아웃 되었습니다."); 
+
+        function logout() {
+            state.user = { id: '', name: '', brand: '', tagId: '' }; state.cart = []; state.reserveMode = false;
+            state.isAdminAuthenticated = false; window.changeView('scan'); window.showMsg("로그아웃 되었습니다.");
         }
         window.logout = logout;
 
         function simulateTag(tagId) {
-            state.reserveMode = false; 
+            state.reserveMode = false;
             const convertedTagId = window.convertAccessControlID(tagId);
             const staff = state.staffList.find(s => s.tagId === convertedTagId);
-            
-            state.isAdminAuthenticated = false; 
-            if(state.view === 'register' || state.view === 'reserveLogin'){ state.view = 'scan'; }
-            
+
+            state.isAdminAuthenticated = false;
+            if (state.view === 'register' || state.view === 'reserveLogin') { state.view = 'scan'; }
+
             if (staff) {
-                state.user = staff; 
+                state.user = staff;
                 const pending = state.reservations.filter(r => r.staffId === staff.id && r.status === 'pending');
                 if (pending.length > 0) {
-                    state.pendingReservations = pending; 
+                    state.pendingReservations = pending;
                 }
-                window.changeView('explorer'); 
-                window.showMsg(`${staff.name}님 환영합니다.`);
-            } else {
-                state.user = { id: '', name: '', brand: '', tagId: convertedTagId }; window.changeView('register'); window.showMsg("미등록 카드입니다. 정보를 입력해주세요.");
-            }
-        }
-        window.simulateTag = simulateTag;
-
-        // [수정됨] 키오스크 RFID 리더기 전용 이벤트 리스너 (한영키/속도 문제 보완)
-        let lastKeyTime = Date.now();
-        window.addEventListener('keydown', function(e) {
-            // 1. 입력창 포커스 시 무시
-            if (document.activeElement && ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
-            
-            // 2. 모달창 활성화 시 무시
-            if (state.authModal || state.pwdChangeModal || state.categoryModal || state.editingItem || state.transferModal || state.editingStaffItem || state.confirmModal || state.checkoutConfirmModal || state.stockAlertModal) return; 
-
-            const currentTime = Date.now();
-            
-            // 3. 키 입력 간격이 50ms 이상이면 사람의 손 타이핑으로 간주하고 버퍼 초기화 (바코드/RFID 리더기는 10~20ms 이내로 매우 빠름)
-            if (currentTime - lastKeyTime > 50) {
-                tagBuffer = "";
-            }
-            lastKeyTime = currentTime;
-
-            const key = e.key;
-            if (key === 'Enter') { 
-                e.preventDefault(); // 기본 Enter 동작(스크롤 이동 등) 방지
-                if (tagBuffer.trim()) { 
-                    window.simulateTag(tagBuffer.trim()); 
-                    tagBuffer = ""; 
-                } 
-            } 
-            // 4. 한글 입력 방지 및 영문/숫자만 수집 (e.code를 사용해 물리적 키보드 값 추출)
-            else if (e.code && (e.code.startsWith('Key') || e.code.startsWith('Digit'))) { 
-                tagBuffer += e.code.replace('Key', '').replace('Digit', ''); 
-            }
-        });
-
-        function verifyReserveStaff() {
-            const idInput = document.getElementById('reserveStaffId').value.trim().toUpperCase();
-            if(!idInput) return window.showMsg("사번을 입력해주세요.");
-            
-            const staff = state.staffList.find(s => s.id === idInput);
-            if(staff) {
-                state.user = staff;
-                state.reserveMode = true;
-                state.cart = [];
                 window.changeView('explorer');
-                window.showMsg(`${staff.name}님 예약 시스템에 오신 것을 환영합니다.`);
-            } else {
-                window.showMsg("등록되지 않은 사번입니다. 최초 등록은 사원증을 지참하여 현장 키오스크에서 진행해주세요.");
+                window.showMsg(`${staff.name}님 환영합니다.`);
+
             }
-        }
-        window.verifyReserveStaff = verifyReserveStaff;
+            // 1. 기존 카드 인식 관련 잔재는 모두 삭제하고 아래 SSO 로직만 남깁니다.
 
-        function registerUser() {
-            const brand = document.getElementById('regBrand').value.toUpperCase();
-            const id = document.getElementById('regId').value.toUpperCase();
-            const name = document.getElementById('regName').value.toUpperCase();
-            const tagId = window.convertAccessControlID(document.getElementById('regTagId').value.toUpperCase());
-            const consent = document.getElementById('privacyConsent').checked;
-            
-            if(!consent) {
-                return window.showMsg("개인정보 수집 및 이용에 동의해 주세요.");
-            }
+            window.addEventListener('DOMContentLoaded', function () {
+                // 무디 ERP에서 저장한 'h_moody_auth' 정보를 가져옵니다.
+                const authData = localStorage.getItem('h_moody_auth');
 
-            if(brand && name && id && tagId) {
-                state.user = { ...state.user, brand, id, name, tagId };
-                state.staffList.push(state.user);
-                window.saveDataToStorage(); 
-                window.changeView('explorer'); window.showMsg("등록 완료!");
-            } else { window.showMsg("모든 정보를 입력해주세요."); }
-        }
-        window.registerUser = registerUser;
+                if (authData) {
+                    try {
+                        const user = JSON.parse(authData);
 
-        function openItemModal(id) { 
-            state.selectedItem = state.inventory.find(i => i.id == id); 
-            state.cartInputQty = 1;
-            state.cartInputUnit = 'base';
-            window.renderApp(); 
-        }
-        window.openItemModal = openItemModal;
+                        // 인증 정보를 현재 앱의 state에 주입
+                        state.user = user;
+                        state.appUser = user;
+                        state.isAuthorized = true;
 
-        function closeItemModal() { state.selectedItem = null; window.renderApp(); }
-        window.closeItemModal = closeItemModal;
-        
-        function setCartInputQty(val) {
-            if (!state.selectedItem) return;
-            const item = state.selectedItem;
-            const inCartItem = state.cart.find(c => c.itemId === item.id);
-            const availableNow = (item.stocks.counter || 0) - (inCartItem ? inCartItem.amount : 0);
-            
-            let qty = parseInt(val) || 1;
-            if (qty < 1) qty = 1;
-            
-            const multiplier = state.cartInputUnit === 'bulk' ? (item.bulkRatio || 1) : 1;
-            const itemMaxReserve = item.maxReserveQty ?? 100;
-            const maxAllowed = state.reserveMode ? Math.min(availableNow, itemMaxReserve) : availableNow;
-            
-            if (qty * multiplier > maxAllowed) {
-                if (qty * multiplier > availableNow) {
-                    window.showMsg("재고수량을 초과 하였습니다.");
+                        console.log("🔓 SSO 인증 성공:", user.name);
+
+                        // 인증 성공 시 화면 그리기
+                        if (typeof renderApp === 'function') renderApp();
+
+                        // 만약 첫 화면이 자동으로 안 뜨면 아래 주석을 해제하세요.
+                        // if (typeof window.changeView === 'function') window.changeView('explorer');
+
+                    } catch (e) {
+                        console.error("인증 데이터 파싱 오류:", e);
+                        redirectToLogin();
+                    }
                 } else {
-                    window.showMsg(`해당 품목의 예약 한도는 1인당 최대 ${itemMaxReserve}개입니다.`);
+                    redirectToLogin();
                 }
-                state.cartInputQty = Math.max(1, Math.floor(maxAllowed / multiplier));
-            } else {
-                state.cartInputQty = qty;
+            });
+
+            // 로그인 페이지(무디 ERP)로 리다이렉트
+            function redirectToLogin() {
+                alert("무디 ERP에서 포스번호로 먼저 로그인해주세요.");
+                window.location.href = "무디클로드코드_fixed.html";
             }
-            window.renderApp();
-        }
-        window.setCartInputQty = setCartInputQty;
 
-        function changeCartInputQty(delta) {
-            window.setCartInputQty(state.cartInputQty + delta);
-        }
-        window.changeCartInputQty = changeCartInputQty;
+            // 에러 방지용 빈 함수 (기존 카드 리더기 호출 대비)
+            window.simulateTag = function (tag) {
+                console.log("카드는 더 이상 사용하지 않습니다. 현재 접속자:", state.user?.name);
+            };
 
-        function changeCartInputUnit(unit) {
-            state.cartInputUnit = unit;
-            window.setCartInputQty(state.cartInputQty); 
-        }
-        window.changeCartInputUnit = changeCartInputUnit;
+            // 예약 시스템용 함수 (기존 유지)
+            function verifyReserveStaff() {
+                const idInput = document.getElementById('reserveStaffId').value.trim().toUpperCase();
+                if (!idInput) return window.showMsg("사번을 입력해주세요.");
 
-        function confirmAddToCart() {
-            if(!state.selectedItem) return;
-            const item = state.selectedItem;
-            const qty = parseInt(state.cartInputQty) || 1;
-            const isBulk = state.cartInputUnit === 'bulk';
-            const addAmount = isBulk ? (qty * (item.bulkRatio || 1)) : qty;
-
-            if(addAmount <= 0) return window.showMsg("수량을 1 이상 입력해주세요.");
-
-            window.addToCart(item.id, addAmount);
-        }
-        window.confirmAddToCart = confirmAddToCart;
-
-        function addToCart(itemId, addAmount) {
-            const item = state.inventory.find(i => i.id == itemId);
-            const currentStock = item.stocks.counter || 0;
-            const inCartItem = state.cart.find(c => c.itemId === itemId);
-            const currentInCartQty = inCartItem ? inCartItem.amount : 0;
-            
-            const itemMaxReserve = item.maxReserveQty ?? 100;
-            const maxAllowed = state.reserveMode ? Math.min(currentStock, itemMaxReserve) : currentStock;
-
-            if (currentInCartQty + addAmount > maxAllowed) {
-                if (currentInCartQty + addAmount > currentStock) {
-                    return window.showMsg("재고수량을 초과 하였습니다.");
-                } else {
-                    return window.showMsg(`해당 품목의 예약 한도는 1인당 최대 ${itemMaxReserve}개입니다.`);
+                const staff = state.staffList.find(s => s.id === idInput);
+                if (staff) {
+                    state.user = staff;
+                    state.reserveMode = true;
+                    state.cart = [];
+                    window.changeView('explorer');
+                    window.showMsg(`${staff.name}님 예약 시스템에 오신 것을 환영합니다.`);
                 }
             }
-            
-            if (inCartItem) { inCartItem.amount += addAmount; } 
-            else { 
-                state.cart.push({ itemId: item.id, itemName: item.name, unitBase: item.unitBase, unitBulk: item.unitBulk, bulkRatio: item.bulkRatio, amount: addAmount }); 
+
+            // 전역 함수 등록
+            window.verifyReserveStaff = verifyReserveStaff;
+
+            function registerUser() {
+                const brand = document.getElementById('regBrand').value.toUpperCase();
+                const id = document.getElementById('regId').value.toUpperCase();
+                const name = document.getElementById('regName').value.toUpperCase();
+                const tagId = window.convertAccessControlID(document.getElementById('regTagId').value.toUpperCase());
+                const consent = document.getElementById('privacyConsent').checked;
+
+                if (!consent) {
+                    return window.showMsg("개인정보 수집 및 이용에 동의해 주세요.");
+                }
+
+                if (brand && name && id && tagId) {
+                    state.user = { ...state.user, brand, id, name, tagId };
+                    state.staffList.push(state.user);
+                    window.saveDataToStorage();
+                    window.changeView('explorer'); window.showMsg("등록 완료!");
+                } else { window.showMsg("모든 정보를 입력해주세요."); }
             }
-            state.selectedItem = null; window.showMsg(`${item.name} 담기 완료`); window.renderApp();
-        }
-        window.addToCart = addToCart;
+            window.registerUser = registerUser;
 
-        function removeFromCart(itemId) { state.cart = state.cart.filter(c => c.itemId !== itemId); window.renderApp(); }
-        window.removeFromCart = removeFromCart;
+            function openItemModal(id) {
+                state.selectedItem = state.inventory.find(i => i.id == id);
+                state.cartInputQty = 1;
+                state.cartInputUnit = 'base';
+                window.renderApp();
+            }
+            window.openItemModal = openItemModal;
 
-        function updateCartQty(itemId, delta) {
-            const item = state.inventory.find(i => i.id == itemId);
-            const currentStock = item.stocks.counter || 0;
-            const cartItem = state.cart.find(c => c.itemId === itemId);
-            
-            if(cartItem) {
-                const nextQty = cartItem.amount + delta;
-                if(nextQty <= 0) return window.removeFromCart(itemId);
-                
+            function closeItemModal() { state.selectedItem = null; window.renderApp(); }
+            window.closeItemModal = closeItemModal;
+
+            function setCartInputQty(val) {
+                if (!state.selectedItem) return;
+                const item = state.selectedItem;
+                const inCartItem = state.cart.find(c => c.itemId === item.id);
+                const availableNow = (item.stocks.counter || 0) - (inCartItem ? inCartItem.amount : 0);
+
+                let qty = parseInt(val) || 1;
+                if (qty < 1) qty = 1;
+
+                const multiplier = state.cartInputUnit === 'bulk' ? (item.bulkRatio || 1) : 1;
+                const itemMaxReserve = item.maxReserveQty ?? 100;
+                const maxAllowed = state.reserveMode ? Math.min(availableNow, itemMaxReserve) : availableNow;
+
+                if (qty * multiplier > maxAllowed) {
+                    if (qty * multiplier > availableNow) {
+                        window.showMsg("재고수량을 초과 하였습니다.");
+                    } else {
+                        window.showMsg(`해당 품목의 예약 한도는 1인당 최대 ${itemMaxReserve}개입니다.`);
+                    }
+                    state.cartInputQty = Math.max(1, Math.floor(maxAllowed / multiplier));
+                } else {
+                    state.cartInputQty = qty;
+                }
+                window.renderApp();
+            }
+            window.setCartInputQty = setCartInputQty;
+
+            function changeCartInputQty(delta) {
+                window.setCartInputQty(state.cartInputQty + delta);
+            }
+            window.changeCartInputQty = changeCartInputQty;
+
+            function changeCartInputUnit(unit) {
+                state.cartInputUnit = unit;
+                window.setCartInputQty(state.cartInputQty);
+            }
+            window.changeCartInputUnit = changeCartInputUnit;
+
+            function confirmAddToCart() {
+                if (!state.selectedItem) return;
+                const item = state.selectedItem;
+                const qty = parseInt(state.cartInputQty) || 1;
+                const isBulk = state.cartInputUnit === 'bulk';
+                const addAmount = isBulk ? (qty * (item.bulkRatio || 1)) : qty;
+
+                if (addAmount <= 0) return window.showMsg("수량을 1 이상 입력해주세요.");
+
+                window.addToCart(item.id, addAmount);
+            }
+            window.confirmAddToCart = confirmAddToCart;
+
+            function addToCart(itemId, addAmount) {
+                const item = state.inventory.find(i => i.id == itemId);
+                const currentStock = item.stocks.counter || 0;
+                const inCartItem = state.cart.find(c => c.itemId === itemId);
+                const currentInCartQty = inCartItem ? inCartItem.amount : 0;
+
                 const itemMaxReserve = item.maxReserveQty ?? 100;
                 const maxAllowed = state.reserveMode ? Math.min(currentStock, itemMaxReserve) : currentStock;
-                
-                if(nextQty > maxAllowed) {
-                    if (nextQty > currentStock) {
+
+                if (currentInCartQty + addAmount > maxAllowed) {
+                    if (currentInCartQty + addAmount > currentStock) {
                         return window.showMsg("재고수량을 초과 하였습니다.");
                     } else {
                         return window.showMsg(`해당 품목의 예약 한도는 1인당 최대 ${itemMaxReserve}개입니다.`);
                     }
                 }
-                cartItem.amount = nextQty; window.renderApp();
-            }
-        }
-        window.updateCartQty = updateCartQty;
 
-        function openCheckoutConfirm() {
-            if (state.cart.length === 0) return;
-            state.checkoutConfirmModal = true;
-            window.renderApp();
-        }
-        window.openCheckoutConfirm = openCheckoutConfirm;
-
-        function executeCheckout() {
-            state.checkoutConfirmModal = false;
-            
-            const rawDate = new Date().toISOString().split('T')[0];
-            const timeStr = new Date().toLocaleTimeString('ko-KR', { hour12: false });
-            
-            const cartCopy = JSON.parse(JSON.stringify(state.cart));
-            
-            // 👇 [핵심 로직] 현장 오프라인 태그 수령일 때만 즉시 프린트!
-            if (!state.reserveMode && window.printReceipt) {
-                window.printReceipt(cartCopy, state.user, false);
-            }
-
-            if (state.reserveMode) {
-                // 사전 예약 로직 (출력 없이 데이터만 저장)
-                const reserveCart = state.cart.map(c => {
-                    const realItem = state.inventory.find(i => i.id === c.itemId);
-                    realItem.stocks.counter -= c.amount; 
-                    const formatStr = window.formatStock(c.amount, c.unitBase, c.unitBulk, c.bulkRatio, false).replace(/<[^>]*>?/gm, ''); 
-                    return { ...c, amountStr: formatStr };
-                });
-                
-                state.reservations.unshift({
-                    id: Date.now() + Math.random(),
-                    rawDate,
-                    time: timeStr,
-                    staffId: state.user.id,
-                    name: state.user.name,
-                    brand: state.user.brand,
-                    cart: reserveCart,
-                    status: 'new' // 신규 예약은 '준비중' 상태
-                });
-                
-                state.cart = []; window.saveDataToStorage(); 
-                window.showMsg("사전 예약이 완료되었습니다! (익일 14시 이후 현장 수령)");
-                setTimeout(() => { state.reserveMode = false; window.changeView('scan'); }, 3000);
-
-            } else {
-                // 오프라인 현장 수령 로직 (데이터 저장 및 로그 기록)
-                state.cart.forEach(c => {
-                    const realItem = state.inventory.find(i => i.id === c.itemId);
-                    realItem.stocks.counter -= c.amount;
-                    const formatStr = window.formatStock(c.amount, c.unitBase, c.unitBulk, c.bulkRatio, true).replace(/<[^>]*>?/gm, ''); 
-                    
-                    state.logs.unshift({
-                        id: Date.now() + '_' + Math.random().toString(36).slice(2), rawDate, time: timeStr,
-                        brand: state.user.brand, name: state.user.name, staffId: state.user.id,
-                        itemName: c.itemName, amountStr: formatStr, qty: c.amount 
-                    });
-                });
-                state.cart = []; window.saveDataToStorage(); window.showMsg("수령이 완료되었습니다!");
-                setTimeout(() => window.changeView('scan'), 2000);
-            }
-            
-            window.checkLowStockAndAlert(cartCopy);
-        }
-        window.executeCheckout = executeCheckout;
-
-        function confirmReserveReceipt(resId) {
-            const res = state.reservations.find(r => r.id == resId);
-            if(!res) return;
-            
-            const rawDate = new Date().toISOString().split('T')[0];
-            const timeStr = new Date().toLocaleTimeString('ko-KR', { hour12: false });
-            
-            res.cart.forEach(c => {
-                state.logs.unshift({
-                    id: Date.now() + Math.random(), rawDate, time: timeStr,
-                    brand: res.brand, name: res.name, staffId: res.staffId,
-                    itemName: c.itemName, amountStr: c.amountStr, qty: c.amount 
-                });
-            });
-            
-            res.status = 'completed'; 
-            if (state.pendingReservations) {
-                state.pendingReservations.shift(); 
-                if(state.pendingReservations.length === 0) state.pendingReservations = null;
-            }
-            window.saveDataToStorage();
-            window.showMsg("예약 물품 수령 처리가 완료되었습니다!");
-            window.renderApp();
-        }
-        window.confirmReserveReceipt = confirmReserveReceipt;
-
-        function delayReserveReceipt() {
-            state.pendingReservations = null;
-            window.renderApp();
-        }
-        window.delayReserveReceipt = delayReserveReceipt;
-
-        function cancelReservation(resId) {
-            window.openConfirmModal('예약 강제 취소', '이 예약을 정말 취소하시겠습니까?<br/>미리 차감되었던 창고 재고가 다시 복구됩니다.', 'cancelReservation', resId, '강제 취소', true);
-        }
-        window.cancelReservation = cancelReservation;
-// [신규 기능] 예약건 출력 및 준비 완료 처리
-        function printAndReadyReservation(resId) {
-            const res = state.reservations.find(r => r.id == resId);
-            if(res) {
-                // 1. 감열지 프린터로 영수증 출력 (이전 답변에서 추가한 printReceipt 함수 활용)
-                const userObj = { brand: res.brand, name: res.name, id: res.staffId };
-                if (window.printReceipt) {
-                    window.printReceipt(res.cart, userObj, true);
+                if (inCartItem) { inCartItem.amount += addAmount; }
+                else {
+                    state.cart.push({ itemId: item.id, itemName: item.name, unitBase: item.unitBase, unitBulk: item.unitBulk, bulkRatio: item.bulkRatio, amount: addAmount });
                 }
-                
-                // 2. 상태를 '현장 대기중(pending)'으로 변경
-                res.status = 'pending';
-                window.saveDataToStorage();
-                window.showMsg("🖨️ 주문 내역이 출력되었으며, '현장 대기중'으로 변경되었습니다.");
+                state.selectedItem = null; window.showMsg(`${item.name} 담기 완료`); window.renderApp();
+            }
+            window.addToCart = addToCart;
+
+            function removeFromCart(itemId) { state.cart = state.cart.filter(c => c.itemId !== itemId); window.renderApp(); }
+            window.removeFromCart = removeFromCart;
+
+            function updateCartQty(itemId, delta) {
+                const item = state.inventory.find(i => i.id == itemId);
+                const currentStock = item.stocks.counter || 0;
+                const cartItem = state.cart.find(c => c.itemId === itemId);
+
+                if (cartItem) {
+                    const nextQty = cartItem.amount + delta;
+                    if (nextQty <= 0) return window.removeFromCart(itemId);
+
+                    const itemMaxReserve = item.maxReserveQty ?? 100;
+                    const maxAllowed = state.reserveMode ? Math.min(currentStock, itemMaxReserve) : currentStock;
+
+                    if (nextQty > maxAllowed) {
+                        if (nextQty > currentStock) {
+                            return window.showMsg("재고수량을 초과 하였습니다.");
+                        } else {
+                            return window.showMsg(`해당 품목의 예약 한도는 1인당 최대 ${itemMaxReserve}개입니다.`);
+                        }
+                    }
+                    cartItem.amount = nextQty; window.renderApp();
+                }
+            }
+            window.updateCartQty = updateCartQty;
+
+            function openCheckoutConfirm() {
+                if (state.cart.length === 0) return;
+                state.checkoutConfirmModal = true;
                 window.renderApp();
             }
-        }
-        window.printAndReadyReservation = printAndReadyReservation;
-        function deleteLog(id) {
-            window.openConfirmModal('수령 기록 취소', '이 수령 기록을 삭제하고 차감된 재고를 다시 원상 복구하시겠습니까?', 'deleteLog', id, '취소 및 복구', true);
-        }
-        window.deleteLog = deleteLog;
+            window.openCheckoutConfirm = openCheckoutConfirm;
 
-        function openAddCategory() { state.categoryInputValue = ''; state.categoryModal = { mode: 'add' }; window.renderApp(); }
-        window.openAddCategory = openAddCategory;
+            function executeCheckout() {
+                state.checkoutConfirmModal = false;
 
-        function openEditCategory(cat) { state.categoryInputValue = cat; state.categoryModal = { mode: 'edit', oldName: cat }; window.renderApp(); }
-        window.openEditCategory = openEditCategory;
+                const rawDate = new Date().toISOString().split('T')[0];
+                const timeStr = new Date().toLocaleTimeString('ko-KR', { hour12: false });
 
-        function deleteCategory(cat) { window.openConfirmModal('분류 삭제', `[${cat}] 분류를 삭제하시겠습니까?`, 'deleteCategory', cat, '삭제하기', true); }
-        window.deleteCategory = deleteCategory;
+                const cartCopy = JSON.parse(JSON.stringify(state.cart));
 
-        function saveCategory() {
-            const name = document.getElementById('catInput').value.trim();
-            if (!name) return window.showMsg("이름을 입력하세요.");
-            if (state.categoryModal.mode === 'add') {
-                if (state.categories.includes(name)) return window.showMsg("이미 존재합니다.");
-                state.categories.push(name);
-            } else {
-                const old = state.categoryModal.oldName;
-                state.categories = state.categories.map(c => c === old ? name : c);
-                state.inventory = state.inventory.map(i => i.cat === old ? { ...i, cat: name } : i);
-                if (state.activeCat === old) state.activeCat = name;
+                // 👇 [핵심 로직] 현장 오프라인 태그 수령일 때만 즉시 프린트!
+                if (!state.reserveMode && window.printReceipt) {
+                    window.printReceipt(cartCopy, state.user, false);
+                }
+
+                if (state.reserveMode) {
+                    // 사전 예약 로직 (출력 없이 데이터만 저장)
+                    const reserveCart = state.cart.map(c => {
+                        const realItem = state.inventory.find(i => i.id === c.itemId);
+                        realItem.stocks.counter -= c.amount;
+                        const formatStr = window.formatStock(c.amount, c.unitBase, c.unitBulk, c.bulkRatio, false).replace(/<[^>]*>?/gm, '');
+                        return { ...c, amountStr: formatStr };
+                    });
+
+                    state.reservations.unshift({
+                        id: Date.now() + Math.random(),
+                        rawDate,
+                        time: timeStr,
+                        staffId: state.user.id,
+                        name: state.user.name,
+                        brand: state.user.brand,
+                        cart: reserveCart,
+                        status: 'new' // 신규 예약은 '준비중' 상태
+                    });
+
+                    state.cart = []; window.saveDataToStorage();
+                    window.showMsg("사전 예약이 완료되었습니다! (익일 14시 이후 현장 수령)");
+                    setTimeout(() => { state.reserveMode = false; window.changeView('scan'); }, 3000);
+
+                } else {
+                    // ✅ [수정됨] POS 통합 로그인 정보를 기반으로 데이터 저장
+                    state.cart.forEach(c => {
+                        const realItem = state.inventory.find(i => i.id === c.itemId);
+                        realItem.stocks.counter -= c.amount;
+                        const formatStr = window.formatStock(c.amount, c.unitBase, c.unitBulk, c.bulkRatio, true).replace(/<[^>]*>?/gm, '');
+
+                        // 로그 기록 (장부 작성)
+                        state.logs.unshift({
+                            id: Date.now() + '_' + Math.random().toString(36).slice(2),
+                            rawDate,
+                            time: timeStr,
+                            // 1. 브랜드: 무디에서 가져온 매장명(accountName)을 넣습니다.
+                            brand: state.user.name,
+                            // 2. 성명: 매장명을 그대로 사용하거나 '포스'라고 표시합니다.
+                            name: state.user.name,
+                            // 3. 식별ID: 무디에서 가져온 포스번호(empId)를 넣습니다.
+                            staffId: state.user.empId,
+                            itemName: c.itemName,
+                            amountStr: formatStr,
+                            qty: c.amount
+                        });
+                    });
+
+                    state.cart = [];
+                    window.saveDataToStorage();
+                    window.showMsg("수령 기록이 완료되었습니다!");
+
+                    // 🚨 중요: 'scan' 뷰는 카드를 찍는 화면입니다. 
+                    // 이제 로그인이 유지되므로 물품 목록('explorer') 화면으로 바로 돌려보냅니다.
+                    setTimeout(() => window.changeView('explorer'), 2000);
+                }
+
+                window.checkLowStockAndAlert(cartCopy);
             }
-            state.categoryModal = null; window.saveDataToStorage(); window.showMsg("분류가 저장되었습니다.");
-        }
-        window.saveCategory = saveCategory;
+            window.executeCheckout = executeCheckout;
 
-        function selectAdminItem(id) { state.selectedAdminItemId = id; window.renderApp(); }
-        window.selectAdminItem = selectAdminItem;
-        
-        function setStockManual(itemId, whKey, value) {
-            let item = state.inventory.find(i => i.id == itemId);
-            item.stocks[whKey] = Math.max(0, parseInt(value) || 0);
-            window.saveDataToStorage(); window.renderApp();
-        }
-        window.setStockManual = setStockManual;
+            function confirmReserveReceipt(resId) {
+                const res = state.reservations.find(r => r.id == resId);
+                if (!res) return;
 
-        function updateStockManual(itemId, whKey, delta) {
-            let item = state.inventory.find(i => i.id == itemId);
-            item.stocks[whKey] = Math.max(0, (item.stocks[whKey] || 0) + delta);
-            window.saveDataToStorage(); window.renderApp();
-        }
-        window.updateStockManual = updateStockManual;
-        
-        function openTransfer(itemId) { 
-            const warehouseKeys = Object.keys(state.warehouses);
-            state.transferModal = { itemId, unitType: 'base' }; 
-            state.transferQty = 1;
-            // 현재 설정된 출발/도착 창고 키가 warehouses에 없을 경우 첫 번째 키로 초기화
-            if (!state.warehouses[state.transferFrom]) state.transferFrom = warehouseKeys[0] || 'counter';
-            if (!state.warehouses[state.transferTo]) state.transferTo = warehouseKeys[1] || warehouseKeys[0] || 'counter';
-            window.renderApp(); 
-        }
-        window.openTransfer = openTransfer;
+                const rawDate = new Date().toISOString().split('T')[0];
+                const timeStr = new Date().toLocaleTimeString('ko-KR', { hour12: false });
 
-        function execTransfer() {
-            const item = state.inventory.find(i => i.id == state.transferModal.itemId);
-            const multiplier = state.transferModal.unitType === 'bulk' ? (item.bulkRatio || 1) : 1;
-            const totalTransfer = (parseInt(document.getElementById('transQty').value) || 0) * multiplier;
-            
-            if((item.stocks[state.transferFrom] || 0) < totalTransfer) return window.showMsg("출발 창고 재고 부족");
-            if(state.transferFrom === state.transferTo) return window.showMsg("동일 위치 이동 불가");
-            if(totalTransfer <= 0) return window.showMsg("수량을 올바르게 입력하세요");
-            
-            item.stocks[state.transferFrom] -= totalTransfer;
-            item.stocks[state.transferTo] = (item.stocks[state.transferTo] || 0) + totalTransfer;
-            state.transferModal = null; window.saveDataToStorage(); window.showMsg("재고 이동 완료");
-        }
-        window.execTransfer = execTransfer;
+                res.cart.forEach(c => {
+                    state.logs.unshift({
+                        id: Date.now() + Math.random(), rawDate, time: timeStr,
+                        brand: res.brand, name: res.name, staffId: res.staffId,
+                        itemName: c.itemName, amountStr: c.amountStr, qty: c.amount
+                    });
+                });
 
-        function openAddItem() {
-            state.isAddingNew = true;
-            const initialStocks = {};
-            Object.keys(state.warehouses).forEach(k => { initialStocks[k] = 0; });
-            state.editingItem = { id: Date.now(), name: '', cat: state.activeCat, unitBase: '개', unitBulk: '', bulkRatio: 1, stocks: initialStocks, maxReserveQty: 100, alertQty: 10 };
-            window.renderApp();
-        }
-        window.openAddItem = openAddItem;
+                res.status = 'completed';
+                if (state.pendingReservations) {
+                    state.pendingReservations.shift();
+                    if (state.pendingReservations.length === 0) state.pendingReservations = null;
+                }
+                window.saveDataToStorage();
+                window.showMsg("예약 물품 수령 처리가 완료되었습니다!");
+                window.renderApp();
+            }
+            window.confirmReserveReceipt = confirmReserveReceipt;
 
-        function openEditItem(itemId) { 
-            const item = state.inventory.find(i => i.id == itemId);
-            if (!item) return;
-            state.isAddingNew = false;
-            state.editingItem = JSON.parse(JSON.stringify(item)); 
-            window.renderApp(); 
-        }
-        window.openEditItem = openEditItem;
+            function delayReserveReceipt() {
+                state.pendingReservations = null;
+                window.renderApp();
+            }
+            window.delayReserveReceipt = delayReserveReceipt;
 
-        function closeEditItem() {
-            state.editingItem = null;
-            state.isAddingNew = false;
-            window.renderApp();
-        }
-        window.closeEditItem = closeEditItem;
-        
-        function deleteAdminItem(id) {
-            const item = state.inventory.find(i => i.id == id);
-            window.openConfirmModal('품목 삭제 확인', `정말 <span class="text-red-600 font-bold">[${item.name}]</span> 품목을 삭제하시겠습니까?<br/>해당 품목에 관련된 재고 데이터가 영구적으로 사라집니다.`, 'deleteItem', id, '삭제하기', true);
-        }
-        window.deleteAdminItem = deleteAdminItem;
+            function cancelReservation(resId) {
+                window.openConfirmModal('예약 강제 취소', '이 예약을 정말 취소하시겠습니까?<br/>미리 차감되었던 창고 재고가 다시 복구됩니다.', 'cancelReservation', resId, '강제 취소', true);
+            }
+            window.cancelReservation = cancelReservation;
+            // [신규 기능] 예약건 출력 및 준비 완료 처리
+            function printAndReadyReservation(resId) {
+                const res = state.reservations.find(r => r.id == resId);
+                if (res) {
+                    // 1. 감열지 프린터로 영수증 출력 (이전 답변에서 추가한 printReceipt 함수 활용)
+                    const userObj = { brand: res.brand, name: res.name, id: res.staffId };
+                    if (window.printReceipt) {
+                        window.printReceipt(res.cart, userObj, true);
+                    }
 
-        function saveItem() {
-            const name = document.getElementById('editName').value.trim();
-            const base = document.getElementById('editUnitBase').value.trim();
-            const bulk = document.getElementById('editUnitBulk').value.trim();
-            const ratio = parseInt(document.getElementById('editBulkRatio').value) || 1;
-            
-            const maxReserveQty = parseInt(document.getElementById('editMaxReserveQty').value) || 0;
-            const alertQty = parseInt(document.getElementById('editAlertQty').value) || 0;
-            
-            if(!name || !base) return window.showMsg("품목명과 기본 단위를 입력하세요.");
-            
-            state.editingItem.name = name;
-            state.editingItem.unitBase = base;
-            state.editingItem.unitBulk = bulk;
-            state.editingItem.bulkRatio = ratio;
-            state.editingItem.maxReserveQty = maxReserveQty;
-            state.editingItem.alertQty = alertQty;
-            
-            if (!state.editingItem.stocks) {
+                    // 2. 상태를 '현장 대기중(pending)'으로 변경
+                    res.status = 'pending';
+                    window.saveDataToStorage();
+                    window.showMsg("🖨️ 주문 내역이 출력되었으며, '현장 대기중'으로 변경되었습니다.");
+                    window.renderApp();
+                }
+            }
+            window.printAndReadyReservation = printAndReadyReservation;
+            function deleteLog(id) {
+                window.openConfirmModal('수령 기록 취소', '이 수령 기록을 삭제하고 차감된 재고를 다시 원상 복구하시겠습니까?', 'deleteLog', id, '취소 및 복구', true);
+            }
+            window.deleteLog = deleteLog;
+
+            function openAddCategory() { state.categoryInputValue = ''; state.categoryModal = { mode: 'add' }; window.renderApp(); }
+            window.openAddCategory = openAddCategory;
+
+            function openEditCategory(cat) { state.categoryInputValue = cat; state.categoryModal = { mode: 'edit', oldName: cat }; window.renderApp(); }
+            window.openEditCategory = openEditCategory;
+
+            function deleteCategory(cat) { window.openConfirmModal('분류 삭제', `[${cat}] 분류를 삭제하시겠습니까?`, 'deleteCategory', cat, '삭제하기', true); }
+            window.deleteCategory = deleteCategory;
+
+            function saveCategory() {
+                const name = document.getElementById('catInput').value.trim();
+                if (!name) return window.showMsg("이름을 입력하세요.");
+                if (state.categoryModal.mode === 'add') {
+                    if (state.categories.includes(name)) return window.showMsg("이미 존재합니다.");
+                    state.categories.push(name);
+                } else {
+                    const old = state.categoryModal.oldName;
+                    state.categories = state.categories.map(c => c === old ? name : c);
+                    state.inventory = state.inventory.map(i => i.cat === old ? { ...i, cat: name } : i);
+                    if (state.activeCat === old) state.activeCat = name;
+                }
+                state.categoryModal = null; window.saveDataToStorage(); window.showMsg("분류가 저장되었습니다.");
+            }
+            window.saveCategory = saveCategory;
+
+            function selectAdminItem(id) { state.selectedAdminItemId = id; window.renderApp(); }
+            window.selectAdminItem = selectAdminItem;
+
+            function setStockManual(itemId, whKey, value) {
+                let item = state.inventory.find(i => i.id == itemId);
+                item.stocks[whKey] = Math.max(0, parseInt(value) || 0);
+                window.saveDataToStorage(); window.renderApp();
+            }
+            window.setStockManual = setStockManual;
+
+            function updateStockManual(itemId, whKey, delta) {
+                let item = state.inventory.find(i => i.id == itemId);
+                item.stocks[whKey] = Math.max(0, (item.stocks[whKey] || 0) + delta);
+                window.saveDataToStorage(); window.renderApp();
+            }
+            window.updateStockManual = updateStockManual;
+
+            function openTransfer(itemId) {
+                const warehouseKeys = Object.keys(state.warehouses);
+                state.transferModal = { itemId, unitType: 'base' };
+                state.transferQty = 1;
+                // 현재 설정된 출발/도착 창고 키가 warehouses에 없을 경우 첫 번째 키로 초기화
+                if (!state.warehouses[state.transferFrom]) state.transferFrom = warehouseKeys[0] || 'counter';
+                if (!state.warehouses[state.transferTo]) state.transferTo = warehouseKeys[1] || warehouseKeys[0] || 'counter';
+                window.renderApp();
+            }
+            window.openTransfer = openTransfer;
+
+            function execTransfer() {
+                const item = state.inventory.find(i => i.id == state.transferModal.itemId);
+                const multiplier = state.transferModal.unitType === 'bulk' ? (item.bulkRatio || 1) : 1;
+                const totalTransfer = (parseInt(document.getElementById('transQty').value) || 0) * multiplier;
+
+                if ((item.stocks[state.transferFrom] || 0) < totalTransfer) return window.showMsg("출발 창고 재고 부족");
+                if (state.transferFrom === state.transferTo) return window.showMsg("동일 위치 이동 불가");
+                if (totalTransfer <= 0) return window.showMsg("수량을 올바르게 입력하세요");
+
+                item.stocks[state.transferFrom] -= totalTransfer;
+                item.stocks[state.transferTo] = (item.stocks[state.transferTo] || 0) + totalTransfer;
+                state.transferModal = null; window.saveDataToStorage(); window.showMsg("재고 이동 완료");
+            }
+            window.execTransfer = execTransfer;
+
+            function openAddItem() {
+                state.isAddingNew = true;
                 const initialStocks = {};
                 Object.keys(state.warehouses).forEach(k => { initialStocks[k] = 0; });
-                state.editingItem.stocks = initialStocks;
-            } else {
-                // 기존 품목에도 누락된 창고 키가 있으면 0으로 채움
-                Object.keys(state.warehouses).forEach(k => {
-                    if (state.editingItem.stocks[k] === undefined) state.editingItem.stocks[k] = 0;
-                });
+                state.editingItem = { id: Date.now(), name: '', cat: state.activeCat, unitBase: '개', unitBulk: '', bulkRatio: 1, stocks: initialStocks, maxReserveQty: 100, alertQty: 10 };
+                window.renderApp();
             }
-            
-            const existingIdx = state.inventory.findIndex(i => i.id == state.editingItem.id);
-            if(existingIdx >= 0) state.inventory[existingIdx] = state.editingItem;
-            else state.inventory.push(state.editingItem);
-            
-            state.selectedAdminItemId = state.editingItem.id; state.editingItem = null; window.saveDataToStorage(); window.showMsg("저장 완료");
-        }
-        window.saveItem = saveItem;
+            window.openAddItem = openAddItem;
 
-        function updateSetting(key, value) {
-            if (!state.settings) state.settings = {};
-            state.settings[key] = value.trim();
-            window.saveDataToStorage();
-            window.showMsg("설정이 저장되었습니다.");
-        }
-        window.updateSetting = updateSetting;
+            function openEditItem(itemId) {
+                const item = state.inventory.find(i => i.id == itemId);
+                if (!item) return;
+                state.isAddingNew = false;
+                state.editingItem = JSON.parse(JSON.stringify(item));
+                window.renderApp();
+            }
+            window.openEditItem = openEditItem;
 
-        function doSearchStaff() { state.staffSearchQuery = document.getElementById('staffSearchInput').value.toUpperCase(); window.renderApp(); }
-        window.doSearchStaff = doSearchStaff;
+            function closeEditItem() {
+                state.editingItem = null;
+                state.isAddingNew = false;
+                window.renderApp();
+            }
+            window.closeEditItem = closeEditItem;
 
-        function openEditStaff(idx) { state.editingStaffItem = { idx, ...state.staffList[idx] }; window.renderApp(); }
-        window.openEditStaff = openEditStaff;
+            function deleteAdminItem(id) {
+                const item = state.inventory.find(i => i.id == id);
+                window.openConfirmModal('품목 삭제 확인', `정말 <span class="text-red-600 font-bold">[${item.name}]</span> 품목을 삭제하시겠습니까?<br/>해당 품목에 관련된 재고 데이터가 영구적으로 사라집니다.`, 'deleteItem', id, '삭제하기', true);
+            }
+            window.deleteAdminItem = deleteAdminItem;
 
-        function saveStaffEdit() {
-            const item = state.editingStaffItem;
-            item.brand = document.getElementById('editStaffBrand').value.toUpperCase();
-            item.id = document.getElementById('editStaffId').value.toUpperCase();
-            item.name = document.getElementById('editStaffName').value.toUpperCase();
-            item.tagId = window.convertAccessControlID(document.getElementById('editStaffTag').value.toUpperCase());
-            if(!item.brand || !item.id || !item.name || !item.tagId) return window.showMsg("모든 정보를 입력해주세요.");
-            state.staffList[item.idx] = { brand: item.brand, id: item.id, name: item.name, tagId: item.tagId };
-            state.editingStaffItem = null; window.saveDataToStorage(); window.showMsg("직원 정보가 수정되었습니다.");
-        }
-        window.saveStaffEdit = saveStaffEdit;
+            function saveItem() {
+                const name = document.getElementById('editName').value.trim();
+                const base = document.getElementById('editUnitBase').value.trim();
+                const bulk = document.getElementById('editUnitBulk').value.trim();
+                const ratio = parseInt(document.getElementById('editBulkRatio').value) || 1;
 
-        function doBulkImport() {
-            const text = document.getElementById('bulkText').value; if(!text.trim()) return;
-            const lines = text.split('\n'); let count = 0;
-            lines.forEach(line => {
-                const data = line.split(/[\t\s,]+/).filter(v => v.trim());
-                if(data.length >= 3) {
-                    state.staffList.push({ brand: data[0].toUpperCase(), id: data[1].toUpperCase(), name: data[2].toUpperCase(), tagId: window.convertAccessControlID((data[3] || '임시-'+Math.random().toString(16).slice(2,6)).toUpperCase()) });
-                    count++;
+                const maxReserveQty = parseInt(document.getElementById('editMaxReserveQty').value) || 0;
+                const alertQty = parseInt(document.getElementById('editAlertQty').value) || 0;
+
+                if (!name || !base) return window.showMsg("품목명과 기본 단위를 입력하세요.");
+
+                state.editingItem.name = name;
+                state.editingItem.unitBase = base;
+                state.editingItem.unitBulk = bulk;
+                state.editingItem.bulkRatio = ratio;
+                state.editingItem.maxReserveQty = maxReserveQty;
+                state.editingItem.alertQty = alertQty;
+
+                if (!state.editingItem.stocks) {
+                    const initialStocks = {};
+                    Object.keys(state.warehouses).forEach(k => { initialStocks[k] = 0; });
+                    state.editingItem.stocks = initialStocks;
+                } else {
+                    // 기존 품목에도 누락된 창고 키가 있으면 0으로 채움
+                    Object.keys(state.warehouses).forEach(k => {
+                        if (state.editingItem.stocks[k] === undefined) state.editingItem.stocks[k] = 0;
+                    });
                 }
-            });
-            window.saveDataToStorage(); window.showMsg(`${count}명 등록 완료`); window.renderApp();
-        }
-        window.doBulkImport = doBulkImport;
 
-        function deleteStaff(idx, name) { window.openConfirmModal('직원 삭제 확인', `[${name}] 님을 정말 삭제하시겠습니까?`, 'deleteStaff', idx, '삭제하기', true); }
-        window.deleteStaff = deleteStaff;
+                const existingIdx = state.inventory.findIndex(i => i.id == state.editingItem.id);
+                if (existingIdx >= 0) state.inventory[existingIdx] = state.editingItem;
+                else state.inventory.push(state.editingItem);
 
-        function exportStaffCSV() {
-            let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; csvContent += "브랜드,사번,이름,카드번호(TagID)\n"; 
-            if (state.staffList.length === 0) { csvContent += "예시) 나이키,2024001,홍길동,12345678\n"; } 
-            else { state.staffList.forEach(s => { csvContent += `${s.brand},${s.id},${s.name},${s.tagId}\n`; }); }
-            const encodedUri = encodeURI(csvContent); const link = document.createElement("a");
-            link.setAttribute("href", encodedUri); link.setAttribute("download", "warehouse_staff_list.csv");
-            document.body.appendChild(link); link.click(); link.remove(); window.showMsg("엑셀 다운로드 완료");
-        }
-        window.exportStaffCSV = exportStaffCSV;
+                state.selectedAdminItemId = state.editingItem.id; state.editingItem = null; window.saveDataToStorage(); window.showMsg("저장 완료");
+            }
+            window.saveItem = saveItem;
 
-        function importStaffCSV(event) {
-            const file = event.target.files[0]; if (!file) return;
-            const parseCSV = function(text) {
+            function updateSetting(key, value) {
+                if (!state.settings) state.settings = {};
+                state.settings[key] = value.trim();
+                window.saveDataToStorage();
+                window.showMsg("설정이 저장되었습니다.");
+            }
+            window.updateSetting = updateSetting;
+
+            function doSearchStaff() { state.staffSearchQuery = document.getElementById('staffSearchInput').value.toUpperCase(); window.renderApp(); }
+            window.doSearchStaff = doSearchStaff;
+
+            function openEditStaff(idx) { state.editingStaffItem = { idx, ...state.staffList[idx] }; window.renderApp(); }
+            window.openEditStaff = openEditStaff;
+
+            function saveStaffEdit() {
+                const item = state.editingStaffItem;
+                item.brand = document.getElementById('editStaffBrand').value.toUpperCase();
+                item.id = document.getElementById('editStaffId').value.toUpperCase();
+                item.name = document.getElementById('editStaffName').value.toUpperCase();
+                item.tagId = window.convertAccessControlID(document.getElementById('editStaffTag').value.toUpperCase());
+                if (!item.brand || !item.id || !item.name || !item.tagId) return window.showMsg("모든 정보를 입력해주세요.");
+                state.staffList[item.idx] = { brand: item.brand, id: item.id, name: item.name, tagId: item.tagId };
+                state.editingStaffItem = null; window.saveDataToStorage(); window.showMsg("직원 정보가 수정되었습니다.");
+            }
+            window.saveStaffEdit = saveStaffEdit;
+
+            function doBulkImport() {
+                const text = document.getElementById('bulkText').value; if (!text.trim()) return;
                 const lines = text.split('\n'); let count = 0;
-                lines.forEach((line, index) => {
-                    if (index === 0) return; 
-                    const data = line.split(',').map(v => v.trim());
-                    if (data.length >= 3 && data[1] && data[2] && !data[0].includes('예시)')) {
-                        state.staffList.push({ brand: data[0].toUpperCase(), id: data[1].toUpperCase(), name: data[2].toUpperCase(), tagId: window.convertAccessControlID((data[3] || '임시-'+Math.random().toString(16).slice(2,6)).toUpperCase()) });
+                lines.forEach(line => {
+                    const data = line.split(/[\t\s,]+/).filter(v => v.trim());
+                    if (data.length >= 3) {
+                        state.staffList.push({ brand: data[0].toUpperCase(), id: data[1].toUpperCase(), name: data[2].toUpperCase(), tagId: window.convertAccessControlID((data[3] || '임시-' + Math.random().toString(16).slice(2, 6)).toUpperCase()) });
                         count++;
                     }
                 });
-                event.target.value = ''; window.saveDataToStorage(); window.showMsg(`엑셀을 통해 ${count}명 등록 완료`); window.renderApp();
-            };
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const text = e.target.result;
-                if (text.includes('')) {
-                    const readerEucKr = new FileReader();
-                    readerEucKr.onload = function(e2) { parseCSV(e2.target.result); };
-                    readerEucKr.readAsText(file, "euc-kr");
-                } else { parseCSV(text); }
-            };
-            reader.readAsText(file, "utf-8");
-        }
-        window.importStaffCSV = importStaffCSV;
-
-        function getStats() {
-            const filtered = state.logs.filter(log => (log.rawDate >= state.startDate && log.rawDate <= state.endDate) && (state.filterItem === "전체" || log.itemName === state.filterItem));
-            const summary = {};
-            filtered.forEach(log => {
-                const key = state.filterItem === "전체" ? log.itemName : log.brand;
-                summary[key] = (summary[key] || 0) + log.qty;
-            });
-            const statsData = Object.entries(summary).map(([label, value]) => ({ label, value })).sort((a,b) => b.value - a.value).slice(0,5);
-            const maxVal = statsData.length ? Math.max(...statsData.map(d=>d.value)) : 1;
-            return { filtered, statsData, maxVal };
-        }
-
-        function updateWarehouseName(key, name) { if(name.trim()) { state.warehouses[key] = name.trim(); window.saveDataToStorage(); window.showMsg("창고 명칭이 변경되었습니다."); } }
-        window.updateWarehouseName = updateWarehouseName;
-
-        function clearLogsData() { window.openConfirmModal('수령 내역 전체 삭제', '정말 모든 수령 내역(로그)을 삭제하시겠습니까?<br/>(※ 재고는 복구되지 않으며 기록만 지워집니다)', 'clearLogs', null, '전체 삭제', true); }
-        window.clearLogsData = clearLogsData;
-
-        function clearAllInventory() { window.openConfirmModal('품목 및 분류 전체 삭제', '모든 재고 품목과 분류 데이터를 완전히 삭제하시겠습니까?<br/>(백지 상태에서 새로 등록할 때 사용합니다)', 'clearInventory', null, '전체 삭제', true); }
-        window.clearAllInventory = clearAllInventory;
-
-        function clearAllStaff() { window.openConfirmModal('직원 명단 전체 삭제', '등록된 모든 직원 데이터를 삭제하시겠습니까?<br/>(이 작업은 되돌릴 수 없습니다)', 'clearStaff', null, '전체 삭제', true); }
-        window.clearAllStaff = clearAllStaff;
-
-        function factoryReset() { window.openConfirmModal('🚨 시스템 공장초기화', '경고: 모든 직원, 재고, 분류, 로그, 비밀번호 데이터가 영구 삭제됩니다!<br/>정말 앱을 완전 초기 상태로 되돌리시겠습니까?', 'factoryReset', null, '초기화 실행', true); }
-        window.factoryReset = factoryReset;
-        
-        function exportAllData() {
-            const dataToExport = { adminPassword: state.adminPassword, warehouses: state.warehouses, staffList: state.staffList, categories: state.categories, inventory: state.inventory, logs: state.logs, reservations: state.reservations, settings: state.settings, exportDate: new Date().toISOString() };
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataToExport, null, 2));
-            const downloadAnchorNode = document.createElement('a'); downloadAnchorNode.setAttribute("href", dataStr); downloadAnchorNode.setAttribute("download", `warehouse_backup_${new Date().toISOString().split('T')[0]}.json`);
-            document.body.appendChild(downloadAnchorNode); downloadAnchorNode.click(); downloadAnchorNode.remove(); window.showMsg("전체 데이터 백업 완료");
-        }
-        window.exportAllData = exportAllData;
-
-        function importAllData(event) {
-            const file = event.target.files[0]; if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const parsed = JSON.parse(e.target.result);
-                    if(parsed.inventory && parsed.categories) {
-                        state.adminPassword = parsed.adminPassword || initialState.adminPassword; state.warehouses = parsed.warehouses || initialState.warehouses; state.staffList = parsed.staffList || []; state.categories = parsed.categories || initialState.categories; state.inventory = parsed.inventory || initialState.inventory; state.logs = parsed.logs || []; state.reservations = parsed.reservations || []; state.settings = parsed.settings || initialState.settings;
-                        window.saveDataToStorage(); window.showMsg("데이터 복원 성공!"); window.renderApp();
-                    } else { window.showMsg("올바른 백업 파일이 아닙니다."); }
-                } catch(err) { window.showMsg("파일을 읽는 중 오류가 발생했습니다."); console.error(err); }
-                event.target.value = ''; 
-            };
-            reader.readAsText(file);
-        }
-        window.importAllData = importAllData;
-
-        function changeReserveFilter(status) {
-            state.reserveFilterStatus = status;
-            window.renderApp();
-        }
-        window.changeReserveFilter = changeReserveFilter;
-
-        // ==========================================
-        // 3. 앱 구동 파트 (백지 화면 방지 로직)
-        // ==========================================
-        
-        // 함수들이 모두 메모리에 로드된 후 무조건 즉시 화면을 그립니다.
-        window.loadLocalDataFallback(); 
-        window.renderApp();      
-
-        // 화면이 먼저 뜬 후 백그라운드에서 파이어베이스 연결을 시도합니다.
-        async function initFirebase() {
-            try {
-                if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") {
-                    app = initializeApp(firebaseConfig);
-                    auth = getAuth(app);
-                    db = getFirestore(app);
-                    
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
-                    
-                    onAuthStateChanged(auth, (user) => {
-                        authUser = user;
-                        if (!user) return;
-                        docRef = doc(db, "artifacts", appId, "public", "data", "store_data", "main_state");
-                        onSnapshot(docRef, (docSnap) => {
-                            if (docSnap.exists()) {
-                                const parsed = docSnap.data();
-                                state.adminPassword = parsed.adminPassword || initialState.adminPassword;
-                                state.warehouses = parsed.warehouses || initialState.warehouses;
-                                state.staffList = parsed.staffList || [];
-                                state.categories = parsed.categories || initialState.categories;
-                                state.inventory = parsed.inventory || initialState.inventory;
-                                state.logs = parsed.logs || [];
-                                state.reservations = parsed.reservations || [];
-                                state.settings = parsed.settings || initialState.settings;
-                            } else {
-                                window.saveDataToStorage();
-                            }
-                            isFirebaseActive = true;
-                            if (document.activeElement && ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
-                                console.log("입력 중 렌더링 보류");
-                            } else {
-                                window.renderApp();
-                            }
-                        }, (error) => {
-                            console.error("Firestore Error:", error);
-                        });
-                    });
-                }
-            } catch(e) {
-                console.error("Firebase Init Error:", e);
+                window.saveDataToStorage(); window.showMsg(`${count}명 등록 완료`); window.renderApp();
             }
-        }
-        
-        // 브라우저 렌더링 주기에 맞추어 안전하게 비동기 초기화를 실행합니다.
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initFirebase);
-        } else {
-            initFirebase();
-        }
+            window.doBulkImport = doBulkImport;
 
-        // ==========================================
-        // 4. UI 렌더링 영역 (컴포넌트)
-        // ==========================================
-        function renderHeader() {
-            return `
+            function deleteStaff(idx, name) { window.openConfirmModal('직원 삭제 확인', `[${name}] 님을 정말 삭제하시겠습니까?`, 'deleteStaff', idx, '삭제하기', true); }
+            window.deleteStaff = deleteStaff;
+
+            function exportStaffCSV() {
+                let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; csvContent += "브랜드,사번,이름,카드번호(TagID)\n";
+                if (state.staffList.length === 0) { csvContent += "예시) 나이키,2024001,홍길동,12345678\n"; }
+                else { state.staffList.forEach(s => { csvContent += `${s.brand},${s.id},${s.name},${s.tagId}\n`; }); }
+                const encodedUri = encodeURI(csvContent); const link = document.createElement("a");
+                link.setAttribute("href", encodedUri); link.setAttribute("download", "warehouse_staff_list.csv");
+                document.body.appendChild(link); link.click(); link.remove(); window.showMsg("엑셀 다운로드 완료");
+            }
+            window.exportStaffCSV = exportStaffCSV;
+
+            function importStaffCSV(event) {
+                const file = event.target.files[0]; if (!file) return;
+                const parseCSV = function (text) {
+                    const lines = text.split('\n'); let count = 0;
+                    lines.forEach((line, index) => {
+                        if (index === 0) return;
+                        const data = line.split(',').map(v => v.trim());
+                        if (data.length >= 3 && data[1] && data[2] && !data[0].includes('예시)')) {
+                            state.staffList.push({ brand: data[0].toUpperCase(), id: data[1].toUpperCase(), name: data[2].toUpperCase(), tagId: window.convertAccessControlID((data[3] || '임시-' + Math.random().toString(16).slice(2, 6)).toUpperCase()) });
+                            count++;
+                        }
+                    });
+                    event.target.value = ''; window.saveDataToStorage(); window.showMsg(`엑셀을 통해 ${count}명 등록 완료`); window.renderApp();
+                };
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const text = e.target.result;
+                    if (text.includes('')) {
+                        const readerEucKr = new FileReader();
+                        readerEucKr.onload = function (e2) { parseCSV(e2.target.result); };
+                        readerEucKr.readAsText(file, "euc-kr");
+                    } else { parseCSV(text); }
+                };
+                reader.readAsText(file, "utf-8");
+            }
+            window.importStaffCSV = importStaffCSV;
+
+            function getStats() {
+                const filtered = state.logs.filter(log => (log.rawDate >= state.startDate && log.rawDate <= state.endDate) && (state.filterItem === "전체" || log.itemName === state.filterItem));
+                const summary = {};
+                filtered.forEach(log => {
+                    const key = state.filterItem === "전체" ? log.itemName : log.brand;
+                    summary[key] = (summary[key] || 0) + log.qty;
+                });
+                const statsData = Object.entries(summary).map(([label, value]) => ({ label, value })).sort((a, b) => b.value - a.value).slice(0, 5);
+                const maxVal = statsData.length ? Math.max(...statsData.map(d => d.value)) : 1;
+                return { filtered, statsData, maxVal };
+            }
+
+            function updateWarehouseName(key, name) { if (name.trim()) { state.warehouses[key] = name.trim(); window.saveDataToStorage(); window.showMsg("창고 명칭이 변경되었습니다."); } }
+            window.updateWarehouseName = updateWarehouseName;
+
+            function clearLogsData() { window.openConfirmModal('수령 내역 전체 삭제', '정말 모든 수령 내역(로그)을 삭제하시겠습니까?<br/>(※ 재고는 복구되지 않으며 기록만 지워집니다)', 'clearLogs', null, '전체 삭제', true); }
+            window.clearLogsData = clearLogsData;
+
+            function clearAllInventory() { window.openConfirmModal('품목 및 분류 전체 삭제', '모든 재고 품목과 분류 데이터를 완전히 삭제하시겠습니까?<br/>(백지 상태에서 새로 등록할 때 사용합니다)', 'clearInventory', null, '전체 삭제', true); }
+            window.clearAllInventory = clearAllInventory;
+
+            function clearAllStaff() { window.openConfirmModal('직원 명단 전체 삭제', '등록된 모든 직원 데이터를 삭제하시겠습니까?<br/>(이 작업은 되돌릴 수 없습니다)', 'clearStaff', null, '전체 삭제', true); }
+            window.clearAllStaff = clearAllStaff;
+
+            function factoryReset() { window.openConfirmModal('🚨 시스템 공장초기화', '경고: 모든 직원, 재고, 분류, 로그, 비밀번호 데이터가 영구 삭제됩니다!<br/>정말 앱을 완전 초기 상태로 되돌리시겠습니까?', 'factoryReset', null, '초기화 실행', true); }
+            window.factoryReset = factoryReset;
+
+            function exportAllData() {
+                const dataToExport = { adminPassword: state.adminPassword, warehouses: state.warehouses, staffList: state.staffList, categories: state.categories, inventory: state.inventory, logs: state.logs, reservations: state.reservations, settings: state.settings, exportDate: new Date().toISOString() };
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataToExport, null, 2));
+                const downloadAnchorNode = document.createElement('a'); downloadAnchorNode.setAttribute("href", dataStr); downloadAnchorNode.setAttribute("download", `warehouse_backup_${new Date().toISOString().split('T')[0]}.json`);
+                document.body.appendChild(downloadAnchorNode); downloadAnchorNode.click(); downloadAnchorNode.remove(); window.showMsg("전체 데이터 백업 완료");
+            }
+            window.exportAllData = exportAllData;
+
+            function importAllData(event) {
+                const file = event.target.files[0]; if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    try {
+                        const parsed = JSON.parse(e.target.result);
+                        if (parsed.inventory && parsed.categories) {
+                            state.adminPassword = parsed.adminPassword || initialState.adminPassword; state.warehouses = parsed.warehouses || initialState.warehouses; state.staffList = parsed.staffList || []; state.categories = parsed.categories || initialState.categories; state.inventory = parsed.inventory || initialState.inventory; state.logs = parsed.logs || []; state.reservations = parsed.reservations || []; state.settings = parsed.settings || initialState.settings;
+                            window.saveDataToStorage(); window.showMsg("데이터 복원 성공!"); window.renderApp();
+                        } else { window.showMsg("올바른 백업 파일이 아닙니다."); }
+                    } catch (err) { window.showMsg("파일을 읽는 중 오류가 발생했습니다."); console.error(err); }
+                    event.target.value = '';
+                };
+                reader.readAsText(file);
+            }
+            window.importAllData = importAllData;
+
+            function changeReserveFilter(status) {
+                state.reserveFilterStatus = status;
+                window.renderApp();
+            }
+            window.changeReserveFilter = changeReserveFilter;
+
+            // ==========================================
+            // 3. 앱 구동 파트 (백지 화면 방지 로직)
+            // ==========================================
+
+            // 함수들이 모두 메모리에 로드된 후 무조건 즉시 화면을 그립니다.
+            window.loadLocalDataFallback();
+            window.renderApp();
+
+            // 화면이 먼저 뜬 후 백그라운드에서 파이어베이스 연결을 시도합니다.
+            async function initFirebase() {
+                try {
+                    if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") {
+                        app = initializeApp(firebaseConfig);
+                        auth = getAuth(app);
+                        db = getFirestore(app);
+
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            await signInWithCustomToken(auth, __initial_auth_token);
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+
+                        onAuthStateChanged(auth, (user) => {
+                            authUser = user;
+                            if (!user) return;
+                            docRef = doc(db, "artifacts", appId, "public", "data", "store_data", "main_state");
+                            onSnapshot(docRef, (docSnap) => {
+                                if (docSnap.exists()) {
+                                    const parsed = docSnap.data();
+                                    state.adminPassword = parsed.adminPassword || initialState.adminPassword;
+                                    state.warehouses = parsed.warehouses || initialState.warehouses;
+                                    state.staffList = parsed.staffList || [];
+                                    state.categories = parsed.categories || initialState.categories;
+                                    state.inventory = parsed.inventory || initialState.inventory;
+                                    state.logs = parsed.logs || [];
+                                    state.reservations = parsed.reservations || [];
+                                    state.settings = parsed.settings || initialState.settings;
+                                } else {
+                                    window.saveDataToStorage();
+                                }
+                                isFirebaseActive = true;
+                                if (document.activeElement && ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
+                                    console.log("입력 중 렌더링 보류");
+                                } else {
+                                    window.renderApp();
+                                }
+                            }, (error) => {
+                                console.error("Firestore Error:", error);
+                            });
+                        });
+                    }
+                } catch (e) {
+                    console.error("Firebase Init Error:", e);
+                }
+            }
+
+            // 브라우저 렌더링 주기에 맞추어 안전하게 비동기 초기화를 실행합니다.
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initFirebase);
+            } else {
+                initFirebase();
+            }
+
+            // ==========================================
+            // 4. UI 렌더링 영역 (컴포넌트)
+            // ==========================================
+            function renderHeader() {
+                return `
             <div class="min-h-[5rem] h-auto bg-slate-900 flex flex-wrap items-center justify-between px-4 lg:px-10 shrink-0 border-b border-slate-800 py-4 z-10 gap-4">
                 <div class="flex items-center gap-3 text-white">
                     <div class="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center text-lg shadow-lg p-2">W</div>
@@ -1438,26 +2436,26 @@
                     </div>
                 </div>
             </div>`;
-        }
+            }
 
-        function renderFooter() {
-            return `
+            function renderFooter() {
+                return `
             <div class="flex flex-col shrink-0 z-[100] relative">
                 <div class="bg-slate-100 flex items-center justify-around px-10 border-t-8 border-slate-200 shadow-[0_-15px_40px_rgba(0,0,0,0.15)] py-4 mobile-footer">
-                    <button onclick="window.changeView('scan')" class="flex flex-col items-center gap-1 tap-effect flex-1 ${window.state.view!=='admin'?'text-blue-600':'text-slate-400'}">
+                    <button onclick="window.changeView('scan')" class="flex flex-col items-center gap-1 tap-effect flex-1 ${window.state.view !== 'admin' ? 'text-blue-600' : 'text-slate-400'}">
                         <span class="footer-icon drop-shadow-sm">🏠</span><span class="footer-text uppercase tracking-widest whitespace-nowrap">홈 화면</span>
                     </button>
                     <div class="bg-slate-300 rounded-full mx-4 footer-divider"></div>
-                    <button onclick="window.tryEnterAdmin()" class="flex flex-col items-center gap-1 tap-effect flex-1 ${window.state.view==='admin'?'text-amber-600':'text-slate-400'}">
+                    <button onclick="window.tryEnterAdmin()" class="flex flex-col items-center gap-1 tap-effect flex-1 ${window.state.view === 'admin' ? 'text-amber-600' : 'text-slate-400'}">
                         <span class="footer-icon drop-shadow-sm">⚙️</span><span class="footer-text uppercase tracking-widest whitespace-nowrap">시스템 관리</span>
                     </button>
                 </div>
             </div>`;
-        }
+            }
 
-        function renderView() {
-            if (window.state.view === 'scan') {
-                return `
+            function renderView() {
+                if (window.state.view === 'scan') {
+                    return `
                 <div class="flex-1 flex flex-col items-center justify-center p-10 pb-32 gap-12" style="overflow-y:auto;">
                     <div class="bg-blue-50 rounded-full flex items-center justify-center relative shrink-0" style="width:350px; height:350px;">
                         <div class="bg-blue-600 rounded-full flex items-center justify-center shadow-2xl z-10 shrink-0" style="width:280px; height:280px;"><span class="text-8xl" style="font-size: 8rem;">💳</span></div>
@@ -1471,9 +2469,9 @@
                         <span class="text-4xl">📱</span> 직원 모바일/PC 사전 예약하기
                     </button>
                 </div>`;
-            } 
-            if (window.state.view === 'reserveLogin') {
-                return `
+                }
+                if (window.state.view === 'reserveLogin') {
+                    return `
                 <div class="flex-1 flex items-center justify-center p-10 custom-scroll" style="overflow-y:auto;">
                     <div class="bg-white p-16 rounded-[4rem] shadow-2xl border-4 border-slate-100 w-full max-w-2xl my-auto fade-in">
                         <h2 class="text-6xl mb-4 text-slate-800 text-center word-keep tracking-tighter italic">📱 직원 사전 예약</h2>
@@ -1493,9 +2491,9 @@
                         </div>
                     </div>
                 </div>`;
-            }
-            if (window.state.view === 'register') {
-                return `
+                }
+                if (window.state.view === 'register') {
+                    return `
                 <div class="flex-1 flex items-center justify-center p-10 custom-scroll" style="overflow-y:auto;">
                     <div class="bg-white p-16 rounded-[4rem] shadow-2xl border-4 border-slate-100 w-full max-w-2xl my-auto fade-in">
                         <h2 class="text-6xl mb-4 text-slate-800 text-center word-keep">직원 신규 등록</h2>
@@ -1521,10 +2519,10 @@
                         </div>
                     </div>
                 </div>`;
-            }
-            if (window.state.view === 'explorer') {
-                const items = window.state.inventory.filter(i => i.cat === window.state.activeCat);
-                return `
+                }
+                if (window.state.view === 'explorer') {
+                    const items = window.state.inventory.filter(i => i.cat === window.state.activeCat);
+                    return `
                 <div class="flex-1 flex flex-col overflow-hidden">
                     <div class="bg-white border-b flex overflow-x-auto custom-scroll shrink-0 px-8 items-center gap-4 explorer-cat-bar" style="min-height: 80px;">
                         ${window.state.categories.map(cat => `
@@ -1538,9 +2536,9 @@
                     <div class="explorer-list-zone custom-scroll flex-1">
                         <div class="grid grid-cols-2 gap-8 pb-10">
                             ${items.map(item => {
-                                const totalStock = item.stocks.counter || 0;
-                                const isSoldOut = totalStock <= 0;
-                                return `
+                        const totalStock = item.stocks.counter || 0;
+                        const isSoldOut = totalStock <= 0;
+                        return `
                                 <button onclick="${!isSoldOut ? `window.openItemModal(${item.id})` : ''}" class="bg-white flex flex-col justify-between relative overflow-hidden text-left tap-effect explorer-item-card ${isSoldOut ? 'grayscale border-slate-100' : 'border-transparent hover:border-blue-500 shadow-xl border-4'}">
                                     <div class="z-10 w-full overflow-hidden">
                                         <h3 class="text-slate-800 leading-tight word-keep item-title truncate">${item.name}</h3>
@@ -1550,7 +2548,7 @@
                                         <span class="rounded-full italic border-2 item-stock-text ${isSoldOut ? 'bg-slate-100 text-slate-400 border-slate-200' : 'bg-blue-50 text-blue-600 border-blue-100'}">재고: ${window.formatStock(totalStock, item.unitBase, item.unitBulk, item.bulkRatio)}</span>
                                     </div>
                                 </button>`;
-                            }).join('')}
+                    }).join('')}
                         </div>
                     </div>
 
@@ -1566,7 +2564,7 @@
                             <div class="text-2xl text-slate-400">${document.querySelector('.explorer-cart-zone')?.classList.contains('expanded') ? '▼' : '▲'}</div>
                         </div>
                         <div class="flex-1 overflow-x-auto custom-scroll ${window.state.cart.length === 0 ? 'flex items-center justify-center p-8' : 'cart-grid'}">
-                            ${window.state.cart.length===0 ? `<div class="w-full text-center text-slate-500 italic text-4xl">물품을 선택해 주세요</div>` : ''}
+                            ${window.state.cart.length === 0 ? `<div class="w-full text-center text-slate-500 italic text-4xl">물품을 선택해 주세요</div>` : ''}
                             ${window.state.cart.map(c => `
                             <div class="bg-slate-800 flex flex-col justify-between border-2 border-slate-700 shadow-2xl shrink-0 explorer-cart-item">
                                 <div class="flex flex-col flex-1 overflow-hidden pr-2"><p class="leading-tight text-white font-bold word-keep cart-item-title">${c.itemName}</p></div>
@@ -1578,20 +2576,20 @@
                             </div>`).join('')}
                         </div>
                         <div class="bg-slate-900 border-t border-slate-800 text-center cart-checkout-zone shrink-0">
-                            <button onclick="window.openCheckoutConfirm()" class="bg-blue-600 tap-effect shadow-xl italic cart-checkout-btn ${window.state.cart.length===0?'grayscale':''}" ${window.state.cart.length===0?'disabled':''}>${window.state.reserveMode ? '사전 예약 확정' : '수령 최종 확정'}</button>
+                            <button onclick="window.openCheckoutConfirm()" class="bg-blue-600 tap-effect shadow-xl italic cart-checkout-btn ${window.state.cart.length === 0 ? 'grayscale' : ''}" ${window.state.cart.length === 0 ? 'disabled' : ''}>${window.state.reserveMode ? '사전 예약 확정' : '수령 최종 확정'}</button>
                         </div>
                     </div>
                 </div>`;
-            }
-            if (window.state.view === 'admin') {
-                return `
+                }
+                if (window.state.view === 'admin') {
+                    return `
                 <div class="flex-1 flex flex-col bg-white overflow-hidden h-full fade-in">
                     <div class="bg-slate-100 flex items-center px-10 justify-start shrink-0 border-b-4 border-slate-200 overflow-x-auto custom-scroll py-6 gap-4">
-                        <button onclick="window.changeAdminSubView('inventory')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView==='inventory'?'bg-blue-600 text-white shadow-xl':'bg-white text-slate-500 shadow-md'}">📦 재고 관리</button>
-                        <button onclick="window.changeAdminSubView('logs')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView==='logs'?'bg-blue-600 text-white shadow-xl':'bg-white text-slate-500 shadow-md'}">📊 수령 내역</button>
-                        <button onclick="window.changeAdminSubView('reservations')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView==='reservations'?'bg-blue-600 text-white shadow-xl':'bg-white text-slate-500 shadow-md'}">📅 예약 관리</button>
-                        <button onclick="window.changeAdminSubView('staff')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView==='staff'?'bg-blue-600 text-white shadow-xl':'bg-white text-slate-500 shadow-md'}">👥 직원 관리</button>
-                        <button onclick="window.changeAdminSubView('settings')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView==='settings'?'bg-slate-800 text-white shadow-xl':'bg-white text-slate-500 shadow-md'}">⚙️ 시스템 설정</button>
+                        <button onclick="window.changeAdminSubView('inventory')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView === 'inventory' ? 'bg-blue-600 text-white shadow-xl' : 'bg-white text-slate-500 shadow-md'}">📦 재고 관리</button>
+                        <button onclick="window.changeAdminSubView('logs')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView === 'logs' ? 'bg-blue-600 text-white shadow-xl' : 'bg-white text-slate-500 shadow-md'}">📊 수령 내역</button>
+                        <button onclick="window.changeAdminSubView('reservations')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView === 'reservations' ? 'bg-blue-600 text-white shadow-xl' : 'bg-white text-slate-500 shadow-md'}">📅 예약 관리</button>
+                        <button onclick="window.changeAdminSubView('staff')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView === 'staff' ? 'bg-blue-600 text-white shadow-xl' : 'bg-white text-slate-500 shadow-md'}">👥 직원 관리</button>
+                        <button onclick="window.changeAdminSubView('settings')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView === 'settings' ? 'bg-slate-800 text-white shadow-xl' : 'bg-white text-slate-500 shadow-md'}">⚙️ 시스템 설정</button>
                     </div>
                     <div class="flex-1 overflow-y-auto custom-scroll p-12">
                         ${window.state.adminSubView === 'inventory' ? renderAdminInventory() : ''}
@@ -1601,33 +2599,33 @@
                         ${window.state.adminSubView === 'settings' ? renderAdminSettings() : ''}
                     </div>
                 </div>`;
-            }
-        }
-
-        function renderAdminReservations() {
-            const filterStatus = window.state.reserveFilterStatus || '전체';
-            const filtered = window.state.reservations.filter(r => filterStatus === '전체' || r.status === filterStatus);
-            
-            // 배지(상태창) 폰트와 패딩 축소
-            const getStatusHtml = (status) => {
-                if(status === 'new') return `<span class="bg-white border-2 border-blue-500 text-blue-600 px-3 py-1 rounded-full text-sm font-bold whitespace-nowrap">신규(준비중)</span>`;
-                if(status === 'pending') return `<span class="bg-amber-100 text-amber-600 px-3 py-1 rounded-full text-sm font-bold whitespace-nowrap">현장 대기</span>`;
-                if(status === 'completed') return `<span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm font-bold whitespace-nowrap">수령 완료</span>`;
-                if(status === 'cancelled') return `<span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-bold whitespace-nowrap">취소됨</span>`;
-                return status;
+                }
             }
 
-            return `
+            function renderAdminReservations() {
+                const filterStatus = window.state.reserveFilterStatus || '전체';
+                const filtered = window.state.reservations.filter(r => filterStatus === '전체' || r.status === filterStatus);
+
+                // 배지(상태창) 폰트와 패딩 축소
+                const getStatusHtml = (status) => {
+                    if (status === 'new') return `<span class="bg-white border-2 border-blue-500 text-blue-600 px-3 py-1 rounded-full text-sm font-bold whitespace-nowrap">신규(준비중)</span>`;
+                    if (status === 'pending') return `<span class="bg-amber-100 text-amber-600 px-3 py-1 rounded-full text-sm font-bold whitespace-nowrap">현장 대기</span>`;
+                    if (status === 'completed') return `<span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm font-bold whitespace-nowrap">수령 완료</span>`;
+                    if (status === 'cancelled') return `<span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-bold whitespace-nowrap">취소됨</span>`;
+                    return status;
+                }
+
+                return `
             <div class="flex flex-col gap-10">
                 <div class="bg-white p-6 lg:p-12 rounded-[4rem] border-4 border-slate-200 flex flex-col gap-8 shadow-lg">
                     <div class="flex flex-wrap justify-between items-center border-b-4 border-slate-200 pb-6 gap-4">
                         <h3 class="text-3xl lg:text-4xl text-slate-800 border-l-[10px] border-blue-500 pl-4 uppercase tracking-widest italic font-black word-keep">📅 예약 종합 관리</h3>
                         <div class="flex flex-wrap gap-2">
-                            <button onclick="window.changeReserveFilter('전체')" class="px-4 py-2 rounded-xl text-sm lg:text-base font-bold tap-effect ${filterStatus==='전체'?'bg-slate-800 text-white':'bg-slate-100 text-slate-500'}">전체</button>
-                            <button onclick="window.changeReserveFilter('new')" class="px-4 py-2 rounded-xl text-sm lg:text-base font-bold tap-effect ${filterStatus==='new'?'bg-blue-600 text-white':'bg-slate-100 text-slate-500'}">신규</button>
-                            <button onclick="window.changeReserveFilter('pending')" class="px-4 py-2 rounded-xl text-sm lg:text-base font-bold tap-effect ${filterStatus==='pending'?'bg-amber-500 text-white':'bg-slate-100 text-slate-500'}">대기</button>
-                            <button onclick="window.changeReserveFilter('completed')" class="px-4 py-2 rounded-xl text-sm lg:text-base font-bold tap-effect ${filterStatus==='completed'?'bg-slate-600 text-white':'bg-slate-100 text-slate-500'}">완료</button>
-                            <button onclick="window.changeReserveFilter('cancelled')" class="px-4 py-2 rounded-xl text-sm lg:text-base font-bold tap-effect ${filterStatus==='cancelled'?'bg-red-600 text-white':'bg-slate-100 text-slate-500'}">취소</button>
+                            <button onclick="window.changeReserveFilter('전체')" class="px-4 py-2 rounded-xl text-sm lg:text-base font-bold tap-effect ${filterStatus === '전체' ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-500'}">전체</button>
+                            <button onclick="window.changeReserveFilter('new')" class="px-4 py-2 rounded-xl text-sm lg:text-base font-bold tap-effect ${filterStatus === 'new' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500'}">신규</button>
+                            <button onclick="window.changeReserveFilter('pending')" class="px-4 py-2 rounded-xl text-sm lg:text-base font-bold tap-effect ${filterStatus === 'pending' ? 'bg-amber-500 text-white' : 'bg-slate-100 text-slate-500'}">대기</button>
+                            <button onclick="window.changeReserveFilter('completed')" class="px-4 py-2 rounded-xl text-sm lg:text-base font-bold tap-effect ${filterStatus === 'completed' ? 'bg-slate-600 text-white' : 'bg-slate-100 text-slate-500'}">완료</button>
+                            <button onclick="window.changeReserveFilter('cancelled')" class="px-4 py-2 rounded-xl text-sm lg:text-base font-bold tap-effect ${filterStatus === 'cancelled' ? 'bg-red-600 text-white' : 'bg-slate-100 text-slate-500'}">취소</button>
                         </div>
                     </div>
                     
@@ -1667,16 +2665,16 @@
                                         </div>
                                     </td>
                                 </tr>`).join('')}
-                                ${filtered.length===0 ? `<tr><td colspan="5" class="text-center py-16 text-slate-400 word-keep">예약 기록이 없습니다.</td></tr>`:''}
+                                ${filtered.length === 0 ? `<tr><td colspan="5" class="text-center py-16 text-slate-400 word-keep">예약 기록이 없습니다.</td></tr>` : ''}
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>`;
-        }
+            }
 
-        function renderAdminSettings() {
-            return `
+            function renderAdminSettings() {
+                return `
             <div class="flex flex-col gap-10">
                 <div class="bg-blue-50 p-12 rounded-[4rem] border-4 border-blue-200 shadow-md flex flex-col gap-8">
                     <h3 class="text-4xl text-blue-800 border-l-[10px] border-blue-500 pl-6 uppercase tracking-widest italic font-black word-keep">📧 일일 전체 재고 현황 메일 발송</h3>
@@ -1713,11 +2711,11 @@
                     </div>
                 </div>
             </div>`;
-        }
+            }
 
-        function renderAdminInventory() {
-            const activeItem = window.state.inventory.find(i => i.id === window.state.selectedAdminItemId);
-            return `
+            function renderAdminInventory() {
+                const activeItem = window.state.inventory.find(i => i.id === window.state.selectedAdminItemId);
+                return `
             <div class="flex flex-col gap-12">
                 <div class="flex flex-col gap-6">
                     <div class="flex justify-between items-center px-4">
@@ -1788,11 +2786,11 @@
                     </div>
                 </div>` : ''}
             </div>`;
-        }
+            }
 
-        function renderAdminLogs() {
-            const { filtered, statsData, maxVal } = getStats();
-            return `
+            function renderAdminLogs() {
+                const { filtered, statsData, maxVal } = getStats();
+                return `
             <div class="flex flex-col gap-12">
                 <div class="bg-slate-900 p-16 rounded-[4rem] shadow-2xl">
                     <h3 class="text-amber-400 text-4xl uppercase mb-12 italic tracking-widest underline decoration-amber-500 underline-offset-10 word-keep">📊 실시간 수령 통계 분석</h3>
@@ -1801,7 +2799,7 @@
                         <div class="flex flex-col gap-4">
                             <div class="flex justify-between text-3xl text-slate-300 px-6"><span class="whitespace-nowrap">${d.label}</span><span class="whitespace-nowrap">${d.value} 개</span></div>
                             <div class="w-full bg-slate-800 h-12 rounded-full overflow-hidden border border-slate-700 p-1">
-                                <div class="h-full bg-amber-500 rounded-full" style="width: ${(d.value/maxVal)*100}%; box-shadow: 0 0 20px rgba(245,158,11,0.5);"></div>
+                                <div class="h-full bg-amber-500 rounded-full" style="width: ${(d.value / maxVal) * 100}%; box-shadow: 0 0 20px rgba(245,158,11,0.5);"></div>
                             </div>
                         </div>`).join('')}
                         ${statsData.length === 0 ? `<p class="text-slate-500 italic text-4xl py-10 text-center word-keep">데이터가 없습니다.</p>` : ''}
@@ -1815,8 +2813,8 @@
                     <div class="flex flex-col gap-4">
                         <label class="text-2xl text-slate-400 ml-6 uppercase tracking-widest whitespace-nowrap">품목 필터</label>
                         <select onchange="window.state.filterItem=this.value; window.renderApp();" class="input-standard appearance-none">
-                            <option value="전체" ${window.state.filterItem==='전체'?'selected':''}>모든 품목 합계</option>
-                            ${window.state.inventory.map(i => `<option value="${i.name}" ${window.state.filterItem===i.name?'selected':''}>${i.name}</option>`).join('')}
+                            <option value="전체" ${window.state.filterItem === '전체' ? 'selected' : ''}>모든 품목 합계</option>
+                            ${window.state.inventory.map(i => `<option value="${i.name}" ${window.state.filterItem === i.name ? 'selected' : ''}>${i.name}</option>`).join('')}
                         </select>
                     </div>
                 </div>
@@ -1836,20 +2834,20 @@
                                     </div>
                                 </td>
                             </tr>`).join('')}
-                            ${filtered.length===0 ? `<tr><td colspan="4" class="text-center py-16 text-slate-400 word-keep">기록이 없습니다.</td></tr>`:''}
+                            ${filtered.length === 0 ? `<tr><td colspan="4" class="text-center py-16 text-slate-400 word-keep">기록이 없습니다.</td></tr>` : ''}
                         </tbody>
                     </table>
                 </div>
             </div>`;
-        }
+            }
 
-        function renderAdminStaff() {
-            const filteredStaff = window.state.staffList.filter(s => 
-                s.name.toUpperCase().includes(window.state.staffSearchQuery) || 
-                s.id.toUpperCase().includes(window.state.staffSearchQuery) || 
-                s.brand.toUpperCase().includes(window.state.staffSearchQuery)
-            );
-            return `
+            function renderAdminStaff() {
+                const filteredStaff = window.state.staffList.filter(s =>
+                    s.name.toUpperCase().includes(window.state.staffSearchQuery) ||
+                    s.id.toUpperCase().includes(window.state.staffSearchQuery) ||
+                    s.brand.toUpperCase().includes(window.state.staffSearchQuery)
+                );
+                return `
             <div class="flex flex-col gap-10">
                 <div class="bg-slate-800 p-8 lg:p-10 rounded-[3rem] border-4 border-slate-700 shadow-inner flex flex-col shrink-0">
                     <div class="flex flex-wrap justify-between items-center mb-6 border-b-4 border-slate-700 pb-6 gap-4">
@@ -1885,8 +2883,8 @@
                             </thead>
                             <tbody>
                                 ${filteredStaff.map((s, filteredIdx) => {
-                                    const originalIdx = window.state.staffList.indexOf(s);
-                                    return `
+                    const originalIdx = window.state.staffList.indexOf(s);
+                    return `
                                     <tr>
                                         <td style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: normal; word-break: break-all; line-height: 1.3;" class="text-blue-600 font-bold uppercase">${s.brand}</td>
                                         <td style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: normal; word-break: break-all; line-height: 1.3;" class="text-slate-600 uppercase">${s.id}</td>
@@ -1899,34 +2897,34 @@
                                             </div>
                                         </td>
                                     </tr>`
-                                }).join('')}
+                }).join('')}
                                 ${filteredStaff.length === 0 ? `<tr><td colspan="5" class="py-12 text-slate-400 word-keep">검색된 직원이 없습니다.</td></tr>` : ''}
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>`;
-        }
-        // [신규] 감열지 영수증 프린터 출력용 함수
-        function printReceipt(cart, user, isReserve) {
-            // 현재 시간 생성
-            const dateStr = new Date().toLocaleString('ko-KR');
-            let itemsHtml = '';
-            let totalQty = 0;
-            
-            // 장바구니 내역을 표(Table) 형태의 HTML로 변환
-            cart.forEach(c => {
-                itemsHtml += `
+            }
+            // [신규] 감열지 영수증 프린터 출력용 함수
+            function printReceipt(cart, user, isReserve) {
+                // 현재 시간 생성
+                const dateStr = new Date().toLocaleString('ko-KR');
+                let itemsHtml = '';
+                let totalQty = 0;
+
+                // 장바구니 내역을 표(Table) 형태의 HTML로 변환
+                cart.forEach(c => {
+                    itemsHtml += `
                     <tr>
                         <td style="text-align: left; padding: 4px 0; font-size: 14px; word-break: keep-all;">${c.itemName}</td>
                         <td style="text-align: right; font-size: 14px;">${c.amount}${c.unitBase}</td>
                     </tr>
                 `;
-                totalQty += c.amount;
-            });
+                    totalQty += c.amount;
+                });
 
-            // 감열지 프린터용 (가로 80mm 기준) 영수증 HTML 템플릿
-            const printContent = `
+                // 감열지 프린터용 (가로 80mm 기준) 영수증 HTML 템플릿
+                const printContent = `
                 <!DOCTYPE html>
                 <html>
                 <head>
@@ -1978,35 +2976,35 @@
                 </html>
             `;
 
-            // 보이지 않는 iframe을 생성하여 그 안에서 인쇄 실행
-            const printFrame = document.createElement('iframe');
-            printFrame.style.position = 'fixed';
-            printFrame.style.right = '0';
-            printFrame.style.bottom = '0';
-            printFrame.style.width = '0';
-            printFrame.style.height = '0';
-            printFrame.style.border = '0';
-            document.body.appendChild(printFrame);
+                // 보이지 않는 iframe을 생성하여 그 안에서 인쇄 실행
+                const printFrame = document.createElement('iframe');
+                printFrame.style.position = 'fixed';
+                printFrame.style.right = '0';
+                printFrame.style.bottom = '0';
+                printFrame.style.width = '0';
+                printFrame.style.height = '0';
+                printFrame.style.border = '0';
+                document.body.appendChild(printFrame);
 
-            const doc = printFrame.contentWindow.document;
-            doc.open();
-            doc.write(printContent);
-            doc.close();
+                const doc = printFrame.contentWindow.document;
+                doc.open();
+                doc.write(printContent);
+                doc.close();
 
-            // 내용이 로드될 시간을 짧게 준 뒤 인쇄 호출
-            setTimeout(() => {
-                printFrame.contentWindow.focus();
-                printFrame.contentWindow.print();
-                // 인쇄 다이얼로그가 닫히면 iframe 제거
-                setTimeout(() => document.body.removeChild(printFrame), 1000);
-            }, 300);
-        }
-        window.printReceipt = printReceipt;
-        function renderModals() {
-            let html = '';
-            
-            if (window.state.stockAlertModal) {
-                html += `
+                // 내용이 로드될 시간을 짧게 준 뒤 인쇄 호출
+                setTimeout(() => {
+                    printFrame.contentWindow.focus();
+                    printFrame.contentWindow.print();
+                    // 인쇄 다이얼로그가 닫히면 iframe 제거
+                    setTimeout(() => document.body.removeChild(printFrame), 1000);
+                }, 300);
+            }
+            window.printReceipt = printReceipt;
+            function renderModals() {
+                let html = '';
+
+                if (window.state.stockAlertModal) {
+                    html += `
                 <div class="modal-overlay fade-in z-[9000]">
                     <div class="bg-white w-full max-w-[700px] rounded-[4rem] p-12 border-8 border-red-500 shadow-2xl flex flex-col gap-6 text-center">
                         <div class="text-6xl mb-2">⚠️</div>
@@ -2022,10 +3020,10 @@
                         <button onclick="window.state.stockAlertModal = null; window.renderApp();" class="mt-4 py-6 bg-slate-800 text-white rounded-full text-3xl shadow-xl tap-effect font-bold">확인했습니다</button>
                     </div>
                 </div>`;
-            }
+                }
 
-            if (window.state.checkoutConfirmModal) {
-                html += `
+                if (window.state.checkoutConfirmModal) {
+                    html += `
                 <div class="modal-overlay fade-in z-[7000]">
                     <div class="bg-white w-full max-w-[800px] rounded-[4rem] p-12 border-8 border-blue-500 shadow-2xl flex flex-col gap-6">
                         <div class="text-center">
@@ -2060,11 +3058,11 @@
                         </div>
                     </div>
                 </div>`;
-            }
+                }
 
-            if (window.state.confirmModal) {
-                const m = window.state.confirmModal;
-                html += `
+                if (window.state.confirmModal) {
+                    const m = window.state.confirmModal;
+                    html += `
                 <div class="modal-overlay fade-in z-[8000]">
                     <div class="bg-white w-full max-w-[600px] rounded-[4rem] p-16 border-8 ${m.isRed ? 'border-red-500' : 'border-blue-500'} shadow-2xl flex flex-col gap-8 text-center">
                         <div class="text-6xl mb-2">${m.isRed ? '⚠️' : '❓'}</div>
@@ -2076,11 +3074,11 @@
                         </div>
                     </div>
                 </div>`;
-            }
+                }
 
-            if (window.state.pendingReservations && window.state.pendingReservations.length > 0 && !window.state.confirmModal && !window.state.checkoutConfirmModal) {
-                const res = window.state.pendingReservations[0];
-                html += `
+                if (window.state.pendingReservations && window.state.pendingReservations.length > 0 && !window.state.confirmModal && !window.state.checkoutConfirmModal) {
+                    const res = window.state.pendingReservations[0];
+                    html += `
                 <div class="modal-overlay fade-in">
                     <div class="bg-white w-full max-w-[900px] rounded-[5rem] p-16 border-[12px] border-amber-500 shadow-2xl flex flex-col gap-6">
                         <div class="text-center">
@@ -2104,10 +3102,10 @@
                         </div>
                     </div>
                 </div>`;
-            }
+                }
 
-            if (window.state.authModal) {
-                html += `
+                if (window.state.authModal) {
+                    html += `
                 <div class="modal-overlay fade-in">
                     <div class="bg-white w-full max-w-[600px] rounded-[4rem] p-16 border-8 border-slate-800 shadow-2xl flex flex-col gap-10">
                         <div class="text-center gap-4 flex flex-col"><span class="text-6xl">🔒</span><h2 class="text-5xl font-black text-slate-800 word-keep">관리자 인증</h2></div>
@@ -2118,9 +3116,9 @@
                         </div>
                     </div>
                 </div>`;
-            }
-            if (window.state.pwdChangeModal) {
-                html += `
+                }
+                if (window.state.pwdChangeModal) {
+                    html += `
                 <div class="modal-overlay fade-in">
                     <div class="bg-white w-full max-w-[700px] rounded-[4rem] p-16 border-8 border-slate-700 shadow-2xl flex flex-col gap-10">
                         <h2 class="text-5xl font-black text-slate-800 mb-4 border-b-4 border-slate-200 pb-4 word-keep">관리자 비밀번호 변경</h2>
@@ -2134,10 +3132,10 @@
                         </div>
                     </div>
                 </div>`;
-            }
-            if (window.state.editingStaffItem && !window.state.confirmModal && !window.state.checkoutConfirmModal) {
-                const s = window.state.editingStaffItem;
-                html += `
+                }
+                if (window.state.editingStaffItem && !window.state.confirmModal && !window.state.checkoutConfirmModal) {
+                    const s = window.state.editingStaffItem;
+                    html += `
                 <div class="modal-overlay fade-in">
                     <div class="bg-white w-full max-w-[800px] rounded-[4rem] p-16 border-8 border-blue-500 shadow-2xl flex flex-col gap-8">
                         <h2 class="text-5xl font-black text-slate-800 mb-4 border-b-4 border-blue-100 pb-6 word-keep">직원 정보 수정</h2>
@@ -2153,14 +3151,14 @@
                         </div>
                     </div>
                 </div>`;
-            }
-            if (window.state.selectedItem && !window.state.confirmModal && !window.state.checkoutConfirmModal) {
-                const item = window.state.selectedItem;
-                const inCartItem = window.state.cart.find(c => c.itemId === item.id);
-                const availableNow = (item.stocks.counter || 0) - (inCartItem ? inCartItem.amount : 0);
-                const isSoldOut = availableNow <= 0;
-                
-                html += `
+                }
+                if (window.state.selectedItem && !window.state.confirmModal && !window.state.checkoutConfirmModal) {
+                    const item = window.state.selectedItem;
+                    const inCartItem = window.state.cart.find(c => c.itemId === item.id);
+                    const availableNow = (item.stocks.counter || 0) - (inCartItem ? inCartItem.amount : 0);
+                    const isSoldOut = availableNow <= 0;
+
+                    html += `
                 <div class="modal-overlay fade-in">
                     <div class="bg-white w-full max-w-[800px] rounded-[3rem] lg:rounded-[6rem] p-6 lg:p-16 shadow-2xl border-4 lg:border-[20px] border-blue-600 flex flex-col relative overflow-hidden mx-4 max-h-[95vh]">
                         
@@ -2181,7 +3179,7 @@
                                     </div>
                                     <div class="flex flex-col gap-1 text-right items-end min-w-[100px]">
                                         <span class="text-xs lg:text-xl text-slate-400 uppercase italic">잔고</span>
-                                        <span class="text-lg lg:text-3xl italic ${isSoldOut?'text-red-500':'text-slate-700'} font-black whitespace-nowrap">${isSoldOut ? '품절' : window.formatStock(availableNow, item.unitBase, item.unitBulk, item.bulkRatio)}</span>
+                                        <span class="text-lg lg:text-3xl italic ${isSoldOut ? 'text-red-500' : 'text-slate-700'} font-black whitespace-nowrap">${isSoldOut ? '품절' : window.formatStock(availableNow, item.unitBase, item.unitBulk, item.bulkRatio)}</span>
                                     </div>
                                 </div>
 
@@ -2198,7 +3196,7 @@
                                         </div>
                                     </div>
 
-                                    <button onclick="window.confirmAddToCart()" class="bg-blue-600 text-white py-4 lg:py-8 rounded-3xl text-xl lg:text-4xl tap-effect shadow-xl font-bold ${isSoldOut?'grayscale':''}" ${isSoldOut?'disabled':''}>
+                                    <button onclick="window.confirmAddToCart()" class="bg-blue-600 text-white py-4 lg:py-8 rounded-3xl text-xl lg:text-4xl tap-effect shadow-xl font-bold ${isSoldOut ? 'grayscale' : ''}" ${isSoldOut ? 'disabled' : ''}>
                                         ${window.state.reserveMode ? '예약 바구니 담기' : '장바구니 담기'}
                                     </button>
                                 </div>
@@ -2208,12 +3206,12 @@
                         <button onclick="window.closeItemModal()" class="mt-4 py-4 lg:py-8 text-slate-500 border-2 border-dashed border-slate-300 rounded-3xl text-lg lg:text-3xl tap-effect bg-slate-50">취소</button>
                     </div>
                 </div>`;
-            }
-            if (window.state.categoryModal && !window.state.confirmModal) {
-                html += `
+                }
+                if (window.state.categoryModal && !window.state.confirmModal) {
+                    html += `
                 <div class="modal-overlay fade-in">
                     <div class="bg-white w-full max-w-[800px] rounded-[5rem] p-16 border-8 border-blue-500 shadow-2xl flex flex-col">
-                        <h2 class="text-6xl mb-12 italic border-b-8 border-blue-100 pb-8 text-slate-800 word-keep">[${window.state.categoryModal.mode==='add'?'분류 신규 추가':'분류 명칭 수정'}]</h2>
+                        <h2 class="text-6xl mb-12 italic border-b-8 border-blue-100 pb-8 text-slate-800 word-keep">[${window.state.categoryModal.mode === 'add' ? '분류 신규 추가' : '분류 명칭 수정'}]</h2>
                         <div class="flex flex-col gap-12 overflow-y-auto custom-scroll">
                             <div class="flex flex-col gap-4"><label class="text-3xl text-slate-500 ml-6 italic whitespace-nowrap">분류 이름</label><input id="catInput" class="input-standard" value="${window.state.categoryInputValue}" placeholder="분류명을 입력하세요"></div>
                             <div class="flex gap-6 mt-8 shrink-0">
@@ -2223,12 +3221,12 @@
                         </div>
                     </div>
                 </div>`;
-            }
-            if (window.state.editingItem && !window.state.confirmModal) {
-                html += `
+                }
+                if (window.state.editingItem && !window.state.confirmModal) {
+                    html += `
                 <div class="modal-overlay fade-in">
                     <div class="bg-white w-full max-w-[900px] rounded-[5rem] p-16 border-8 border-amber-500 shadow-2xl flex flex-col max-h-[90vh]">
-                        <h2 class="text-6xl mb-12 italic border-b-8 border-amber-100 pb-8 text-slate-800 shrink-0 word-keep">[${window.state.isAddingNew?'품목 신규 등록':'품목 정보 수정'}]</h2>
+                        <h2 class="text-6xl mb-12 italic border-b-8 border-amber-100 pb-8 text-slate-800 shrink-0 word-keep">[${window.state.isAddingNew ? '품목 신규 등록' : '품목 정보 수정'}]</h2>
                         <div class="flex flex-col gap-8 overflow-y-auto custom-scroll pr-4 mb-8">
                             <div class="flex flex-col gap-2"><label class="text-2xl text-slate-500 ml-4 font-bold">품목 정식 명칭</label><input id="editName" class="input-standard" value="${window.state.editingItem.name}" placeholder="품목 명칭 입력"></div>
                             <div class="grid grid-cols-2 gap-6">
@@ -2248,11 +3246,11 @@
                         </div>
                     </div>
                 </div>`;
-            }
-            if (window.state.transferModal && !window.state.confirmModal) {
-                const item = window.state.inventory.find(i=>i.id == window.state.transferModal.itemId);
-                if (item) {
-                    html += `
+                }
+                if (window.state.transferModal && !window.state.confirmModal) {
+                    const item = window.state.inventory.find(i => i.id == window.state.transferModal.itemId);
+                    if (item) {
+                        html += `
                     <div class="modal-overlay fade-in">
                         <div class="bg-white w-full max-w-[900px] rounded-[5rem] p-16 border-8 border-blue-500 shadow-2xl flex flex-col max-h-[90vh]">
                             <h2 class="text-6xl mb-12 italic border-b-8 border-blue-100 pb-8 text-slate-800 word-keep shrink-0">[${item.name}] 재고 이동</h2>
@@ -2260,12 +3258,12 @@
                                 <div class="grid grid-cols-2 gap-8">
                                     <div class="flex flex-col gap-4"><label class="text-3xl text-slate-500 ml-6 whitespace-nowrap">출발 창고</label>
                                         <select id="transFrom" onchange="window.state.transferFrom=this.value" class="input-standard appearance-none">
-                                            ${Object.entries(window.state.warehouses).map(([k,v])=>`<option value="${k}" ${window.state.transferFrom===k?'selected':''}>${v}</option>`).join('')}
+                                            ${Object.entries(window.state.warehouses).map(([k, v]) => `<option value="${k}" ${window.state.transferFrom === k ? 'selected' : ''}>${v}</option>`).join('')}
                                         </select>
                                     </div>
                                     <div class="flex flex-col gap-4"><label class="text-3xl text-slate-500 ml-6 whitespace-nowrap">도착 창고</label>
                                         <select id="transTo" onchange="window.state.transferTo=this.value" class="input-standard appearance-none">
-                                            ${Object.entries(window.state.warehouses).map(([k,v])=>`<option value="${k}" ${window.state.transferTo===k?'selected':''}>${v}</option>`).join('')}
+                                            ${Object.entries(window.state.warehouses).map(([k, v]) => `<option value="${k}" ${window.state.transferTo === k ? 'selected' : ''}>${v}</option>`).join('')}
                                         </select>
                                     </div>
                                 </div>
@@ -2273,14 +3271,14 @@
                                     <div class="flex justify-between items-center">
                                         <label class="text-3xl text-slate-500 ml-6 whitespace-nowrap">이동 단위 및 수량</label>
                                         <select onchange="window.state.transferModal.unitType=this.value" class="bg-slate-100 p-4 rounded-2xl text-2xl outline-none font-bold border-4 border-slate-200">
-                                            <option value="base" ${window.state.transferModal.unitType==='base'?'selected':''}>기본 단위 (${item.unitBase})</option>
-                                            ${item.unitBulk && item.bulkRatio > 1 ? `<option value="bulk" ${window.state.transferModal.unitType==='bulk'?'selected':''}>묶음 단위 (${item.unitBulk})</option>` : ''}
+                                            <option value="base" ${window.state.transferModal.unitType === 'base' ? 'selected' : ''}>기본 단위 (${item.unitBase})</option>
+                                            ${item.unitBulk && item.bulkRatio > 1 ? `<option value="bulk" ${window.state.transferModal.unitType === 'bulk' ? 'selected' : ''}>묶음 단위 (${item.unitBulk})</option>` : ''}
                                         </select>
                                     </div>
                                     <div class="flex items-center gap-6">
                                         <input type="number" id="transQty" value="${window.state.transferQty}" onchange="window.state.transferQty=parseInt(this.value)||1" class="input-standard flex-1">
                                         <div class="flex gap-4">
-                                            ${[1,10,50,100].map(n=>`<button onclick="window.state.transferQty+=${n}; document.getElementById('transQty').value=window.state.transferQty;" class="bg-slate-100 px-8 py-6 rounded-3xl text-3xl tap-effect text-slate-600 whitespace-nowrap">+${n}</button>`).join('')}
+                                            ${[1, 10, 50, 100].map(n => `<button onclick="window.state.transferQty+=${n}; document.getElementById('transQty').value=window.state.transferQty;" class="bg-slate-100 px-8 py-6 rounded-3xl text-3xl tap-effect text-slate-600 whitespace-nowrap">+${n}</button>`).join('')}
                                         </div>
                                     </div>
                                 </div>
@@ -2291,11 +3289,12 @@
                             </div>
                         </div>
                     </div>`;
+                    }
                 }
+                return html;
             }
-            return html;
-        }
 
     </script>
 </body>
+
 </html>
