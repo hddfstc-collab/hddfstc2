@@ -1337,7 +1337,7 @@
         const initialState = {
             adminPassword: '6011',
             warehouses: { counter: '카운터', wh1: '창고1', wh2: '창고2' },
-            staffList: [],
+            storeList: JSON.parse(localStorage.getItem('h_moody_partners') || localStorage.getItem('h_moody_store_list') || '[]'),
             categories: ['완충재', '포장재', '쇼핑백', '스티커', '사무', '기타'],
             inventory: [
                 { id: 1, name: '롤 에어캡', cat: '완충재', unitBase: '개', unitBulk: '', bulkRatio: 1, stocks: { counter: 0, wh1: 0, wh2: 0 }, maxReserveQty: 100, alertQty: 10 },
@@ -1356,12 +1356,12 @@
         };
 
         let state = {
-            view: 'scan',
+            view: 'explorer',
             adminSubView: 'inventory',
             isAdminAuthenticated: false,
             authModal: false,
             pwdChangeModal: false,
-            user: { id: '', name: '', brand: '', tagId: '' },
+            user: { posId: '', name: '', brand: '' },
             activeCat: '완충재',
             cart: [],
             message: null,
@@ -1380,7 +1380,7 @@
             transferQty: 1,
             cartInputQty: 1,
             cartInputUnit: 'base',
-            staffSearchQuery: '',
+            storeSearchQuery: '',
             editingStaffItem: null,
             startDate: '',
             endDate: new Date().toISOString().split('T')[0],
@@ -1388,7 +1388,8 @@
             reserveMode: false,
             pendingReservations: null,
             reserveFilterStatus: '전체',
-            settings: { alertEmail: '' }
+            settings: { alertEmail: '' },
+            offlineLoginSearch: ''
         };
 
         // 전역 객체 바인딩 (인라인 클릭 이벤트 대응)
@@ -1408,7 +1409,7 @@
                     const parsed = JSON.parse(saved);
                     state.adminPassword = parsed.adminPassword || initialState.adminPassword;
                     state.warehouses = parsed.warehouses || initialState.warehouses;
-                    state.staffList = parsed.staffList || [];
+                    state.storeList = JSON.parse(localStorage.getItem('h_moody_partners') || localStorage.getItem('h_moody_store_list') || 'null') || parsed.storeList || [];
                     state.categories = parsed.categories || initialState.categories;
                     state.inventory = parsed.inventory || initialState.inventory;
                     state.logs = parsed.logs || [];
@@ -1417,7 +1418,7 @@
                 } else {
                     state.adminPassword = initialState.adminPassword;
                     state.warehouses = JSON.parse(JSON.stringify(initialState.warehouses));
-                    state.staffList = [...initialState.staffList];
+                    state.storeList = [...initialState.storeList];
                     state.categories = [...initialState.categories];
                     state.inventory = JSON.parse(JSON.stringify(initialState.inventory));
                     state.logs = [...initialState.logs];
@@ -1428,7 +1429,7 @@
                 console.error("데이터 로드 실패:", e);
                 state.adminPassword = initialState.adminPassword;
                 state.warehouses = JSON.parse(JSON.stringify(initialState.warehouses));
-                state.staffList = [];
+                state.storeList = [];
                 state.categories = [...initialState.categories];
                 state.inventory = JSON.parse(JSON.stringify(initialState.inventory));
                 state.logs = [];
@@ -1475,7 +1476,7 @@
             const dataToSave = {
                 adminPassword: state.adminPassword,
                 warehouses: state.warehouses,
-                staffList: state.staffList,
+                storeList: state.storeList,
                 categories: state.categories,
                 inventory: state.inventory,
                 logs: state.logs,
@@ -1629,13 +1630,13 @@
             } else if (actionType === 'deleteCategory') {
                 state.categories = state.categories.filter(c => c !== payload); window.saveDataToStorage(); window.showMsg("분류가 삭제되었습니다.");
             } else if (actionType === 'deleteStaff') {
-                state.staffList.splice(payload, 1); window.saveDataToStorage(); window.showMsg("직원 데이터가 삭제되었습니다.");
+state.storeList.splice(payload, 1); window.saveDataToStorage(); window.showMsg("매장 데이터가 삭제되었습니다.");
             } else if (actionType === 'clearLogs') {
                 state.logs = []; window.saveDataToStorage(); window.showMsg("수령 내역이 모두 삭제되었습니다.");
             } else if (actionType === 'clearInventory') {
                 state.inventory = []; state.categories = ['기본분류']; state.activeCat = '기본분류'; state.selectedAdminItemId = null; window.saveDataToStorage(); window.showMsg("품목 및 분류가 모두 삭제되었습니다.");
             } else if (actionType === 'clearStaff') {
-                state.staffList = []; window.saveDataToStorage(); window.showMsg("직원 명단이 모두 삭제되었습니다.");
+                state.storeList = []; window.saveDataToStorage(); window.showMsg("직원 명단이 모두 삭제되었습니다.");
             } else if (actionType === 'factoryReset') {
                 localStorage.removeItem(STORAGE_KEY); window.location.reload();
             }
@@ -1646,7 +1647,7 @@
 
         function tryEnterAdmin() {
             if (state.isAdminAuthenticated) {
-                state.user = { id: '', name: '', brand: '', tagId: '' };
+                state.user = { posId: '', name: '', brand: '' };
                 state.cart = [];
                 state.reserveMode = false;
                 window.changeView('admin');
@@ -1668,7 +1669,7 @@
             if (input === state.adminPassword) {
                 state.isAdminAuthenticated = true;
                 state.authModal = false;
-                state.user = { id: '', name: '', brand: '', tagId: '' };
+                state.user = { posId: '', name: '', brand: '' };
                 state.cart = [];
                 state.reserveMode = false;
                 window.changeView('admin');
@@ -1719,18 +1720,19 @@
         window.setCategory = setCategory;
 
         function logout() {
-            state.user = { id: '', name: '', brand: '', tagId: '' }; state.cart = []; state.reserveMode = false;
-            state.isAdminAuthenticated = false; window.changeView('scan'); window.showMsg("로그아웃 되었습니다.");
+            state.user = { posId: '', name: '', brand: '' }; state.cart = []; state.reserveMode = false;
+            state.isAdminAuthenticated = false; localStorage.removeItem('h_moody_auth'); window.state.view = 'offlineLogin'; window.showMsg('로그아웃 되었습니다.'); window.renderApp();
         }
         window.logout = logout;
 
         function simulateTag(tagId) {
-            state.reserveMode = false;
-            const convertedTagId = window.convertAccessControlID(tagId);
-            const staff = state.staffList.find(s => s.tagId === convertedTagId);
+            // 카드 리더기 미사용 - stub 유지
+            console.log('카드 리더기 미사용:', tagId);
+            return;
+            const staff = null; // 하위 코드 도달 안 함 - 참조오류 방지용
 
             state.isAdminAuthenticated = false;
-            if (state.view === 'register' || state.view === 'reserveLogin') { state.view = 'scan'; }
+            if (state.view === 'register' || state.view === 'reserveLogin') { state.view = 'explorer'; }
 
             if (staff) {
                 state.user = staff;
@@ -1752,34 +1754,103 @@
                 if (authData) {
                     try {
                         const user = JSON.parse(authData);
-
-                        // 인증 정보를 현재 앱의 state에 주입
                         state.user = user;
                         state.appUser = user;
                         state.isAuthorized = true;
-
                         console.log("🔓 SSO 인증 성공:", user.name);
-
-                        // 인증 성공 시 화면 그리기
                         if (typeof renderApp === 'function') renderApp();
-
-                        // 만약 첫 화면이 자동으로 안 뜨면 아래 주석을 해제하세요.
-                        // if (typeof window.changeView === 'function') window.changeView('explorer');
-
                     } catch (e) {
                         console.error("인증 데이터 파싱 오류:", e);
-                        redirectToLogin();
+                        showOfflineLogin();
                     }
                 } else {
-                    redirectToLogin();
+                    showOfflineLogin();
                 }
             });
 
-            // 로그인 페이지(무디 ERP)로 리다이렉트
-            function redirectToLogin() {
-                alert("무디 ERP에서 포스번호로 먼저 로그인해주세요.");
-                window.location.href = "무디클로드코드_fixed.html";
+            // 오프라인 로그인 화면 표시
+            function showOfflineLogin() {
+                state.view = 'offlineLogin';
+                if (typeof renderApp === 'function') renderApp();
             }
+
+            // 매장 목록 CSV 양식 다운로드
+            window.downloadStoreTemplate = function() {
+                const csv = "포스번호,매장명\n1001,아디다스 현대점\n1002,나이키 강남점";
+                const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = '매장목록_양식.csv';
+                a.click();
+            };
+
+            // 매장 목록 CSV 업로드 파싱
+            window.importStoreCSV = function(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                const parse = (text) => {
+                    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+                    const stores = [];
+                    lines.forEach((line, i) => {
+                        if (i === 0 && line.includes('포스번호')) return; // 헤더 스킵
+                        const cols = line.split(',').map(v => v.trim());
+                        if (cols[0] && cols[1]) stores.push({ posId: cols[0], name: cols[1] });
+                    });
+                    if (stores.length === 0) return window.showMsg('업로드된 매장이 없습니다. 양식을 확인하세요.', true);
+                    state.storeList = stores;
+                    localStorage.setItem('h_moody_store_list', JSON.stringify(stores));
+                    localStorage.removeItem('h_moody_partners'); // 수동 업로드 시 무디 캐시 대신 사용
+                    event.target.value = '';
+                    window.showMsg(`${stores.length}개 매장 등록 완료`);
+                    window.renderApp();
+                };
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const text = e.target.result;
+                    if (text.includes('\ufffd')) {
+                        const r2 = new FileReader();
+                        r2.onload = e2 => parse(e2.target.result);
+                        r2.readAsText(file, 'euc-kr');
+                    } else { parse(text); }
+                };
+                reader.readAsText(file, 'utf-8');
+            };
+
+            // 매장 목록에서 선택 로그인
+            window.loginFromStoreList = function(posId, name) {
+                const user = { posId, name, role: 'partner', offlineMode: true };
+                localStorage.setItem('h_moody_auth', JSON.stringify(user));
+                state.user = user;
+                state.appUser = user;
+                state.isAuthorized = true;
+                state.view = 'explorer';
+                window.showMsg(`${name} 로그인 완료`);
+                window.renderApp();
+            };
+
+            // 오프라인 로그인 처리 (포스번호 + 매장명 직접 입력)
+            window.doOfflineLogin = function() {
+                const posId = document.getElementById('offlinePosId').value.trim();
+                const storeName = document.getElementById('offlineStoreName').value.trim();
+                if (!posId || !storeName) {
+                    window.showMsg('포스번호와 매장명을 모두 입력해주세요.');
+                    return;
+                }
+                const user = {
+                    posId: posId,
+                    name: storeName,
+                    role: 'partner',
+                    offlineMode: true
+                };
+                // localStorage에 저장해서 이후 재접속 시 자동 로그인
+                localStorage.setItem('h_moody_auth', JSON.stringify(user));
+                state.user = user;
+                state.appUser = user;
+                state.isAuthorized = true;
+                state.view = 'explorer';
+                window.showMsg(`${storeName} 오프라인 로그인 완료`);
+                if (typeof renderApp === 'function') renderApp();
+            };
 
             // 에러 방지용 빈 함수 (기존 카드 리더기 호출 대비)
             window.simulateTag = function (tag) {
@@ -1788,40 +1859,22 @@
 
             // 예약 시스템용 함수 (기존 유지)
             function verifyReserveStaff() {
-                const idInput = document.getElementById('reserveStaffId').value.trim().toUpperCase();
-                if (!idInput) return window.showMsg("사번을 입력해주세요.");
-
-                const staff = state.staffList.find(s => s.id === idInput);
-                if (staff) {
-                    state.user = staff;
+                const idInput = document.getElementById('reserveStaffId')?.value.trim();
+                if (!idInput) return;
+                const store = state.storeList.find(s => s.posId === idInput);
+                if (store) {
+                    state.user = store;
                     state.reserveMode = true;
                     state.cart = [];
                     window.changeView('explorer');
-                    window.showMsg(`${staff.name}님 예약 시스템에 오신 것을 환영합니다.`);
+                    window.showMsg(`${store.name} 예약 시스템에 오신 것을 환영합니다.`);
                 }
             }
 
             // 전역 함수 등록
             window.verifyReserveStaff = verifyReserveStaff;
 
-            function registerUser() {
-                const brand = document.getElementById('regBrand').value.toUpperCase();
-                const id = document.getElementById('regId').value.toUpperCase();
-                const name = document.getElementById('regName').value.toUpperCase();
-                const tagId = window.convertAccessControlID(document.getElementById('regTagId').value.toUpperCase());
-                const consent = document.getElementById('privacyConsent').checked;
-
-                if (!consent) {
-                    return window.showMsg("개인정보 수집 및 이용에 동의해 주세요.");
-                }
-
-                if (brand && name && id && tagId) {
-                    state.user = { ...state.user, brand, id, name, tagId };
-                    state.staffList.push(state.user);
-                    window.saveDataToStorage();
-                    window.changeView('explorer'); window.showMsg("등록 완료!");
-                } else { window.showMsg("모든 정보를 입력해주세요."); }
-            }
+            function registerUser() { /* 카드 등록 미사용 */ }
             window.registerUser = registerUser;
 
             function openItemModal(id) {
@@ -1971,7 +2024,7 @@
                         id: Date.now() + Math.random(),
                         rawDate,
                         time: timeStr,
-                        staffId: state.user.id,
+                        posId: state.user.posId || state.user.empId,
                         name: state.user.name,
                         brand: state.user.brand,
                         cart: reserveCart,
@@ -1980,7 +2033,7 @@
 
                     state.cart = []; window.saveDataToStorage();
                     window.showMsg("사전 예약이 완료되었습니다! (익일 14시 이후 현장 수령)");
-                    setTimeout(() => { state.reserveMode = false; window.changeView('scan'); }, 3000);
+                    setTimeout(() => { state.reserveMode = false; window.changeView('explorer'); }, 3000);
 
                 } else {
                     // ✅ [수정됨] POS 통합 로그인 정보를 기반으로 데이터 저장
@@ -1999,7 +2052,7 @@
                             // 2. 성명: 매장명을 그대로 사용하거나 '포스'라고 표시합니다.
                             name: state.user.name,
                             // 3. 식별ID: 무디에서 가져온 포스번호(empId)를 넣습니다.
-                            staffId: state.user.empId,
+                            posId: state.user.posId || state.user.empId,
                             itemName: c.itemName,
                             amountStr: formatStr,
                             qty: c.amount
@@ -2029,7 +2082,7 @@
                 res.cart.forEach(c => {
                     state.logs.unshift({
                         id: Date.now() + Math.random(), rawDate, time: timeStr,
-                        brand: res.brand, name: res.name, staffId: res.staffId,
+                        brand: res.brand, name: res.name, posId: res.posId,
                         itemName: c.itemName, amountStr: c.amountStr, qty: c.amount
                     });
                 });
@@ -2060,7 +2113,7 @@
                 const res = state.reservations.find(r => r.id == resId);
                 if (res) {
                     // 1. 감열지 프린터로 영수증 출력 (이전 답변에서 추가한 printReceipt 함수 활용)
-                    const userObj = { brand: res.brand, name: res.name, id: res.staffId };
+                    const userObj = { brand: res.brand, name: res.name, posId: res.posId };
                     if (window.printReceipt) {
                         window.printReceipt(res.cart, userObj, true);
                     }
@@ -2222,21 +2275,20 @@
             }
             window.updateSetting = updateSetting;
 
-            function doSearchStaff() { state.staffSearchQuery = document.getElementById('staffSearchInput').value.toUpperCase(); window.renderApp(); }
-            window.doSearchStaff = doSearchStaff;
+            function doSearchStore() { state.storeSearchQuery = document.getElementById('storeSearchInput').value.toUpperCase(); window.renderApp(); }
+            window.doSearchStore = doSearchStore;
 
-            function openEditStaff(idx) { state.editingStaffItem = { idx, ...state.staffList[idx] }; window.renderApp(); }
-            window.openEditStaff = openEditStaff;
+            function openEditStore(idx) { state.editingStaffItem = { idx, ...state.storeList[idx] }; window.renderApp(); }
+            window.openEditStore = openEditStore;
 
             function saveStaffEdit() {
                 const item = state.editingStaffItem;
-                item.brand = document.getElementById('editStaffBrand').value.toUpperCase();
-                item.id = document.getElementById('editStaffId').value.toUpperCase();
-                item.name = document.getElementById('editStaffName').value.toUpperCase();
-                item.tagId = window.convertAccessControlID(document.getElementById('editStaffTag').value.toUpperCase());
-                if (!item.brand || !item.id || !item.name || !item.tagId) return window.showMsg("모든 정보를 입력해주세요.");
-                state.staffList[item.idx] = { brand: item.brand, id: item.id, name: item.name, tagId: item.tagId };
-                state.editingStaffItem = null; window.saveDataToStorage(); window.showMsg("직원 정보가 수정되었습니다.");
+                item.posId = document.getElementById('editStorePosId').value.trim();
+                item.name = document.getElementById('editStoreName').value.trim();
+                item.brand = document.getElementById('editStoreBrand').value.trim();
+                if (!item.posId || !item.name) return window.showMsg('포스번호와 매장명을 입력해주세요.');
+                state.storeList[item.idx] = { posId: item.posId, name: item.name, brand: item.brand };
+                state.editingStaffItem = null; window.saveDataToStorage(); window.showMsg('매장 정보가 수정되었습니다.');
             }
             window.saveStaffEdit = saveStaffEdit;
 
@@ -2246,7 +2298,7 @@
                 lines.forEach(line => {
                     const data = line.split(/[\t\s,]+/).filter(v => v.trim());
                     if (data.length >= 3) {
-                        state.staffList.push({ brand: data[0].toUpperCase(), id: data[1].toUpperCase(), name: data[2].toUpperCase(), tagId: window.convertAccessControlID((data[3] || '임시-' + Math.random().toString(16).slice(2, 6)).toUpperCase()) });
+                        state.storeList.push({ posId: data[0].trim(), name: data[1].trim(), brand: (data[2] || '').trim() });
                         count++;
                     }
                 });
@@ -2255,12 +2307,12 @@
             window.doBulkImport = doBulkImport;
 
             function deleteStaff(idx, name) { window.openConfirmModal('직원 삭제 확인', `[${name}] 님을 정말 삭제하시겠습니까?`, 'deleteStaff', idx, '삭제하기', true); }
-            window.deleteStaff = deleteStaff;
+            window.deleteStore = deleteStore;
 
             function exportStaffCSV() {
-                let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; csvContent += "브랜드,사번,이름,카드번호(TagID)\n";
-                if (state.staffList.length === 0) { csvContent += "예시) 나이키,2024001,홍길동,12345678\n"; }
-                else { state.staffList.forEach(s => { csvContent += `${s.brand},${s.id},${s.name},${s.tagId}\n`; }); }
+                let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; csvContent += "포스번호,매장명,브랜드\n";
+                if (state.storeList.length === 0) { csvContent += "예시) 1001,아디다스 현대점,아디다스\n"; }
+                else { state.storeList.forEach(s => { csvContent += `${s.posId},${s.name},${s.brand || ''}\n`; }); }
                 const encodedUri = encodeURI(csvContent); const link = document.createElement("a");
                 link.setAttribute("href", encodedUri); link.setAttribute("download", "warehouse_staff_list.csv");
                 document.body.appendChild(link); link.click(); link.remove(); window.showMsg("엑셀 다운로드 완료");
@@ -2272,14 +2324,14 @@
                 const parseCSV = function (text) {
                     const lines = text.split('\n'); let count = 0;
                     lines.forEach((line, index) => {
-                        if (index === 0) return;
+                        if (index === 0 && line.includes('포스번호')) return;
                         const data = line.split(',').map(v => v.trim());
-                        if (data.length >= 3 && data[1] && data[2] && !data[0].includes('예시)')) {
-                            state.staffList.push({ brand: data[0].toUpperCase(), id: data[1].toUpperCase(), name: data[2].toUpperCase(), tagId: window.convertAccessControlID((data[3] || '임시-' + Math.random().toString(16).slice(2, 6)).toUpperCase()) });
+                        if (data[0] && data[1] && !data[0].includes('예시)')) {
+                            state.storeList.push({ posId: data[0], name: data[1], brand: data[2] || '' });
                             count++;
                         }
                     });
-                    event.target.value = ''; window.saveDataToStorage(); window.showMsg(`엑셀을 통해 ${count}명 등록 완료`); window.renderApp();
+                    event.target.value = ''; window.saveDataToStorage(); window.showMsg(`엑셀을 통해 ${count}개 매장 등록 완료`); window.renderApp();
                 };
                 const reader = new FileReader();
                 reader.onload = function (e) {
@@ -2315,14 +2367,14 @@
             function clearAllInventory() { window.openConfirmModal('품목 및 분류 전체 삭제', '모든 재고 품목과 분류 데이터를 완전히 삭제하시겠습니까?<br/>(백지 상태에서 새로 등록할 때 사용합니다)', 'clearInventory', null, '전체 삭제', true); }
             window.clearAllInventory = clearAllInventory;
 
-            function clearAllStaff() { window.openConfirmModal('직원 명단 전체 삭제', '등록된 모든 직원 데이터를 삭제하시겠습니까?<br/>(이 작업은 되돌릴 수 없습니다)', 'clearStaff', null, '전체 삭제', true); }
-            window.clearAllStaff = clearAllStaff;
+            function clearAllStore() { window.openConfirmModal('매장 목록 전체 삭제', '등록된 모든 매장 데이터를 삭제하시겠습니까?<br/>(이 작업은 되돌릴 수 없습니다)', 'clearStaff', null, '전체 삭제', true); }
+            window.clearAllStore = clearAllStore;
 
             function factoryReset() { window.openConfirmModal('🚨 시스템 공장초기화', '경고: 모든 직원, 재고, 분류, 로그, 비밀번호 데이터가 영구 삭제됩니다!<br/>정말 앱을 완전 초기 상태로 되돌리시겠습니까?', 'factoryReset', null, '초기화 실행', true); }
             window.factoryReset = factoryReset;
 
             function exportAllData() {
-                const dataToExport = { adminPassword: state.adminPassword, warehouses: state.warehouses, staffList: state.staffList, categories: state.categories, inventory: state.inventory, logs: state.logs, reservations: state.reservations, settings: state.settings, exportDate: new Date().toISOString() };
+                const dataToExport = { adminPassword: state.adminPassword, warehouses: state.warehouses, storeList: state.storeList, categories: state.categories, inventory: state.inventory, logs: state.logs, reservations: state.reservations, settings: state.settings, exportDate: new Date().toISOString() };
                 const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataToExport, null, 2));
                 const downloadAnchorNode = document.createElement('a'); downloadAnchorNode.setAttribute("href", dataStr); downloadAnchorNode.setAttribute("download", `warehouse_backup_${new Date().toISOString().split('T')[0]}.json`);
                 document.body.appendChild(downloadAnchorNode); downloadAnchorNode.click(); downloadAnchorNode.remove(); window.showMsg("전체 데이터 백업 완료");
@@ -2336,7 +2388,7 @@
                     try {
                         const parsed = JSON.parse(e.target.result);
                         if (parsed.inventory && parsed.categories) {
-                            state.adminPassword = parsed.adminPassword || initialState.adminPassword; state.warehouses = parsed.warehouses || initialState.warehouses; state.staffList = parsed.staffList || []; state.categories = parsed.categories || initialState.categories; state.inventory = parsed.inventory || initialState.inventory; state.logs = parsed.logs || []; state.reservations = parsed.reservations || []; state.settings = parsed.settings || initialState.settings;
+                            state.adminPassword = parsed.adminPassword || initialState.adminPassword; state.warehouses = parsed.warehouses || initialState.warehouses; state.storeList = parsed.storeList || []; state.categories = parsed.categories || initialState.categories; state.inventory = parsed.inventory || initialState.inventory; state.logs = parsed.logs || []; state.reservations = parsed.reservations || []; state.settings = parsed.settings || initialState.settings;
                             window.saveDataToStorage(); window.showMsg("데이터 복원 성공!"); window.renderApp();
                         } else { window.showMsg("올바른 백업 파일이 아닙니다."); }
                     } catch (err) { window.showMsg("파일을 읽는 중 오류가 발생했습니다."); console.error(err); }
@@ -2383,7 +2435,7 @@
                                     const parsed = docSnap.data();
                                     state.adminPassword = parsed.adminPassword || initialState.adminPassword;
                                     state.warehouses = parsed.warehouses || initialState.warehouses;
-                                    state.staffList = parsed.staffList || [];
+                                    state.storeList = JSON.parse(localStorage.getItem('h_moody_partners') || localStorage.getItem('h_moody_store_list') || 'null') || parsed.storeList || [];
                                     state.categories = parsed.categories || initialState.categories;
                                     state.inventory = parsed.inventory || initialState.inventory;
                                     state.logs = parsed.logs || [];
@@ -2443,7 +2495,7 @@
                 return `
             <div class="flex flex-col shrink-0 z-[100] relative">
                 <div class="bg-slate-100 flex items-center justify-around px-10 border-t-8 border-slate-200 shadow-[0_-15px_40px_rgba(0,0,0,0.15)] py-4 mobile-footer">
-                    <button onclick="window.changeView('scan')" class="flex flex-col items-center gap-1 tap-effect flex-1 ${window.state.view !== 'admin' ? 'text-blue-600' : 'text-slate-400'}">
+                    <button onclick="window.changeView('explorer')" class="flex flex-col items-center gap-1 tap-effect flex-1 ${window.state.view !== 'admin' ? 'text-blue-600' : 'text-slate-400'}">
                         <span class="footer-icon drop-shadow-sm">🏠</span><span class="footer-text uppercase tracking-widest whitespace-nowrap">홈 화면</span>
                     </button>
                     <div class="bg-slate-300 rounded-full mx-4 footer-divider"></div>
@@ -2455,35 +2507,188 @@
             }
 
             function renderView() {
-                if (window.state.view === 'scan') {
+                if (window.state.view === 'offlineLogin') {
+                    const stores = window.state.storeList || [];
+                    const q = (window.state.offlineLoginSearch || '').toLowerCase();
+                    const filtered = stores.filter(s => s.posId.includes(q) || s.name.toLowerCase().includes(q));
                     return `
-                <div class="flex-1 flex flex-col items-center justify-center p-10 pb-32 gap-12" style="overflow-y:auto;">
-                    <div class="bg-blue-50 rounded-full flex items-center justify-center relative shrink-0" style="width:350px; height:350px;">
-                        <div class="bg-blue-600 rounded-full flex items-center justify-center shadow-2xl z-10 shrink-0" style="width:280px; height:280px;"><span class="text-8xl" style="font-size: 8rem;">💳</span></div>
+                <div class="flex-1 flex flex-col items-center justify-start p-6 gap-5" style="overflow-y:auto; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);">
+                    <div class="w-full max-w-md fade-in">
+                        <!-- 헤더 -->
+                        <div class="flex flex-col items-center mb-6 mt-2">
+                            <div class="w-16 h-16 bg-blue-600 rounded-[1.2rem] flex items-center justify-center shadow-lg mb-3">
+                                <span style="font-size:2rem;">🏪</span>
+                            </div>
+                            <h2 class="text-2xl font-black text-slate-800 tracking-tight">매장 로그인</h2>
+                            <p class="text-sm text-slate-400 mt-1 text-center">매장을 선택하거나 직접 입력하세요.</p>
+                            ${(() => {
+                                const moodySynced = localStorage.getItem('h_moody_partners');
+                                const updatedAt = localStorage.getItem('h_moody_partners_updated');
+                                const timeStr = updatedAt ? new Date(updatedAt).toLocaleString('ko-KR', {month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}) : '';
+                                if (moodySynced) {
+                                    return \`<div class="mt-2 px-3 py-1.5 bg-teal-50 border border-teal-200 rounded-full flex items-center gap-1.5">
+                                        <span class="w-2 h-2 bg-teal-500 rounded-full inline-block"></span>
+                                        <span class="text-xs font-bold text-teal-600">무디 ERP 연동됨 · \${timeStr}</span>
+                                    </div>\`;
+                                } else {
+                                    return \`<div class="mt-2 px-3 py-1.5 bg-slate-100 border border-slate-200 rounded-full flex items-center gap-1.5">
+                                        <span class="w-2 h-2 bg-slate-400 rounded-full inline-block"></span>
+                                        <span class="text-xs font-bold text-slate-400">무디 ERP 미연동 (오프라인 전용)</span>
+                                    </div>\`;
+                                }
+                            })()}
+                        </div>
+
+                        ${stores.length > 0 ? `
+                        <!-- 매장 목록 검색 & 선택 -->
+                        <div class="bg-white rounded-[2rem] shadow-md border border-slate-100 p-5 mb-4">
+                            <p class="text-xs font-black text-blue-600 mb-3 flex items-center gap-1">📋 등록된 매장 목록 (${stores.length}개)</p>
+                            <input
+                                value="${window.state.offlineLoginSearch || ''}"
+                                oninput="window.state.offlineLoginSearch=this.value; window.renderApp();"
+                                placeholder="매장명 또는 포스번호 검색..."
+                                class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-blue-400 mb-3 bg-slate-50"
+                            />
+                            <div class="flex flex-col gap-2 max-h-56 overflow-y-auto custom-scroll pr-1">
+                                ${filtered.length === 0 ? `<p class="text-center text-slate-400 text-xs py-4">검색 결과가 없습니다.</p>` :
+                                    filtered.map(s => `
+                                    <button onclick="window.loginFromStoreList('${s.posId}','${s.name.replace(/'/g, "\\'")}')"
+                                        class="w-full flex items-center justify-between bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-400 rounded-xl px-4 py-3 text-left tap-effect transition-colors group">
+                                        <div>
+                                            <span class="text-sm font-black text-slate-800 group-hover:text-blue-700">${s.name}</span>
+                                            <span class="ml-2 text-xs text-slate-400 font-bold">#${s.posId}</span>
+                                        </div>
+                                        <span class="text-blue-400 text-lg">→</span>
+                                    </button>`).join('')
+                                }
+                            </div>
+                        </div>` : ''}
+
+                        <!-- 직접 입력 -->
+                        <div class="bg-white rounded-[2rem] shadow-md border border-slate-100 p-5 mb-4">
+                            <p class="text-xs font-black text-slate-500 mb-3">✏️ 직접 입력</p>
+                            <div class="flex flex-col gap-3">
+                                <input id="offlinePosId" class="input-standard text-center text-xl tracking-widest font-black" placeholder="포스번호 (예: 1001)"
+                                    onkeydown="if(event.key==='Enter') document.getElementById('offlineStoreName').focus()">
+                                <input id="offlineStoreName" class="input-standard text-center text-lg font-bold" placeholder="매장명 (예: 아디다스 현대점)"
+                                    onkeydown="if(event.key==='Enter') window.doOfflineLogin()">
+                                <button onclick="window.doOfflineLogin()" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-base font-black shadow-md tap-effect transition-colors">
+                                    입장하기
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 매장 목록 업로드 -->
+                        <div class="bg-white rounded-[2rem] shadow-md border border-slate-100 p-5">
+                            <p class="text-xs font-black text-slate-500 mb-3">📤 매장 목록 CSV 업로드</p>
+                            <p class="text-xs text-slate-400 mb-3 leading-relaxed">무디 ERP에 접속하면 매장 목록이 자동 동기화됩니다.<br>무디 미사용 시 CSV를 직접 업로드하세요.</p>
+                            <div class="flex gap-2">
+                                <button onclick="window.downloadStoreTemplate()" class="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-xs font-black tap-effect transition-colors">
+                                    📥 양식 다운로드
+                                </button>
+                                <label class="flex-[2] py-3 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 rounded-xl text-xs font-black text-center cursor-pointer tap-effect transition-colors">
+                                    📤 CSV 업로드
+                                    <input type="file" accept=".csv,.xlsx,.xls" class="hidden" onchange="window.importStoreCSV(event)">
+                                </label>
+                            </div>
+                            ${stores.length > 0 ? `
+                            <button onclick="localStorage.removeItem('h_moody_partners'); localStorage.removeItem('h_moody_store_list'); window.state.storeList=[]; window.renderApp();"
+                                class="w-full mt-2 py-2 text-xs text-rose-400 font-bold hover:text-rose-600 transition-colors">
+                                목록 초기화
+                            </button>` : ''}
+                        </div>
                     </div>
-                    <button onclick="window.changeView('reserveLogin')" class="mt-8 bg-white border-4 border-blue-500 text-blue-600 px-10 py-6 rounded-full text-3xl tap-effect shadow-md whitespace-nowrap font-bold hover:bg-blue-50 flex items-center gap-4">
-                        <span class="text-4xl">📱</span> 직원 모바일/PC 사전 예약하기
-                    </button>
                 </div>`;
                 }
-                if (window.state.view === 'reserveLogin') {
+                if (window.state.view === 'offlineLogin') {
+                    const stores = window.state.storeList || [];
+                    const q = (window.state.offlineLoginSearch || '').toLowerCase();
+                    const filtered = stores.filter(s => s.posId.includes(q) || s.name.toLowerCase().includes(q));
                     return `
-                <div class="flex-1 flex items-center justify-center p-10 custom-scroll" style="overflow-y:auto;">
-                    <div class="bg-white p-16 rounded-[4rem] shadow-2xl border-4 border-slate-100 w-full max-w-2xl my-auto fade-in">
-                        <h2 class="text-6xl mb-4 text-slate-800 text-center word-keep tracking-tighter italic">📱 직원 사전 예약</h2>
-                        <p class="text-2xl text-slate-500 text-center mb-4 word-keep">예약을 진행할 본인의 <span class="font-bold text-blue-600">사번</span>을 입력해주세요.</p>
-                        
-                        <p class="text-xl text-red-500 text-center mb-10 word-keep font-bold px-4">※ 신규 직원의 경우, 현장 키오스크에서 최초 1회 사원증 태그를 통한 정보 등록 후 이용이 가능합니다.</p>
-                        
-                        <div class="flex flex-col gap-10">
-                            <div class="flex flex-col gap-2">
-                                <label class="text-2xl text-slate-400 ml-6 font-bold whitespace-nowrap">직원 사번 (ID)</label>
-                                <input id="reserveStaffId" class="input-standard uppercase-input text-center tracking-widest text-3xl" placeholder="예: S001" onkeydown="if(event.key==='Enter') window.verifyReserveStaff()">
+                <div class="flex-1 flex flex-col items-center justify-start p-6 gap-5" style="overflow-y:auto; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);">
+                    <div class="w-full max-w-md fade-in">
+                        <!-- 헤더 -->
+                        <div class="flex flex-col items-center mb-6 mt-2">
+                            <div class="w-16 h-16 bg-blue-600 rounded-[1.2rem] flex items-center justify-center shadow-lg mb-3">
+                                <span style="font-size:2rem;">🏪</span>
                             </div>
-                            <div class="flex gap-4 mt-4">
-                                <button onclick="window.changeView('scan')" class="flex-1 py-8 bg-slate-100 text-slate-600 rounded-full text-3xl tap-effect whitespace-nowrap font-bold">뒤로</button>
-                                <button onclick="window.verifyReserveStaff()" class="flex-[2] py-8 bg-blue-600 text-white rounded-full text-3xl tap-effect shadow-xl font-bold whitespace-nowrap">예약 화면 입장</button>
+                            <h2 class="text-2xl font-black text-slate-800 tracking-tight">매장 로그인</h2>
+                            <p class="text-sm text-slate-400 mt-1 text-center">매장을 선택하거나 직접 입력하세요.</p>
+                            ${(() => {
+                                const moodySynced = localStorage.getItem('h_moody_partners');
+                                const updatedAt = localStorage.getItem('h_moody_partners_updated');
+                                const timeStr = updatedAt ? new Date(updatedAt).toLocaleString('ko-KR', {month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}) : '';
+                                if (moodySynced) {
+                                    return \`<div class="mt-2 px-3 py-1.5 bg-teal-50 border border-teal-200 rounded-full flex items-center gap-1.5">
+                                        <span class="w-2 h-2 bg-teal-500 rounded-full inline-block"></span>
+                                        <span class="text-xs font-bold text-teal-600">무디 ERP 연동됨 · \${timeStr}</span>
+                                    </div>\`;
+                                } else {
+                                    return \`<div class="mt-2 px-3 py-1.5 bg-slate-100 border border-slate-200 rounded-full flex items-center gap-1.5">
+                                        <span class="w-2 h-2 bg-slate-400 rounded-full inline-block"></span>
+                                        <span class="text-xs font-bold text-slate-400">무디 ERP 미연동 (오프라인 전용)</span>
+                                    </div>\`;
+                                }
+                            })()}
+                        </div>
+
+                        ${stores.length > 0 ? `
+                        <!-- 매장 목록 검색 & 선택 -->
+                        <div class="bg-white rounded-[2rem] shadow-md border border-slate-100 p-5 mb-4">
+                            <p class="text-xs font-black text-blue-600 mb-3 flex items-center gap-1">📋 등록된 매장 목록 (${stores.length}개)</p>
+                            <input
+                                value="${window.state.offlineLoginSearch || ''}"
+                                oninput="window.state.offlineLoginSearch=this.value; window.renderApp();"
+                                placeholder="매장명 또는 포스번호 검색..."
+                                class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-blue-400 mb-3 bg-slate-50"
+                            />
+                            <div class="flex flex-col gap-2 max-h-56 overflow-y-auto custom-scroll pr-1">
+                                ${filtered.length === 0 ? `<p class="text-center text-slate-400 text-xs py-4">검색 결과가 없습니다.</p>` :
+                                    filtered.map(s => `
+                                    <button onclick="window.loginFromStoreList('${s.posId}','${s.name.replace(/'/g, "\\'")}')"
+                                        class="w-full flex items-center justify-between bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-400 rounded-xl px-4 py-3 text-left tap-effect transition-colors group">
+                                        <div>
+                                            <span class="text-sm font-black text-slate-800 group-hover:text-blue-700">${s.name}</span>
+                                            <span class="ml-2 text-xs text-slate-400 font-bold">#${s.posId}</span>
+                                        </div>
+                                        <span class="text-blue-400 text-lg">→</span>
+                                    </button>`).join('')
+                                }
                             </div>
+                        </div>` : ''}
+
+                        <!-- 직접 입력 -->
+                        <div class="bg-white rounded-[2rem] shadow-md border border-slate-100 p-5 mb-4">
+                            <p class="text-xs font-black text-slate-500 mb-3">✏️ 직접 입력</p>
+                            <div class="flex flex-col gap-3">
+                                <input id="offlinePosId" class="input-standard text-center text-xl tracking-widest font-black" placeholder="포스번호 (예: 1001)"
+                                    onkeydown="if(event.key==='Enter') document.getElementById('offlineStoreName').focus()">
+                                <input id="offlineStoreName" class="input-standard text-center text-lg font-bold" placeholder="매장명 (예: 아디다스 현대점)"
+                                    onkeydown="if(event.key==='Enter') window.doOfflineLogin()">
+                                <button onclick="window.doOfflineLogin()" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-base font-black shadow-md tap-effect transition-colors">
+                                    입장하기
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 매장 목록 업로드 -->
+                        <div class="bg-white rounded-[2rem] shadow-md border border-slate-100 p-5">
+                            <p class="text-xs font-black text-slate-500 mb-3">📤 매장 목록 CSV 업로드</p>
+                            <p class="text-xs text-slate-400 mb-3 leading-relaxed">무디 ERP에 접속하면 매장 목록이 자동 동기화됩니다.<br>무디 미사용 시 CSV를 직접 업로드하세요.</p>
+                            <div class="flex gap-2">
+                                <button onclick="window.downloadStoreTemplate()" class="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-xs font-black tap-effect transition-colors">
+                                    📥 양식 다운로드
+                                </button>
+                                <label class="flex-[2] py-3 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 rounded-xl text-xs font-black text-center cursor-pointer tap-effect transition-colors">
+                                    📤 CSV 업로드
+                                    <input type="file" accept=".csv,.xlsx,.xls" class="hidden" onchange="window.importStoreCSV(event)">
+                                </label>
+                            </div>
+                            ${stores.length > 0 ? `
+                            <button onclick="localStorage.removeItem('h_moody_partners'); localStorage.removeItem('h_moody_store_list'); window.state.storeList=[]; window.renderApp();"
+                                class="w-full mt-2 py-2 text-xs text-rose-400 font-bold hover:text-rose-600 transition-colors">
+                                목록 초기화
+                            </button>` : ''}
                         </div>
                     </div>
                 </div>`;
@@ -2584,7 +2789,7 @@
                         <button onclick="window.changeAdminSubView('inventory')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView === 'inventory' ? 'bg-blue-600 text-white shadow-xl' : 'bg-white text-slate-500 shadow-md'}">📦 재고 관리</button>
                         <button onclick="window.changeAdminSubView('logs')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView === 'logs' ? 'bg-blue-600 text-white shadow-xl' : 'bg-white text-slate-500 shadow-md'}">📊 수령 내역</button>
                         <button onclick="window.changeAdminSubView('reservations')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView === 'reservations' ? 'bg-blue-600 text-white shadow-xl' : 'bg-white text-slate-500 shadow-md'}">📅 예약 관리</button>
-                        <button onclick="window.changeAdminSubView('staff')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView === 'staff' ? 'bg-blue-600 text-white shadow-xl' : 'bg-white text-slate-500 shadow-md'}">👥 직원 관리</button>
+                        <button onclick="window.changeAdminSubView('staff')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView === 'staff' ? 'bg-blue-600 text-white shadow-xl' : 'bg-white text-slate-500 shadow-md'}">🏪 매장 관리</button>
                         <button onclick="window.changeAdminSubView('settings')" class="px-8 py-5 rounded-[2rem] text-2xl shrink-0 tap-effect font-bold whitespace-nowrap ${window.state.adminSubView === 'settings' ? 'bg-slate-800 text-white shadow-xl' : 'bg-white text-slate-500 shadow-md'}">⚙️ 시스템 설정</button>
                     </div>
                     <div class="flex-1 overflow-y-auto custom-scroll p-12">
@@ -2838,70 +3043,70 @@
             }
 
             function renderAdminStaff() {
-                const filteredStaff = window.state.staffList.filter(s =>
-                    s.name.toUpperCase().includes(window.state.staffSearchQuery) ||
-                    s.id.toUpperCase().includes(window.state.staffSearchQuery) ||
-                    s.brand.toUpperCase().includes(window.state.staffSearchQuery)
+                const q = (window.state.storeSearchQuery || '');
+                const filteredStore = window.state.storeList.filter(s =>
+                    (s.name || '').toUpperCase().includes(q) ||
+                    (s.posId || '').toUpperCase().includes(q) ||
+                    (s.brand || '').toUpperCase().includes(q)
                 );
                 return `
             <div class="flex flex-col gap-10">
                 <div class="bg-slate-800 p-8 lg:p-10 rounded-[3rem] border-4 border-slate-700 shadow-inner flex flex-col shrink-0">
                     <div class="flex flex-wrap justify-between items-center mb-6 border-b-4 border-slate-700 pb-6 gap-4">
-                        <h3 class="text-3xl lg:text-4xl text-white italic uppercase tracking-tighter word-keep">사원 일괄 등록</h3>
+                        <h3 class="text-3xl lg:text-4xl text-white italic uppercase tracking-tighter word-keep">매장 일괄 등록 (CSV)</h3>
                         <div class="flex flex-wrap gap-2">
-                            <input type="file" id="csvFileInput" accept=".csv" style="display:none;" onchange="window.importStaffCSV(event)">
-                            <button onclick="document.getElementById('csvFileInput').click()" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm lg:text-base tap-effect shadow-md whitespace-nowrap font-bold">엑셀 업로드</button>
-                            <button onclick="window.exportStaffCSV()" class="bg-slate-100 border-2 border-slate-300 text-slate-800 px-4 py-2 rounded-xl text-sm lg:text-base tap-effect shadow-md whitespace-nowrap font-bold">다운로드</button>
+                            <input type="file" id="csvFileInput" accept=".csv,.xlsx,.xls" style="display:none;" onchange="window.importStaffCSV(event)">
+                            <button onclick="window.exportStaffCSV()" class="bg-slate-100 border-2 border-slate-300 text-slate-800 px-4 py-2 rounded-xl text-sm lg:text-base tap-effect shadow-md whitespace-nowrap font-bold">📥 양식 다운로드</button>
+                            <button onclick="document.getElementById('csvFileInput').click()" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm lg:text-base tap-effect shadow-md whitespace-nowrap font-bold">📤 CSV 업로드</button>
                         </div>
                     </div>
-                    <textarea id="bulkText" class="w-full p-6 bg-slate-900 border-2 border-slate-600 rounded-2xl font-black text-lg lg:text-xl mb-6 outline-none shadow-inner custom-scroll text-blue-200 uppercase-input word-keep" style="min-height: 150px;" placeholder="※ 엑셀 다운로드 후 양식에 맞춰 수정하거나, 직접 텍스트를 붙여넣으세요.\\n\\n[양식] 브랜드, 사번, 이름, 카드번호(TagID)"></textarea>
+                    <p class="text-slate-400 text-base lg:text-lg mb-4 word-keep">CSV 양식: <span class="text-blue-300 font-bold">포스번호, 매장명, 브랜드(선택)</span></p>
+                    <textarea id="bulkText" class="w-full p-6 bg-slate-900 border-2 border-slate-600 rounded-2xl font-black text-lg lg:text-xl mb-6 outline-none shadow-inner custom-scroll text-blue-200 word-keep" style="min-height: 120px;" placeholder="직접 붙여넣기도 가능합니다.&#10;[양식] 포스번호, 매장명, 브랜드(선택)&#10;예) 1001, 아디다스 현대점, 아디다스"></textarea>
                     <button onclick="window.doBulkImport()" class="w-full py-4 lg:py-6 bg-blue-500 text-white rounded-full text-xl lg:text-2xl tap-effect shadow-lg uppercase tracking-widest whitespace-nowrap font-bold">텍스트 일괄 등록 실행</button>
                 </div>
-                
+
                 <div class="flex flex-col gap-4 pt-6">
-                    <h3 class="text-2xl lg:text-3xl text-slate-800 px-4 border-l-8 border-blue-500 uppercase tracking-widest italic mb-4 word-keep">직원 데이터 관리 (총 ${window.state.staffList.length}명)</h3>
+                    <h3 class="text-2xl lg:text-3xl text-slate-800 px-4 border-l-8 border-blue-500 uppercase tracking-widest italic mb-4 word-keep">매장 목록 (총 ${window.state.storeList.length}개)</h3>
                     <div class="flex flex-wrap gap-2 mb-4">
-                        <input id="staffSearchInput" class="input-standard flex-1 bg-white uppercase-input !text-xl !py-4" placeholder="직원 검색" value="${window.state.staffSearchQuery}">
-                        <button onclick="window.doSearchStaff()" class="bg-slate-700 text-white px-6 py-4 rounded-2xl text-xl font-bold tap-effect whitespace-nowrap">검색</button>
-                        <button onclick="window.state.staffSearchQuery=''; window.renderApp();" class="bg-slate-200 text-slate-600 px-6 py-4 rounded-2xl text-xl font-bold tap-effect whitespace-nowrap">초기화</button>
+                        <input id="storeSearchInput" class="input-standard flex-1 bg-white !text-xl !py-4" placeholder="포스번호 또는 매장명 검색" value="${window.state.storeSearchQuery}">
+                        <button onclick="window.doSearchStore()" class="bg-slate-700 text-white px-6 py-4 rounded-2xl text-xl font-bold tap-effect whitespace-nowrap">검색</button>
+                        <button onclick="window.state.storeSearchQuery=''; window.renderApp();" class="bg-slate-200 text-slate-600 px-6 py-4 rounded-2xl text-xl font-bold tap-effect whitespace-nowrap">초기화</button>
+                        <button onclick="window.clearAllStore()" class="bg-red-50 border-2 border-red-200 text-red-500 px-6 py-4 rounded-2xl text-xl font-bold tap-effect whitespace-nowrap">전체 삭제</button>
                     </div>
-                    
+
                     <div class="overflow-x-auto rounded-[2rem] border-4 border-slate-300 shadow-md">
                         <table class="excel-table w-full">
                             <thead>
                                 <tr>
+                                    <th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">포스번호</th>
+                                    <th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">매장명</th>
                                     <th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">브랜드</th>
-                                    <th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">사번</th>
-                                    <th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">이름</th>
-                                    <th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">카드번호</th>
                                     <th style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: nowrap;">관리</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                ${filteredStaff.map((s, filteredIdx) => {
-                    const originalIdx = window.state.staffList.indexOf(s);
+                                ${filteredStore.map((s, filteredIdx) => {
+                    const originalIdx = window.state.storeList.indexOf(s);
                     return `
                                     <tr>
-                                        <td style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: normal; word-break: break-all; line-height: 1.3;" class="text-blue-600 font-bold uppercase">${s.brand}</td>
-                                        <td style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: normal; word-break: break-all; line-height: 1.3;" class="text-slate-600 uppercase">${s.id}</td>
-                                        <td style="padding: 1rem 0.5rem; font-size: 1.1rem; white-space: normal; word-break: keep-all; line-height: 1.3;" class="text-slate-800 font-bold uppercase">${s.name}</td>
-                                        <td style="padding: 1rem 0.5rem; font-size: 1rem; white-space: normal; word-break: break-all; line-height: 1.3;" class="text-slate-500 tracking-widest uppercase">${s.tagId}</td>
+                                        <td style="padding: 1rem 0.5rem; font-size: 1.1rem;" class="text-blue-600 font-black tracking-widest">${s.posId}</td>
+                                        <td style="padding: 1rem 0.5rem; font-size: 1.1rem;" class="text-slate-800 font-bold">${s.name}</td>
+                                        <td style="padding: 1rem 0.5rem; font-size: 1.1rem;" class="text-slate-500">${s.brand || '-'}</td>
                                         <td style="padding: 1rem 0.5rem;">
                                             <div class="flex flex-col gap-2 items-center justify-center">
-                                                <button onclick="window.openEditStaff(${originalIdx})" class="bg-blue-100 text-blue-600 px-3 py-2 rounded-lg text-sm tap-effect font-bold w-full whitespace-nowrap">수정</button>
-                                                <button onclick="window.deleteStaff(${originalIdx}, '${s.name}')" class="bg-red-50 text-red-500 px-3 py-2 rounded-lg text-sm tap-effect font-bold w-full whitespace-nowrap">삭제</button>
+                                                <button onclick="window.openEditStore(${originalIdx})" class="bg-blue-100 text-blue-600 px-3 py-2 rounded-lg text-sm tap-effect font-bold w-full whitespace-nowrap">수정</button>
+                                                <button onclick="window.deleteStore(${originalIdx}, '${(s.name || '').replace(/'/g, "\\'")}')" class="bg-red-50 text-red-500 px-3 py-2 rounded-lg text-sm tap-effect font-bold w-full whitespace-nowrap">삭제</button>
                                             </div>
                                         </td>
                                     </tr>`
                 }).join('')}
-                                ${filteredStaff.length === 0 ? `<tr><td colspan="5" class="py-12 text-slate-400 word-keep">검색된 직원이 없습니다.</td></tr>` : ''}
+                                ${filteredStore.length === 0 ? `<tr><td colspan="4" class="py-12 text-slate-400 word-keep">검색된 매장이 없습니다.</td></tr>` : ''}
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>`;
             }
-            // [신규] 감열지 영수증 프린터 출력용 함수
             function printReceipt(cart, user, isReserve) {
                 // 현재 시간 생성
                 const dateStr = new Date().toLocaleString('ko-KR');
@@ -2947,8 +3152,8 @@
                         <p style="margin: 5px 0 0 0; font-size: 12px;">${dateStr}</p>
                     </div>
                     <div style="margin-bottom: 10px; font-size: 14px;">
-                        <strong>출고자:</strong> ${user.brand} / ${user.name} <br>
-                        <strong>사 번:</strong> ${user.id}
+                        <strong>매장명:</strong> ${user.name} <br>
+                        <strong>포스번호:</strong> ${user.posId || user.empId || '-'}
                     </div>
                     <table>
                         <thead>
@@ -3136,10 +3341,9 @@
                     <div class="bg-white w-full max-w-[800px] rounded-[4rem] p-16 border-8 border-blue-500 shadow-2xl flex flex-col gap-8">
                         <h2 class="text-5xl font-black text-slate-800 mb-4 border-b-4 border-blue-100 pb-6 word-keep">직원 정보 수정</h2>
                         <div class="flex flex-col gap-6">
-                            <div class="flex flex-col gap-2"><label class="text-xl text-slate-500 ml-4 whitespace-nowrap">소속 브랜드</label><input id="editStaffBrand" value="${s.brand}" class="input-standard uppercase-input"></div>
-                            <div class="flex flex-col gap-2"><label class="text-xl text-slate-500 ml-4 whitespace-nowrap">사번</label><input id="editStaffId" value="${s.id}" class="input-standard uppercase-input"></div>
-                            <div class="flex flex-col gap-2"><label class="text-xl text-slate-500 ml-4 whitespace-nowrap">이름</label><input id="editStaffName" value="${s.name}" class="input-standard uppercase-input"></div>
-                            <div class="flex flex-col gap-2"><label class="text-xl text-slate-500 ml-4 whitespace-nowrap">카드번호 (Tag ID)</label><input id="editStaffTag" value="${s.tagId}" class="input-standard uppercase-input"></div>
+                            <div class="flex flex-col gap-2"><label class="text-xl text-slate-500 ml-4 whitespace-nowrap">포스번호</label><input id="editStorePosId" value="${s.posId}" class="input-standard text-center tracking-widest font-black"></div>
+                            <div class="flex flex-col gap-2"><label class="text-xl text-slate-500 ml-4 whitespace-nowrap">매장명</label><input id="editStoreName" value="${s.name}" class="input-standard"></div>
+                            <div class="flex flex-col gap-2"><label class="text-xl text-slate-500 ml-4 whitespace-nowrap">브랜드 (선택)</label><input id="editStoreBrand" value="${s.brand || ''}" class="input-standard"></div>
                         </div>
                         <div class="flex gap-4 mt-6 shrink-0">
                             <button onclick="window.state.editingStaffItem=null; window.renderApp();" class="flex-1 py-8 bg-slate-100 rounded-full text-3xl text-slate-600 tap-effect whitespace-nowrap">취소</button>
