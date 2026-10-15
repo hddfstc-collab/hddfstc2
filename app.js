@@ -51,7 +51,7 @@ function renderItems() {
   emptyState.hidden = list.length > 0;
   itemGrid.innerHTML = list.map(item => {
     const stock = Number(item.stock || 0), available = availableQty(item);
-    const buttonText = !item.reservable ? "재고 확인만 가능" : available <= 0 ? "예약 가능수량 없음" : "장바구니 담기";
+    const buttonText = !item.reservable ? "재고 확인만 가능" : available <= 0 ? "예약 가능수량 없음" : "예약하기";
     return `<article class="item-card">
       <div class="item-card-top"><h4>${escapeHtml(item.name)}</h4><span class="stock-badge ${stock<=0?'soldout':''}">${stock<=0?'품절':'재고 있음'}</span></div>
       <div class="item-meta"><div>현재고<strong>${stock.toLocaleString()}${escapeHtml(item.unit||'개')}</strong></div><div>예약가능<strong>${item.reservable?available.toLocaleString():'-'}</strong></div></div>
@@ -68,10 +68,7 @@ function addToCart(id) {
   const next = current.qty + step;
   const max = Number(item.reservationMaxQty || availableQty(item));
   if (next > Math.min(max, availableQty(item))) return toast("예약 가능수량 또는 1회 상한을 초과했습니다.");
-  state.cart.set(id, { item, qty: next });
-  renderCart();
-  openCart();
-  toast(`${item.name}을 장바구니에 담았습니다.`);
+  state.cart.set(id, { item, qty: next }); renderCart(); openCart();
 }
 function changeQty(id, delta) {
   const row = state.cart.get(id); if (!row) return;
@@ -140,22 +137,74 @@ async function createReservation(event){
     const no=`R${bookingDate.replaceAll('-','').slice(2)}-${crypto.randomUUID().slice(0,6).toUpperCase()}`;
     const reservationRef=doc(db,"v2_reservations",no);
     const slotRef=doc(db,"v2_slot_usage",`${bookingDate}_${bookingTime.replace(':','')}`);
-    await runTransaction(db,async tx=>{
-      const slotSnap=await tx.get(slotRef); const used=slotSnap.exists()?Number(slotSnap.data().count||0):0;
-      const timeCfg=(state.settings.times||[]).find(x=>x.time===bookingTime); const capacity=Number(timeCfg?.capacity||3);
-      if(used>=capacity) throw new Error("선택한 시간의 예약이 마감되었습니다.");
-      const reservationItems=[];
-      for(const [id,row] of state.cart){
-        const ref=doc(db,"v2_public_items",id), snap=await tx.get(ref);
-        if(!snap.exists()) throw new Error(`${row.item.name} 품목이 없습니다.`);
-        const live={id,...snap.data()}, available=availableQty(live), max=Number(live.reservationMaxQty||available);
-        if(!live.active||!live.reservable) throw new Error(`${live.name}은 예약할 수 없습니다.`);
-        if(row.qty>available||row.qty>max) throw new Error(`${live.name}의 예약 가능수량이 변경되었습니다.`);
-        tx.update(ref,{reservedQty:Number(live.reservedQty||0)+row.qty,updatedAt:serverTimestamp()});
-        reservationItems.push({itemId:id,itemName:live.name,qty:row.qty,displayQty:formatQty(row.qty,live),unit:live.unit||"개"});
+    await runTransaction(db, async tx => {
+      // Firestore transaction rule: finish every read before the first write.
+      const slotSnap = await tx.get(slotRef);
+      const cartRows = [...state.cart.entries()].map(([id, row]) => ({
+        id,
+        row,
+        ref: doc(db, "v2_public_items", id)
+      }));
+      const itemSnaps = [];
+      for (const cartRow of cartRows) {
+        itemSnaps.push(await tx.get(cartRow.ref));
       }
-      tx.set(slotRef,{bookingDate,bookingTime,count:used+1,capacity,updatedAt:serverTimestamp()},{merge:true});
-      tx.set(reservationRef,{reservationNo:no,brand,bookingDate,bookingTime,bookingAt:Timestamp.fromDate(target),items:reservationItems,status:"예약",createdAt:serverTimestamp(),uid:auth.currentUser.uid});
+
+      // Validate all snapshots after all reads are complete.
+      const used = slotSnap.exists() ? Number(slotSnap.data().count || 0) : 0;
+      const timeCfg = (state.settings.times || []).find(x => x.time === bookingTime);
+      const capacity = Number(timeCfg?.capacity || 3);
+      if (used >= capacity) throw new Error("선택한 시간의 예약이 마감되었습니다.");
+
+      const reservationItems = [];
+      const itemUpdates = [];
+      cartRows.forEach((cartRow, index) => {
+        const snap = itemSnaps[index];
+        if (!snap.exists()) throw new Error(`${cartRow.row.item.name} 품목이 없습니다.`);
+        const live = { id: cartRow.id, ...snap.data() };
+        const available = availableQty(live);
+        const max = Number(live.reservationMaxQty || available);
+        if (!live.active || !live.reservable) throw new Error(`${live.name}은 예약할 수 없습니다.`);
+        if (cartRow.row.qty > available || cartRow.row.qty > max) {
+          throw new Error(`${live.name}의 예약 가능수량이 변경되었습니다.`);
+        }
+        itemUpdates.push({
+          ref: cartRow.ref,
+          data: {
+            reservedQty: Number(live.reservedQty || 0) + cartRow.row.qty,
+            availableReservationQty: available - cartRow.row.qty,
+            updatedAt: serverTimestamp()
+          }
+        });
+        reservationItems.push({
+          itemId: cartRow.id,
+          itemName: live.name,
+          qty: cartRow.row.qty,
+          displayQty: formatQty(cartRow.row.qty, live),
+          unit: live.unit || "개"
+        });
+      });
+
+      // Only writes below this line.
+      itemUpdates.forEach(update => tx.update(update.ref, update.data));
+      tx.set(slotRef, {
+        bookingDate,
+        bookingTime,
+        count: used + 1,
+        capacity,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+      tx.set(reservationRef, {
+        reservationNo: no,
+        brand,
+        bookingDate,
+        bookingTime,
+        bookingAt: Timestamp.fromDate(target),
+        items: reservationItems,
+        status: "예약",
+        createdAt: serverTimestamp(),
+        uid: auth.currentUser.uid
+      });
     });
     state.cart.clear(); renderCart(); closeCart(); el("reservationNumber").textContent=no; el("successDialog").showModal();
     await loadData();
@@ -164,10 +213,7 @@ async function createReservation(event){
 
 el("searchInput").addEventListener("input",e=>{state.search=e.target.value;renderItems();});
 document.querySelectorAll(".filter").forEach(btn=>btn.onclick=()=>{document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));btn.classList.add("active");state.filter=btn.dataset.filter;renderItems();});
-el("openCart").onclick=openCart;
-document.querySelectorAll("[data-close-cart]").forEach(x=>x.onclick=closeCart);
-const continueShopping = el("continueShopping");
-if (continueShopping) continueShopping.onclick = closeCart;
+el("openCart").onclick=openCart; document.querySelectorAll("[data-close-cart]").forEach(x=>x.onclick=closeCart);
 el("reservationForm").addEventListener("submit",createReservation);
 el("closeSuccess").onclick=()=>el("successDialog").close();
 el("copyReservation").onclick=async()=>{await navigator.clipboard.writeText(el("reservationNumber").textContent);toast("예약번호를 복사했습니다.");};
