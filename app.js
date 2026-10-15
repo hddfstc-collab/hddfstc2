@@ -138,19 +138,11 @@ async function createReservation(event){
     const reservationRef=doc(db,"v2_reservations",no);
     const slotRef=doc(db,"v2_slot_usage",`${bookingDate}_${bookingTime.replace(':','')}`);
     await runTransaction(db, async tx => {
-      // Firestore transaction rule: finish every read before the first write.
       const slotSnap = await tx.get(slotRef);
-      const cartRows = [...state.cart.entries()].map(([id, row]) => ({
-        id,
-        row,
-        ref: doc(db, "v2_public_items", id)
-      }));
+      const cartRows = [...state.cart.entries()].map(([id, row]) => ({ id, row, ref: doc(db, "v2_public_items", id) }));
       const itemSnaps = [];
-      for (const cartRow of cartRows) {
-        itemSnaps.push(await tx.get(cartRow.ref));
-      }
+      for (const cartRow of cartRows) itemSnaps.push(await tx.get(cartRow.ref));
 
-      // Validate all snapshots after all reads are complete.
       const used = slotSnap.exists() ? Number(slotSnap.data().count || 0) : 0;
       const timeCfg = (state.settings.times || []).find(x => x.time === bookingTime);
       const capacity = Number(timeCfg?.capacity || 3);
@@ -165,46 +157,14 @@ async function createReservation(event){
         const available = availableQty(live);
         const max = Number(live.reservationMaxQty || available);
         if (!live.active || !live.reservable) throw new Error(`${live.name}은 예약할 수 없습니다.`);
-        if (cartRow.row.qty > available || cartRow.row.qty > max) {
-          throw new Error(`${live.name}의 예약 가능수량이 변경되었습니다.`);
-        }
-        itemUpdates.push({
-          ref: cartRow.ref,
-          data: {
-            reservedQty: Number(live.reservedQty || 0) + cartRow.row.qty,
-            availableReservationQty: available - cartRow.row.qty,
-            updatedAt: serverTimestamp()
-          }
-        });
-        reservationItems.push({
-          itemId: cartRow.id,
-          itemName: live.name,
-          qty: cartRow.row.qty,
-          displayQty: formatQty(cartRow.row.qty, live),
-          unit: live.unit || "개"
-        });
+        if (cartRow.row.qty > available || cartRow.row.qty > max) throw new Error(`${live.name}의 예약 가능수량이 변경되었습니다.`);
+        itemUpdates.push({ ref: cartRow.ref, data: { reservedQty: Number(live.reservedQty || 0) + cartRow.row.qty, updatedAt: serverTimestamp() } });
+        reservationItems.push({ itemId: cartRow.id, itemName: live.name, qty: cartRow.row.qty, displayQty: formatQty(cartRow.row.qty, live), unit: live.unit || "개" });
       });
 
-      // Only writes below this line.
       itemUpdates.forEach(update => tx.update(update.ref, update.data));
-      tx.set(slotRef, {
-        bookingDate,
-        bookingTime,
-        count: used + 1,
-        capacity,
-        updatedAt: serverTimestamp()
-      }, { merge: true });
-      tx.set(reservationRef, {
-        reservationNo: no,
-        brand,
-        bookingDate,
-        bookingTime,
-        bookingAt: Timestamp.fromDate(target),
-        items: reservationItems,
-        status: "예약",
-        createdAt: serverTimestamp(),
-        uid: auth.currentUser.uid
-      });
+      tx.set(slotRef,{bookingDate,bookingTime,count:used+1,capacity,updatedAt:serverTimestamp()},{merge:true});
+      tx.set(reservationRef,{reservationNo:no,brand,bookingDate,bookingTime,bookingAt:Timestamp.fromDate(target),items:reservationItems,status:"예약",createdAt:serverTimestamp(),uid:auth.currentUser.uid});
     });
     state.cart.clear(); renderCart(); closeCart(); el("reservationNumber").textContent=no; el("successDialog").showModal();
     await loadData();
