@@ -21,6 +21,35 @@
   <main class="page-shell">
     <section id="noticeBox" class="notice" hidden></section>
 
+    <section class="service-guide" aria-label="소모품 수령 안내">
+      <div class="service-guide-head">
+        <div><p class="eyebrow">SERVICE GUIDE</p><h2>소모품 수령 안내</h2></div>
+        <span class="contact-chip">문의 · 내선 6026</span>
+      </div>
+      <div class="service-guide-grid">
+        <article class="service-info-card direct-card">
+          <span class="service-info-label">현장 직접수령</span>
+          <strong>월~금 10:00~18:00</strong>
+          <p>기존과 동일하게 현장에서 바로 수령할 수 있습니다.</p>
+        </article>
+        <article class="service-info-card pause-card">
+          <span class="service-info-label">현장 수령 제한시간</span>
+          <strong>12:00~14:00</strong>
+          <p>점심 및 재고 이동으로 현장 수령이 제한됩니다.</p>
+        </article>
+        <article class="service-info-card reservation-card">
+          <span class="service-info-label">추가된 모바일 예약</span>
+          <strong>당일 10:00~11:30 신청</strong>
+          <p>현장 직접수령과 별도로 이용할 수 있습니다.</p>
+        </article>
+        <article class="service-info-card pickup-card">
+          <span class="service-info-label">예약 물품 수령</span>
+          <strong>익일 15:00~18:00</strong>
+          <p>예약 다음 영업일에 방문해 수령해주세요.</p>
+        </article>
+      </div>
+    </section>
+
     <section class="hero">
       <div>
         <span class="badge">실시간 재고 현황</span>
@@ -32,6 +61,8 @@
         <span id="syncText">Firebase 연결 중</span>
       </div>
     </section>
+
+    <section class="category-section" aria-label="품목 카테고리"><div id="categoryTabs" class="category-tabs"></div></section>
 
     <section class="toolbar" aria-label="품목 검색 및 필터">
       <label class="search-box">
@@ -98,7 +129,7 @@
           <button id="continueShopping" class="secondary-button" type="button">＋ 다른 품목 더 담기</button>
           <button id="submitReservation" class="primary-button" type="submit">예약 확정</button>
         </div>
-        <p class="form-help">품목을 모두 담은 뒤 예약 확정을 눌러주세요. 예약번호가 발급됩니다.</p>
+        <p class="form-help">예약 확정 후 발급되는 예약번호를 보관해주세요.</p>
       </form>
     </div>
   </aside>
