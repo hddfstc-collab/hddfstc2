@@ -51,7 +51,7 @@ function renderItems() {
   emptyState.hidden = list.length > 0;
   itemGrid.innerHTML = list.map(item => {
     const stock = Number(item.stock || 0), available = availableQty(item);
-    const buttonText = !item.reservable ? "재고 확인만 가능" : available <= 0 ? "예약 가능수량 없음" : "예약하기";
+    const buttonText = !item.reservable ? "재고 확인만 가능" : available <= 0 ? "예약 가능수량 없음" : "장바구니 담기";
     return `<article class="item-card">
       <div class="item-card-top"><h4>${escapeHtml(item.name)}</h4><span class="stock-badge ${stock<=0?'soldout':''}">${stock<=0?'품절':'재고 있음'}</span></div>
       <div class="item-meta"><div>현재고<strong>${stock.toLocaleString()}${escapeHtml(item.unit||'개')}</strong></div><div>예약가능<strong>${item.reservable?available.toLocaleString():'-'}</strong></div></div>
@@ -68,7 +68,10 @@ function addToCart(id) {
   const next = current.qty + step;
   const max = Number(item.reservationMaxQty || availableQty(item));
   if (next > Math.min(max, availableQty(item))) return toast("예약 가능수량 또는 1회 상한을 초과했습니다.");
-  state.cart.set(id, { item, qty: next }); renderCart(); openCart();
+  state.cart.set(id, { item, qty: next });
+  renderCart();
+  openCart();
+  toast(`${item.name}을 장바구니에 담았습니다.`);
 }
 function changeQty(id, delta) {
   const row = state.cart.get(id); if (!row) return;
@@ -161,7 +164,10 @@ async function createReservation(event){
 
 el("searchInput").addEventListener("input",e=>{state.search=e.target.value;renderItems();});
 document.querySelectorAll(".filter").forEach(btn=>btn.onclick=()=>{document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));btn.classList.add("active");state.filter=btn.dataset.filter;renderItems();});
-el("openCart").onclick=openCart; document.querySelectorAll("[data-close-cart]").forEach(x=>x.onclick=closeCart);
+el("openCart").onclick=openCart;
+document.querySelectorAll("[data-close-cart]").forEach(x=>x.onclick=closeCart);
+const continueShopping = el("continueShopping");
+if (continueShopping) continueShopping.onclick = closeCart;
 el("reservationForm").addEventListener("submit",createReservation);
 el("closeSuccess").onclick=()=>el("successDialog").close();
 el("copyReservation").onclick=async()=>{await navigator.clipboard.writeText(el("reservationNumber").textContent);toast("예약번호를 복사했습니다.");};
