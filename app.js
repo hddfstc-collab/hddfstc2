@@ -10,7 +10,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-const state = { items: [], settings: null, cart: new Map(), filter: "all", search: "" };
+const state = { items: [], settings: null, cart: new Map(), filter: "all", search: "", category: "전체" };
 const el = id => document.getElementById(id);
 const itemGrid = el("itemGrid"), emptyState = el("emptyState"), drawer = el("cartDrawer");
 
@@ -33,26 +33,36 @@ function formatQty(qty, item) {
   return boxes ? `${boxes}${pack}` : `${rem}${unit}`;
 }
 function availableQty(item) {
-  return Math.max(0, Number(item.stock || 0) - Number(item.reservedQty || 0));
+  return Math.max(0, Number(item.stock || 0) - Number(item.reservedQty || 0) - Number(item.reservationMinStock || 0));
 }
 function reservable(item) {
   return Boolean(item.active) && Boolean(item.reservable) && availableQty(item) > 0;
 }
+function normalizedCategory(item){ return String(item.category || "기타").trim() || "기타"; }
+function renderCategories(){
+  const counts=new Map(); state.items.forEach(item=>{const c=normalizedCategory(item);counts.set(c,(counts.get(c)||0)+1);});
+  const categories=[...counts.keys()].sort((a,b)=>a==="기타"?1:b==="기타"?-1:a.localeCompare(b,"ko"));
+  const list=["전체",...categories]; if(!list.includes(state.category)) state.category="전체";
+  el("categoryTabs").innerHTML=list.map(c=>`<button type="button" class="category-tab ${state.category===c?'active':''}" data-category="${escapeHtml(c)}">${escapeHtml(c)}<span class="category-count">${c==="전체"?state.items.length:counts.get(c)}</span></button>`).join("");
+  document.querySelectorAll("[data-category]").forEach(b=>b.onclick=()=>{state.category=b.dataset.category;renderCategories();renderItems();});
+}
 function renderItems() {
   const term = state.search.toLowerCase();
   const list = state.items.filter(item => {
-    const match = !term || String(item.name || "").toLowerCase().includes(term);
+    const match = !term || String(item.name || "").toLowerCase().includes(term) || normalizedCategory(item).toLowerCase().includes(term);
+    const categoryMatch = state.category === "전체" || normalizedCategory(item) === state.category;
     const filter = state.filter === "all" ||
       (state.filter === "reservable" && reservable(item)) ||
       (state.filter === "available" && Number(item.stock || 0) > 0);
-    return match && filter;
+    return match && categoryMatch && filter;
   });
   el("resultCount").textContent = `${list.length}개 품목`;
   emptyState.hidden = list.length > 0;
   itemGrid.innerHTML = list.map(item => {
     const stock = Number(item.stock || 0), available = availableQty(item);
-    const buttonText = !item.reservable ? "재고 확인만 가능" : available <= 0 ? "예약 가능수량 없음" : "예약하기";
+    const buttonText = !item.reservable ? "재고 확인만 가능" : available <= 0 ? "예약 가능수량 없음" : "장바구니 담기";
     return `<article class="item-card">
+      <span class="item-category">${escapeHtml(normalizedCategory(item))}</span>
       <div class="item-card-top"><h4>${escapeHtml(item.name)}</h4><span class="stock-badge ${stock<=0?'soldout':''}">${stock<=0?'품절':'재고 있음'}</span></div>
       <div class="item-meta"><div>현재고<strong>${stock.toLocaleString()}${escapeHtml(item.unit||'개')}</strong></div><div>예약가능<strong>${item.reservable?available.toLocaleString():'-'}</strong></div></div>
       <div class="item-card-footer"><div class="availability">${item.reservable ? `1회 상한 ${item.reservationMaxQty || '현재고'}${item.unit||'개'} · ${item.reservationUnit||'박스+낱개'}` : '이 품목은 예약 대상이 아닙니다.'}</div>
@@ -106,7 +116,7 @@ async function loadData() {
   state.settings = settingsSnap.exists() ? {...defaultSettings,...settingsSnap.data()} : defaultSettings;
   const itemSnap = await getDocs(query(collection(db,"v2_public_items"),where("active","==",true)));
   state.items = itemSnap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>String(a.name).localeCompare(String(b.name),"ko"));
-  updateSettingsUI(); renderItems(); renderCart();
+  updateSettingsUI(); renderCategories(); renderItems(); renderCart();
   document.querySelector(".status-dot").classList.add("online"); el("syncText").textContent="재고 연결 완료";
 }
 function updateSettingsUI() {
@@ -174,6 +184,7 @@ async function createReservation(event){
 el("searchInput").addEventListener("input",e=>{state.search=e.target.value;renderItems();});
 document.querySelectorAll(".filter").forEach(btn=>btn.onclick=()=>{document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));btn.classList.add("active");state.filter=btn.dataset.filter;renderItems();});
 el("openCart").onclick=openCart; document.querySelectorAll("[data-close-cart]").forEach(x=>x.onclick=closeCart);
+const continueShopping=el("continueShopping"); if(continueShopping) continueShopping.onclick=closeCart;
 el("reservationForm").addEventListener("submit",createReservation);
 el("closeSuccess").onclick=()=>el("successDialog").close();
 el("copyReservation").onclick=async()=>{await navigator.clipboard.writeText(el("reservationNumber").textContent);toast("예약번호를 복사했습니다.");};
