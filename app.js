@@ -16,7 +16,7 @@ const itemGrid = el("itemGrid"), emptyState = el("emptyState"), drawer = el("car
 
 const defaultSettings = {
   enabled: true, notice: "", weekdays: [0,1,2,3,4], daysAhead: 14,
-  cutoffHours: 2, cancelHours: 2,
+  applicationStartTime: "10:00", applicationEndTime: "11:30", pickupDayOffset: 1,
   times: [{ time: "10:00", capacity: 3 }, { time: "11:00", capacity: 3 }, { time: "14:00", capacity: 3 }, { time: "15:00", capacity: 3 }]
 };
 
@@ -123,17 +123,26 @@ function updateSettingsUI() {
   const cfg=state.settings;
   if(cfg.notice){ el("noticeBox").hidden=false; el("noticeBox").textContent=cfg.notice; }
   if(!cfg.enabled){ el("noticeBox").hidden=false; el("noticeBox").textContent=cfg.notice||"현재 예약 접수가 중지되었습니다."; }
-  const today=new Date(); const min=today.toISOString().slice(0,10); const maxDate=new Date(today); maxDate.setDate(maxDate.getDate()+Number(cfg.daysAhead||14));
-  el("dateInput").min=min; el("dateInput").max=maxDate.toISOString().slice(0,10); el("dateInput").value=min;
+  const pickupDate=new Date();
+  pickupDate.setDate(pickupDate.getDate()+Number(cfg.pickupDayOffset ?? 1));
+  const pickupDateText=pickupDate.toISOString().slice(0,10);
+  el("dateInput").min=pickupDateText;
+  el("dateInput").max=pickupDateText;
+  el("dateInput").value=pickupDateText;
   const options=(cfg.times||[]).filter(x=>x.active!==false).map(x=>`<option value="${x.time}">${x.time}</option>`).join("");
   el("timeInput").innerHTML=`<option value="">시간 선택</option>${options}`;
 }
 function validateSchedule(dateText,timeText){
   const cfg=state.settings; const target=new Date(`${dateText}T${timeText}:00`); const now=new Date();
   if(!cfg.enabled) throw new Error("현재 예약 접수가 중지되었습니다.");
-  const weekday=(target.getDay()+6)%7;
-  if(!(cfg.weekdays||[]).map(Number).includes(weekday)) throw new Error("예약 가능한 요일이 아닙니다.");
-  if((target-now)/36e5 < Number(cfg.cutoffHours||0)) throw new Error(`예약은 수령 ${cfg.cutoffHours||0}시간 전까지 가능합니다.`);
+  const weekday=(now.getDay()+6)%7;
+  if(!(cfg.weekdays||[]).map(Number).includes(weekday)) throw new Error("오늘은 모바일 예약 신청 가능 요일이 아닙니다.");
+  const currentTime=`${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
+  const open=cfg.applicationStartTime||"10:00";
+  const close=cfg.applicationEndTime||"11:30";
+  if(currentTime<open || currentTime>close) throw new Error(`모바일 예약은 ${open}~${close}에 신청할 수 있습니다.`);
+  const expected=new Date(); expected.setDate(expected.getDate()+Number(cfg.pickupDayOffset ?? 1));
+  if(dateText!==expected.toISOString().slice(0,10)) throw new Error("설정된 수령일과 다릅니다. 화면을 새로고침해주세요.");
   return target;
 }
 async function createReservation(event){
