@@ -153,7 +153,11 @@ async function createReservation(event){
   if(!state.cart.size) return toast("예약 품목을 담아주세요.");
   try{
     const target=validateSchedule(bookingDate,bookingTime);
-    const no=`R${bookingDate.replaceAll('-','').slice(2)}-${crypto.randomUUID().slice(0,6).toUpperCase()}`;
+    const createdNow = new Date();
+    const datePart = `${createdNow.getFullYear()}${String(createdNow.getMonth()+1).padStart(2,"0")}${String(createdNow.getDate()).padStart(2,"0")}`;
+    const timePart = `${String(createdNow.getHours()).padStart(2,"0")}${String(createdNow.getMinutes()).padStart(2,"0")}${String(createdNow.getSeconds()).padStart(2,"0")}`;
+    const milliPart = String(createdNow.getMilliseconds()).padStart(3,"0");
+    const no = `예약-${datePart}-${timePart}-${milliPart}`;
     const reservationRef=doc(db,"v2_reservations",no);
     const slotRef=doc(db,"v2_slot_usage",`${bookingDate}_${bookingTime.replace(':','')}`);
     await runTransaction(db, async tx => {
