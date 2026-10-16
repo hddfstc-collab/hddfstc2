@@ -64,25 +64,34 @@ function renderItems() {
     return `<article class="item-card">
       <span class="item-category">${escapeHtml(normalizedCategory(item))}</span>
       <div class="item-card-top"><h4>${escapeHtml(item.name)}</h4><span class="stock-badge ${stock<=0?'soldout':''}">${stock<=0?'품절':'재고 있음'}</span></div>
-      <div class="item-meta"><div>현재고<strong>${stock.toLocaleString()}${escapeHtml(item.unit||'개')}</strong></div><div>예약가능<strong>${item.reservable?available.toLocaleString():'-'}</strong></div></div>
-      <div class="item-card-footer"><div class="availability">${item.reservable ? `1회 상한 ${item.reservationMaxQty || '현재고'}${item.unit||'개'} · ${item.reservationUnit||'박스+낱개'}` : '이 품목은 예약 대상이 아닙니다.'}</div>
-      <button class="reserve-button" data-add="${item.id}" ${reservable(item)?'':'disabled'}>${buttonText}</button></div>
+      <div class="item-meta"><div>현재고<strong>${escapeHtml(formatQty(stock,item))}</strong><small>낱개환산 ${stock.toLocaleString()}${escapeHtml(item.unit||'개')}</small></div><div>예약가능<strong>${item.reservable?escapeHtml(formatQty(available,item)):'-'}</strong><small>${item.reservable?`낱개환산 ${available.toLocaleString()}${escapeHtml(item.unit||'개')}`:''}</small></div></div>
+      <div class="item-card-footer"><div class="availability">${item.reservable ? `1회 상한 ${item.reservationMaxQty ? formatQty(Number(item.reservationMaxQty),item) : '예약가능수량'} · ${item.reservationUnit||'박스+낱개'}` : '이 품목은 예약 대상이 아닙니다.'}</div>
+      ${item.reservable ? reservationButtons(item) : `<button class="reserve-button" disabled>${buttonText}</button>`}</div>
     </article>`;
   }).join("");
-  document.querySelectorAll("[data-add]").forEach(btn => btn.addEventListener("click", () => addToCart(btn.dataset.add)));
+  document.querySelectorAll("[data-add-box]").forEach(btn => btn.addEventListener("click", () => addToCart(btn.dataset.addBox, "box")));
+  document.querySelectorAll("[data-add-unit]").forEach(btn => btn.addEventListener("click", () => addToCart(btn.dataset.addUnit, "unit")));
 }
-function addToCart(id) {
+function reservationButtons(item) {
+  const enabled=reservable(item), mode=item.reservationUnit||"박스+낱개", packQty=Math.max(1,Number(item.packQty||1));
+  const boxAllowed=mode!=="낱개만" && packQty>1, unitAllowed=mode!=="박스만";
+  return `<div class="reserve-choice">
+    ${boxAllowed?`<button class="reserve-button reserve-box" data-add-box="${item.id}" ${enabled?'':'disabled'}>+ 1${escapeHtml(item.packUnit||'박스')}</button>`:''}
+    ${unitAllowed?`<button class="reserve-button reserve-unit" data-add-unit="${item.id}" ${enabled?'':'disabled'}>+ 1${escapeHtml(item.unit||'개')}</button>`:''}
+  </div>`;
+}
+function addToCart(id, mode="unit") {
   const item = state.items.find(x => x.id === id); if (!item) return;
   const current = state.cart.get(id) || { item, qty: 0 };
-  const step = item.reservationUnit === "박스만" ? Math.max(1,Number(item.packQty||1)) : 1;
+  const step = mode === "box" ? Math.max(1,Number(item.packQty||1)) : 1;
   const next = current.qty + step;
   const max = Number(item.reservationMaxQty || availableQty(item));
   if (next > Math.min(max, availableQty(item))) return toast("예약 가능수량 또는 1회 상한을 초과했습니다.");
   state.cart.set(id, { item, qty: next }); renderCart(); openCart();
 }
-function changeQty(id, delta) {
+function changeQty(id, delta, mode="unit") {
   const row = state.cart.get(id); if (!row) return;
-  const step = row.item.reservationUnit === "박스만" ? Math.max(1,Number(row.item.packQty||1)) : 1;
+  const step = mode === "box" ? Math.max(1,Number(row.item.packQty||1)) : 1;
   const next = row.qty + delta * step;
   if (next <= 0) state.cart.delete(id);
   else {
@@ -92,6 +101,7 @@ function changeQty(id, delta) {
   }
   renderCart();
 }
+
 function renderCart() {
   const rows = [...state.cart.values()];
   el("cartCount").textContent = rows.length;
@@ -99,10 +109,15 @@ function renderCart() {
   el("summaryQty").textContent = `${rows.reduce((s,x)=>s+x.qty,0).toLocaleString()}개`;
   el("cartItems").innerHTML = rows.length ? rows.map(({item,qty}) => `<div class="cart-row">
     <div><h4>${escapeHtml(item.name)}</h4><p>${formatQty(qty,item)} · 낱개환산 ${qty.toLocaleString()}${escapeHtml(item.unit||'개')}</p><button class="remove-button" data-remove="${item.id}">삭제</button></div>
-    <div class="qty-control"><button type="button" data-minus="${item.id}">−</button><strong>${qty.toLocaleString()}</strong><button type="button" data-plus="${item.id}">+</button></div>
+    <div class="cart-quantity-actions">
+      ${(item.reservationUnit||"박스+낱개")!=="낱개만" && Number(item.packQty||1)>1 ? `<div class="qty-control"><button type="button" data-box-minus="${item.id}">−</button><strong>${escapeHtml(item.packUnit||'박스')}</strong><button type="button" data-box-plus="${item.id}">+</button></div>` : ''}
+      ${(item.reservationUnit||"박스+낱개")!=="박스만" ? `<div class="qty-control"><button type="button" data-unit-minus="${item.id}">−</button><strong>${escapeHtml(item.unit||'개')}</strong><button type="button" data-unit-plus="${item.id}">+</button></div>` : ''}
+    </div>
   </div>`).join("") : `<div class="cart-empty">예약할 품목을 담아주세요.</div>`;
-  document.querySelectorAll("[data-minus]").forEach(b=>b.onclick=()=>changeQty(b.dataset.minus,-1));
-  document.querySelectorAll("[data-plus]").forEach(b=>b.onclick=()=>changeQty(b.dataset.plus,1));
+  document.querySelectorAll("[data-box-minus]").forEach(b=>b.onclick=()=>changeQty(b.dataset.boxMinus,-1,"box"));
+  document.querySelectorAll("[data-box-plus]").forEach(b=>b.onclick=()=>changeQty(b.dataset.boxPlus,1,"box"));
+  document.querySelectorAll("[data-unit-minus]").forEach(b=>b.onclick=()=>changeQty(b.dataset.unitMinus,-1,"unit"));
+  document.querySelectorAll("[data-unit-plus]").forEach(b=>b.onclick=()=>changeQty(b.dataset.unitPlus,1,"unit"));
   document.querySelectorAll("[data-remove]").forEach(b=>b.onclick=()=>{state.cart.delete(b.dataset.remove);renderCart();});
   el("submitReservation").disabled = rows.length === 0 || !state.settings?.enabled;
 }
