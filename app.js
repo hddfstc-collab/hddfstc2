@@ -134,10 +134,32 @@ async function loadData() {
   updateSettingsUI(); renderCategories(); renderItems(); renderCart();
   document.querySelector(".status-dot").classList.add("online"); el("syncText").textContent="재고 연결 완료";
 }
+const NOTICE_PHONE = "02-2142-6026";
+function ensureNoticeDialog(){
+  if(el("noticeDialog")) return el("noticeDialog");
+  const dialog=document.createElement("dialog");
+  dialog.id="noticeDialog";
+  dialog.className="notice-dialog";
+  dialog.innerHTML=`<div class="notice-dialog-head"><div><span class="notice-kicker">RESERVATION GUIDE</span><h2>예약 이용안내</h2></div><button type="button" class="icon-button" data-close-notice aria-label="닫기">×</button></div><div id="noticeDialogText" class="notice-dialog-text"></div><a class="notice-phone" href="tel:0221426026">문의 ${NOTICE_PHONE}</a><button type="button" class="primary-button" data-close-notice>확인</button>`;
+  document.body.appendChild(dialog);
+  dialog.querySelectorAll("[data-close-notice]").forEach(button=>button.onclick=()=>dialog.close());
+  dialog.addEventListener("click",event=>{if(event.target===dialog) dialog.close();});
+  return dialog;
+}
+function renderNotice(notice, enabled){
+  const box=el("noticeBox");
+  if(!box) return;
+  const fullText=String(notice||(!enabled?"현재 예약 접수가 중지되었습니다.":"")).trim();
+  if(!fullText){box.hidden=true;return;}
+  const dialog=ensureNoticeDialog();
+  el("noticeDialogText").textContent=fullText;
+  box.hidden=false;
+  box.innerHTML=`<div class="notice-summary"><div><strong>${enabled?"예약 이용안내":"예약 접수 중지"}</strong><span>${enabled?"운영시간과 수령 안내를 확인하세요.":escapeHtml(fullText)}</span></div><div class="notice-actions"><a href="tel:0221426026" class="notice-call" aria-label="${NOTICE_PHONE} 전화걸기">☎ ${NOTICE_PHONE}</a><button type="button" class="notice-open">공지 보기</button></div></div>`;
+  box.querySelector(".notice-open").onclick=()=>dialog.showModal();
+}
 function updateSettingsUI() {
   const cfg=state.settings;
-  if(cfg.notice){ el("noticeBox").hidden=false; el("noticeBox").textContent=cfg.notice; }
-  if(!cfg.enabled){ el("noticeBox").hidden=false; el("noticeBox").textContent=cfg.notice||"현재 예약 접수가 중지되었습니다."; }
+  renderNotice(cfg.notice,cfg.enabled);
   const pickupDate=new Date();
   pickupDate.setDate(pickupDate.getDate()+Number(cfg.pickupDayOffset ?? 1));
   const pickupDateText=pickupDate.toISOString().slice(0,10);
