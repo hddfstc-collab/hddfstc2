@@ -204,6 +204,27 @@ async function createReservation(event){
   }catch(error){ console.error(error); toast(error.message||"예약 처리 중 오류가 발생했습니다."); }
 }
 
+function setupWebGuidePopup(){
+  const guide=document.querySelector(".service-guide");
+  if(!guide || document.getElementById("webGuideDialog")) return;
+  const originalHead=guide.querySelector(".service-guide-head");
+  const originalGrid=guide.querySelector(".service-guide-grid");
+  if(!originalGrid) return;
+
+  const dialog=document.createElement("dialog");
+  dialog.id="webGuideDialog";
+  dialog.className="web-guide-dialog";
+  dialog.innerHTML=`<div class="web-guide-dialog-head"><div><span class="web-guide-kicker">CONSUMABLES GUIDE</span><h2>소모품 수령 안내</h2></div><button type="button" class="icon-button" data-close-web-guide aria-label="닫기">×</button></div><div class="web-guide-dialog-body"></div><div class="web-guide-dialog-actions"><a href="tel:0221426026" class="web-guide-phone">☎ 내선 6026</a><button type="button" class="primary-button" data-close-web-guide>확인</button></div>`;
+  dialog.querySelector(".web-guide-dialog-body").appendChild(originalGrid);
+  document.body.appendChild(dialog);
+  dialog.querySelectorAll("[data-close-web-guide]").forEach(button=>button.onclick=()=>dialog.close());
+  dialog.addEventListener("click",event=>{if(event.target===dialog) dialog.close();});
+
+  guide.innerHTML=`<div class="web-guide-summary"><div><span class="web-guide-kicker">CONSUMABLES GUIDE</span><strong>소모품 수령 안내</strong><small>운영시간, 예약 및 수령시간을 확인하세요.</small></div><div class="web-guide-summary-actions"><a href="tel:0221426026" class="web-guide-phone" aria-label="02-2142-6026 전화걸기">☎ 내선 6026</a><button type="button" id="openWebGuide" class="web-guide-open">안내 보기</button></div></div>`;
+  document.getElementById("openWebGuide").onclick=()=>dialog.showModal();
+}
+
+setupWebGuidePopup();
 el("searchInput").addEventListener("input",e=>{state.search=e.target.value;renderItems();});
 document.querySelectorAll(".filter").forEach(btn=>btn.onclick=()=>{document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));btn.classList.add("active");state.filter=btn.dataset.filter;renderItems();});
 el("openCart").onclick=openCart; document.querySelectorAll("[data-close-cart]").forEach(x=>x.onclick=closeCart);
