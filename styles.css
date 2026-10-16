@@ -12,3 +12,7 @@
 
 /* Box/unit inventory and reservation controls */
 .item-meta small{display:block;margin-top:4px;color:#7a8496;font-size:11px;font-weight:600}.reserve-choice{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.reserve-choice:has(.reserve-button:only-child){grid-template-columns:1fr}.reserve-choice .reserve-button{width:100%}.reserve-box{background:#174ea6}.reserve-unit{background:#111827}.cart-quantity-actions{display:flex;flex-direction:column;gap:7px;align-items:flex-end}.cart-quantity-actions .qty-control strong{min-width:38px;text-align:center;font-size:12px}@media(max-width:560px){.reserve-choice{grid-template-columns:1fr 1fr}.cart-row{align-items:flex-start}.cart-quantity-actions{width:100%;align-items:stretch}.cart-quantity-actions .qty-control{justify-content:flex-end}}
+
+
+/* Click card to choose quantity in cart */
+.item-card-clickable{cursor:pointer;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}.item-card-clickable:hover{transform:translateY(-2px);border-color:#98a2b3;box-shadow:0 12px 28px rgba(17,24,39,.10)}.item-card-clickable:focus-visible{outline:3px solid rgba(23,78,166,.22);outline-offset:2px}.card-open-hint{margin-top:9px;padding:9px 11px;border-radius:9px;background:#f2f4f7;color:#344054;font-size:12px;font-weight:850;text-align:center}.operation-guide-note a{color:#53389e;font-weight:850;text-decoration:underline}
