@@ -57,6 +57,7 @@ function renderItems() {
     return match && categoryMatch && filter;
   });
   el("resultCount").textContent = `${list.length}개 품목`;
+  el("resultCount").dataset.guide = "품목 카드를 누르면 장바구니에서 수량을 정할 수 있어요.";
   emptyState.hidden = list.length > 0;
   itemGrid.innerHTML = list.map(item => {
     const stock = Number(item.stock || 0), available = availableQty(item);
@@ -65,8 +66,7 @@ function renderItems() {
       <span class="item-category">${escapeHtml(normalizedCategory(item))}</span>
       <div class="item-card-top"><h4>${escapeHtml(item.name)}</h4><span class="stock-badge ${stock<=0?'soldout':''}">${stock<=0?'품절':'재고 있음'}</span></div>
       <div class="item-meta"><div>현재고<strong>${escapeHtml(formatQty(stock,item))}</strong><small>낱개환산 ${stock.toLocaleString()}${escapeHtml(item.unit||'개')}</small></div><div>예약가능<strong>${item.reservable?escapeHtml(formatQty(available,item)):'-'}</strong><small>${item.reservable?`낱개환산 ${available.toLocaleString()}${escapeHtml(item.unit||'개')}`:''}</small></div></div>
-      <div class="item-card-footer"><div class="availability">${item.reservable ? `1회 상한 ${item.reservationMaxQty ? formatQty(Number(item.reservationMaxQty),item) : '예약가능수량'} · ${item.reservationUnit||'박스+낱개'}` : '이 품목은 예약 대상이 아닙니다.'}</div>
-      <div class="card-open-hint">${clickable?'품목 카드를 눌러 수량 선택':'예약할 수 없는 품목'}</div></div>
+      <div class="item-card-footer"><div class="availability">${item.reservable ? `1회 예약 한도 ${item.reservationMaxQty ? formatQty(Number(item.reservationMaxQty),item) : '예약 가능수량까지'}` : '이 품목은 예약 대상이 아닙니다.'}</div></div>
     </article>`;
   }).join("");
   document.querySelectorAll("[data-item-card]").forEach(card => {
