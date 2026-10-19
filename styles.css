@@ -20,3 +20,106 @@
 
 /* Web-only consumables guide popup */
 .service-guide{padding:14px 16px}.web-guide-summary{display:flex;align-items:center;justify-content:space-between;gap:16px}.web-guide-summary>div:first-child{display:grid;gap:3px}.web-guide-summary strong{font-size:18px;color:#172033}.web-guide-summary small{font-size:12px;color:#667085}.web-guide-kicker{font-size:10px;letter-spacing:.16em;font-weight:900;color:#98a2b3}.web-guide-summary-actions{display:flex;align-items:center;gap:8px}.web-guide-phone,.web-guide-open{display:inline-flex;align-items:center;justify-content:center;padding:10px 13px;border-radius:10px;font-size:12px;font-weight:850;text-decoration:none;cursor:pointer}.web-guide-phone{border:1px solid #d9d6fe;background:#f4f3ff;color:#53389e}.web-guide-open{border:1px solid #cfd5df;background:#fff;color:#344054}.web-guide-dialog{width:min(880px,94vw);max-height:88vh;border:0;border-radius:20px;padding:0;box-shadow:0 28px 80px rgba(17,24,39,.28);overflow:hidden}.web-guide-dialog::backdrop{background:rgba(17,24,39,.55)}.web-guide-dialog-head{display:flex;align-items:flex-start;justify-content:space-between;padding:22px 24px 16px;border-bottom:1px solid var(--line)}.web-guide-dialog-head h2{margin:4px 0 0;font-size:24px}.web-guide-dialog-body{padding:20px 24px;overflow:auto}.web-guide-dialog-body .service-guide-grid{margin:0}.web-guide-dialog-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 24px 24px}.web-guide-dialog-actions .primary-button{margin:0}.web-guide-dialog-actions .web-guide-phone{border-radius:10px}.web-guide-dialog .icon-button{border:0;background:#f2f4f7;width:36px;height:36px;border-radius:50%;font-size:22px;cursor:pointer}@media(max-width:560px){.web-guide-summary{align-items:stretch;flex-direction:column}.web-guide-summary-actions{display:grid;grid-template-columns:1fr 1fr}.web-guide-dialog-head,.web-guide-dialog-body{padding-left:18px;padding-right:18px}.web-guide-dialog-actions{grid-template-columns:1fr;padding-left:18px;padding-right:18px}.web-guide-dialog-body .service-guide-grid{grid-template-columns:1fr}}
+/* 품목 카드 내부 구분 개선: styles.css 맨 아래에 추가 */
+.item-card{
+  padding:0;
+  overflow:hidden;
+  border:1px solid #d9e0ea;
+  border-radius:16px;
+  background:#fff;
+}
+.item-card .item-category{
+  display:inline-flex;
+  margin:16px 16px 0;
+}
+.item-card .item-card-top{
+  margin:0;
+  padding:12px 16px 16px;
+  border-bottom:1px solid #e7ebf1;
+  align-items:center;
+}
+.item-card .item-card-top h4{
+  margin:0;
+  font-size:18px;
+  line-height:1.35;
+}
+.item-card .item-meta{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0;
+  margin:0;
+  padding:0;
+  background:#f8fafc;
+  border-bottom:1px solid #e7ebf1;
+}
+.item-card .item-meta>div{
+  min-width:0;
+  padding:15px 16px;
+}
+.item-card .item-meta>div+div{
+  border-left:1px solid #e1e6ee;
+}
+.item-card .item-meta>div:first-child::before,
+.item-card .item-meta>div:nth-child(2)::before{
+  display:block;
+  margin-bottom:5px;
+  color:#667085;
+  font-size:11px;
+  font-weight:800;
+}
+.item-card .item-meta>div:first-child::before{content:"현재 재고";}
+.item-card .item-meta>div:nth-child(2)::before{content:"예약 가능";}
+.item-card .item-meta>div{
+  font-size:0;
+  color:transparent;
+}
+.item-card .item-meta strong{
+  display:block;
+  color:#172033;
+  font-size:19px;
+  line-height:1.35;
+  letter-spacing:-.03em;
+  word-break:keep-all;
+}
+.item-card .item-meta small{
+  display:block;
+  margin-top:5px;
+  color:#98a2b3;
+  font-size:11px;
+  font-weight:700;
+  line-height:1.4;
+}
+.item-card .item-card-footer{
+  margin:0;
+  padding:13px 16px 16px;
+  background:#fff;
+}
+.item-card .availability{
+  margin:0 0 10px;
+  padding:9px 11px;
+  border-radius:9px;
+  background:#f4f6f9;
+  color:#667085;
+  font-size:12px;
+  line-height:1.45;
+}
+.item-card .card-open-hint{
+  margin:0;
+  padding:11px 12px;
+  border:1px solid #d7deea;
+  border-radius:10px;
+  background:#eef4ff;
+  color:#244a86;
+  font-size:12px;
+  font-weight:900;
+  text-align:center;
+}
+.item-card-clickable:hover .card-open-hint{
+  border-color:#9ab6e8;
+  background:#e3edff;
+}
+@media(max-width:560px){
+  .item-card .item-card-top h4{font-size:17px;}
+  .item-card .item-meta strong{font-size:18px;}
+  .item-card .item-meta>div{padding:14px 13px;}
+}
