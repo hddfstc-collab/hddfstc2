@@ -123,3 +123,10 @@
   .item-card .item-meta strong{font-size:18px;}
   .item-card .item-meta>div{padding:14px 13px;}
 }
+
+
+/* 품목 카드 반복 문구 정리 - 목록 안내는 한 번만 */
+.section-heading p::after{content:attr(data-guide);display:block;margin-top:4px;color:#526174;font-size:12px;font-weight:700}
+#resultCount::after{content:attr(data-guide);display:block;margin-top:4px;color:#526174;font-size:12px;font-weight:700;white-space:normal}
+.item-card .card-open-hint{display:none!important}
+.item-card .availability{margin:0;padding:8px 10px;border-radius:8px;background:#f4f6f9;color:#667085;font-size:12px;line-height:1.45}
